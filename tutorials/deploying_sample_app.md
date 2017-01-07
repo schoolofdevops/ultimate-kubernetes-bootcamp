@@ -249,6 +249,7 @@ Here the port assigned is 31808, go to the browser and enter
 ```
 masterip:31808
 ```
+![alt text](images/Vote.png "Front-End")
 
 This will load the page where you can vote.
 
@@ -266,5 +267,7 @@ Here the port assigned is 32511, go to the browser and enter
 ```
 masterip:32511
 ```
+
+![alt text](images/Result.png "Result Page")
 
 This is the page where we can see the result of the vote.
