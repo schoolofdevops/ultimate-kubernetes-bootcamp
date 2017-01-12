@@ -80,11 +80,3 @@ Events:
   ---------     --------        -----   ----                            -------------   --------        ------                  -------
   3m            3m              1       {replication-controller }                       Normal          SuccessfulCreate        Created pod: voting-appp-jgplb
 ```
-
-#### Deleting the RC:
-
-To delete a replication controller as well as the pods that it controls, use
-
-```
-kubectl delete rc voting-appp
-```
