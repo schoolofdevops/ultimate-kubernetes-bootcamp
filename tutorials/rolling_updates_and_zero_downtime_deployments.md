@@ -83,7 +83,7 @@ Here the node port is 30165.
 
 Sample output will be:
 
-![alt text](images/RC-Nginx.png "Nginx Page")
+![alt text](images/RC-Nginx.PNG "Nginx Page")
 
 #### Rolling update
 
@@ -112,7 +112,7 @@ replicationcontroller "voting-appp" rolling updated
 Now go to the browser and reload the page, you will see the below output:
 
 
-![alt text](images/RC-Vote.png "Vote Page")
+![alt text](images/RC-Vote.PNG "Vote Page")
 
 Thus the Rolling Update is successfull.
 #### Rollback

@@ -105,7 +105,7 @@ Please check the browser with the hostip and the port number.
 
 In this case it hostip:30410
 
-![alt text](images/Nginx.png "Nginx Page")
+![alt text](images/Nginx.PNG "Nginx Page")
 
 
 ##Deleting a deployment
