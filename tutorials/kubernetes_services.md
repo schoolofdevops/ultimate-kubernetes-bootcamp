@@ -106,3 +106,31 @@ Please check the browser with the hostip and the port number.
 In this case it hostip:30410
 
 ![alt text](images/Nginx.png "Nginx Page")
+
+
+##Deleting a deployment
+
+To delete a deployment in Kubernetes is very simple,
+
+```
+kubectl delete deployment voting-appp
+```
+
+To verify:
+
+```
+kubectl get deployments
+```
+
+##Deleting a service
+
+To delete a service in Kubernetes is very simple,
+
+```
+kubectl delete service voting-appp
+```
+To verify:
+
+```
+kubectl get service
+```
