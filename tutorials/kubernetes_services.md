@@ -107,7 +107,25 @@ In this case it hostip:30410
 
 ![alt text](images/Nginx.PNG "Nginx Page")
 
+##Scaling a deployment
+To scale a deployment in Kubernetes is done by:
 
+```
+kubectl scale deployment/voting-appp --replicas=5
+```
+
+Sample output:
+```
+kubectl scale deployment/voting-appp --replicas=5
+deployment "voting-appp" scaled
+```
+
+To check, we can see the deployment what has happened:
+```
+kubectl get deployment
+NAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+voting-appp   5         5         5            1           28m
+```
 ##Deleting a deployment
 
 To delete a deployment in Kubernetes is very simple,
