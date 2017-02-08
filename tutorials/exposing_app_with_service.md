@@ -1,4 +1,4 @@
-## Creating a Service for Voting UI
+## Exposing Application with  a Service 
 
 Types of Services:
   * ClusterIP
@@ -74,4 +74,4 @@ Here the node port is 30308.
 
 Sample output will be:
 
-![alt text](images/RC-Nginx.PNG "Nginx Page")
+![alt text](images/Vote.png "Voting APP")
