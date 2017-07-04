@@ -9,7 +9,11 @@ Life of a pod
   * Unknown
 
 
-Resource Configs (YAML)
+### Resource Configs
+
+Each entity created with kubernetes is a resource including pod, service, deployments, replication controller etc. Resources can be defined as YAML or JSON.  Here is the syntax to create a YAML specification.
+
+**AKMS** => Resource Configs Specs
 
 ```
 apiVersion: v1
@@ -23,7 +27,7 @@ Spec Schema: https://kubernetes.io/docs/user-guide/pods/multi-container/
 
 Example Resource Config for a Pod
 
-Filename: deploy_pod.yaml
+Filename: vote_pod.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -31,6 +35,9 @@ metadata:
   name: vote
   labels:
     app: voting
+    role: ui
+    tier: front
+    env: dev
 spec:
   containers:
     - name: vote
@@ -51,7 +58,7 @@ Syntax:
 To Launch pod using configs above,
 
 ```
-kubectl create -f deploy_pod.yaml
+kubectl create -f vote_pod.yaml
 
 ```
 
@@ -66,7 +73,7 @@ kubectl get pods vote
 To get detailed info
 
 ```
-kubectl describe pods
+kubectl describe pods vote
 ```
 
 [Output:]
@@ -120,6 +127,8 @@ kubectl exec -it vote ps sh
 
 kubectl exec -it vote  sh
 
+kubectl logs vote
+
 ```
 
 delete
@@ -129,8 +138,99 @@ kubectl delete pod vote
 kubectl get pods
 ```
 
+## Attach a Volume to a Pod
 
-TODO:
- - assigning pods to a node with nodeSelector
-    - affinity and anti affinity
-    
+Lets create a pod for database and attach a volume to it. To achieve this we will need to
+
+  * create a **volumes** definition
+  * attach volume to container using **VolumeMounts** property
+
+Volumes are of two types:
+  * emptyDir
+  * hostPath
+
+File: db_pod.yaml
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: postgres
+    role: database
+    tier: back
+    env: dev
+spec:
+  containers:
+    - name: db
+      image: postgres:9.4
+      ports:
+        - containerPort: 5432
+      volumeMounts:
+      - name: db-data
+        mountPath: /var/lib/postgresql/data
+  volumes:
+  - name: db-data
+    emptyDir: {}
+
+```
+To create this pod,
+
+```
+kubectl create -f db_pod.yaml
+
+kubectl describe pod db
+
+kubectl get events
+```
+
+
+## Selecting Node to run on
+
+```
+kubectl get nodes --show-labels
+
+kubectl label nodes _node-name_ rack=1
+
+kubectl get nodes --show-labels
+
+```
+
+Update pod definition with nodeSelector
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vote
+  labels:
+    app: voting
+    role: ui
+    tier: front
+    env: dev
+spec:
+  containers:
+    - name: vote
+      image: schoolofdevops/vote:latest
+      ports:
+        - containerPort: 80
+  nodeSelector:
+    rack: '1'
+```
+
+For this change, pod needs to be re created.
+
+```
+kubectl delete pod vote
+kubectl create -f vote_pod.yaml
+```
+
+## Exercise
+
+Create a pod definition for redis and deploy.
+
+#### Reading List :
+
+Node Selectors, Affinity
+https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
