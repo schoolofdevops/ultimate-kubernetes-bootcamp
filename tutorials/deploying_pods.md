@@ -46,7 +46,7 @@ spec:
 
 
 
-Lets now create the  Pod config by adding the kind and specs to above schema. 
+Lets now create the  Pod config by adding the kind and specs to above schema.
 
 Filename: vote_pod.yaml
 ```
@@ -74,13 +74,13 @@ spec:
 Syntax:
 
 ```
- kubectl create -f FILE
+ kubectl apply -f FILE
 ```
 
 To Launch pod using configs above,
 
 ```
-kubectl create -f vote_pod.yaml
+kubectl apply -f vote_pod.yaml
 
 ```
 
@@ -201,7 +201,7 @@ spec:
 To create this pod,
 
 ```
-kubectl create -f db_pod.yaml
+kubectl apply -f db_pod.yaml
 
 kubectl describe pod db
 
@@ -214,7 +214,7 @@ kubectl get events
 ```
 kubectl get nodes --show-labels
 
-kubectl label nodes _node-name_ rack=1
+kubectl label nodes <node-name> rack=1
 
 kubectl get nodes --show-labels
 
@@ -222,6 +222,7 @@ kubectl get nodes --show-labels
 
 Update pod definition with nodeSelector
 
+file: vote_pod.yml
 ```
 apiVersion: v1
 kind: Pod
@@ -246,7 +247,7 @@ spec:
 For this change, pod needs to be re created.
 
 ```
-kubectl create -f vote_pod.yaml
+kubectl apply -f vote_pod.yaml
 ```
 
 ## Exercise
