@@ -8,6 +8,9 @@ Life of a pod
   * Failed
   * Unknown
 
+### Probes
+  * livenessProbe : Containers are Alive
+  * readinessProbe : Ready to Serve Traffic
 
 ### Resource Configs
 
