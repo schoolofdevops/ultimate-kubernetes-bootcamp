@@ -1,4 +1,4 @@
-## Exposing Application with  a Service 
+## Exposing Application with  a Service
 
 Types of Services:
   * ClusterIP
@@ -8,6 +8,7 @@ Types of Services:
 
 ```
 kubectl get pods
+kubectl get svc
 ```
 
 Sample Output:
@@ -26,7 +27,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: vote
+    stack: voting
+    role: svc
+    tier: front
+    env: dev
   name: vote-svc
   namespace: default
 spec:
@@ -45,11 +49,12 @@ Now to create a service:
 
 ```
 kubectl create -f vote-service.yml
+kubectl get svc
 ```
 
 Now to check which port the pod is connected
 ```
-kubectl describe service voting-appp
+kubectl describe service vote-svc
 ```
 Check for the Nodeport here
 

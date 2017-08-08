@@ -24,8 +24,29 @@ spec:
 
 Spec Schema: https://kubernetes.io/docs/user-guide/pods/multi-container/
 
+#### Common Configurations
 
-Example Resource Config for a Pod
+Througout this tutorial, we would be deploying differnt components of  example voting application. Lets assume we are deploying it in a **dev** environment.  Lets create the common specs for this app with the AKMS schema discussed above.
+
+file: common.yml
+
+```
+apiVersion: v1
+kind:
+metadata:
+  name: vote
+  labels:
+    stack: voting
+    app: vote
+    role: ui
+    tier: front
+    env: dev
+spec:
+```
+
+
+
+Lets now create the  Pod config by adding the kind and specs to above schema. 
 
 Filename: vote_pod.yaml
 ```
@@ -34,7 +55,8 @@ kind: Pod
 metadata:
   name: vote
   labels:
-    app: voting
+    stack: voting
+    app: vote
     role: ui
     tier: front
     env: dev
@@ -157,6 +179,7 @@ kind: Pod
 metadata:
   name: db
   labels:
+    stack: voting
     app: postgres
     role: database
     tier: back
@@ -205,7 +228,8 @@ kind: Pod
 metadata:
   name: vote
   labels:
-    app: voting
+    stack: voting
+    app: vote
     role: ui
     tier: front
     env: dev
@@ -222,7 +246,6 @@ spec:
 For this change, pod needs to be re created.
 
 ```
-kubectl delete pod vote
 kubectl create -f vote_pod.yaml
 ```
 
