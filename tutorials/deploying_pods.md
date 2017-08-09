@@ -12,6 +12,14 @@ Life of a pod
   * livenessProbe : Containers are Alive
   * readinessProbe : Ready to Serve Traffic
 
+### Quicklaunch with Kubernetes
+
+```
+kubectl run app --image=schoolofdevops/vote --port 80
+kubectl expose deploy app   --port 80  --type NodePort
+kubectl describe svc app
+```
+
 ### Resource Configs
 
 Each entity created with kubernetes is a resource including pod, service, deployments, replication controller etc. Resources can be defined as YAML or JSON.  Here is the syntax to create a YAML specification.

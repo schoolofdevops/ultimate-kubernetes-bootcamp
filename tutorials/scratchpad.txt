@@ -15,6 +15,12 @@ kubectl delete services example-service
  - pods
  - deployments
 
+Misc:
+----------
+ kubectl label pods -l app=nginx tier=fe
+
+
+
 Deployment/replica sets vs Replication Controllet + rolling-update
  - declarative vs imperative (ref1: giant swarm blog article)
  - replica sets support advanced set based selectors
@@ -77,4 +83,4 @@ Sequence :
   - Scaling Apps
   - Injecting Configurations with ConfigMaps
   - Launching Tasks on all Nodes with Daemonjobs
-  - 
+  -
