@@ -74,13 +74,22 @@ Components
 
 Sequence :
 
+  - Setup Cluster
+  - Configure, Create a Namespace
   - Launch a Pod
   - Maintain the Fleet with RC
   - Expose App with Service
   - Deploy new version of the app with rcs and rolling updates
   - Use Deployments and Replica Sets
   - Declarative way to update apps with Deployments
-  - Scaling Apps
   - Injecting Configurations with ConfigMaps
+  - Creating a Ingress with Nginx
+  - Horizontally Scaling Apps
   - Launching Tasks on all Nodes with Daemonjobs
-  -
+  - Persistent Storage
+  - Logs
+
+
+Questions:
+---------
+  - How to use rkt/runc with k8s

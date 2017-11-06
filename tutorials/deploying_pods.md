@@ -12,13 +12,6 @@ Life of a pod
   * livenessProbe : Containers are Alive
   * readinessProbe : Ready to Serve Traffic
 
-### Quicklaunch with Kubernetes
-
-```
-kubectl run app --image=schoolofdevops/vote --port 80
-kubectl expose deploy app   --port 80  --type NodePort
-kubectl describe svc app
-```
 
 ### Resource Configs
 
@@ -47,11 +40,9 @@ kind:
 metadata:
   name: vote
   labels:
-    stack: voting
     app: vote
     role: ui
     tier: front
-    env: dev
 spec:
 ```
 
@@ -66,11 +57,9 @@ kind: Pod
 metadata:
   name: vote
   labels:
-    stack: voting
     app: vote
     role: ui
     tier: front
-    env: dev
 spec:
   containers:
     - name: vote
@@ -153,7 +142,7 @@ Events:
   9s            9s              1       {kubelet kube-3}        spec.containers{vote}   Normal          Started         Started container with docker id 48304b35b945
 ```
 
-To run commands against a pod,
+Commands to operate the pod
 
 ```
 kubectl exec -it vote ps sh
@@ -190,11 +179,9 @@ kind: Pod
 metadata:
   name: db
   labels:
-    stack: voting
     app: postgres
     role: database
     tier: back
-    env: dev
 spec:
   containers:
     - name: db
@@ -240,11 +227,9 @@ kind: Pod
 metadata:
   name: vote
   labels:
-    stack: voting
     app: vote
     role: ui
     tier: front
-    env: dev
 spec:
   containers:
     - name: vote
