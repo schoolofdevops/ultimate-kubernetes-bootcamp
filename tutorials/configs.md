@@ -1,9 +1,42 @@
 ### Topics
 
+  * Monitor k8s
   * Configs
   * Context
   * Namespaces
 
+
+### Setup monitoring console for Kubernetes
+Unix **screen** is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a **screenrc** script as follows on kube-01 node (node where *kubectl* is configured)
+
+file: k8s-monitor.screenrc
+
+```
+screen watch -n 1 kubectl get pods
+split
+focus down
+screen watch -n 1 kubectl get rc
+split
+focus down
+screen watch -n 1 kubectl get deploy
+split
+focus down
+screen watch -n 1 kubectl get services
+split
+focus down
+screen watch -n 1 kubectl get replicasets
+focus bottom
+```
+
+Open a dedicated terminal to run this utility.  Launch it using
+
+```
+screen -c k8s-monitor.screenrc
+
+```
+
+
+### Configurations
 
 Check current config
 ```

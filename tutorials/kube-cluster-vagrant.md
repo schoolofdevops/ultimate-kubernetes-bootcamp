@@ -63,5 +63,6 @@ vagrant ssh kube-03
 sudo su
 ```
 
+
 Once the environment is setup, follow **Initialization of Master** onwards from the following tutorial
 https://github.com/schoolofdevops/kubernetes-fundamentals/blob/master/tutorials/1.%20install_kubernetes.md
