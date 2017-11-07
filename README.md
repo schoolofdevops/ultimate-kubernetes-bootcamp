@@ -1,6 +1,6 @@
 # Kubernetes Fundamentals
 
-
+* [Chapter 0: Bringing up Kubernetes Cluster with Vagrant](https://github.com/schoolofdevops/kubernetes-fundamentals/blob/master/tutorials/kube-cluster-vagrant.md)  
 * [Chapter 1: Installing Kubernetes Cluster](https://github.com/schoolofdevops/kubernetes-fundamentals/blob/master/tutorials/1.%20install_kubernetes.md)  
 * [Chapter 2: Configuring Kubernetes](https://github.com/schoolofdevops/kubernetes-fundamentals/blob/master/tutorials/configs.md)
 * [Chapter 3: Deploying a Pod](https://github.com/schoolofdevops/kubernetes-fundamentals/blob/master/tutorials/deploying_pods.md)
