@@ -19,7 +19,7 @@ voting-appp-pr2xz   1/1       Running   0          9m
 voting-appp-qpxbm   1/1       Running   0          15m
 ```
 
-Filename: vote-service.yml
+Filename: vote_svc.yaml
 
 ```
 ---
@@ -27,12 +27,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    stack: voting
     role: svc
     tier: front
-    env: dev
   name: vote-svc
-  namespace: default
+  namespace: dev
 spec:
   selector:
     app: vote
@@ -48,7 +46,7 @@ Save the file.
 Now to create a service:
 
 ```
-kubectl create -f vote-service.yml
+kubectl create -f vote_svc.yaml
 kubectl get svc
 ```
 
@@ -61,7 +59,7 @@ Check for the Nodeport here
 Sample Output
 ```
 Name:                   vote-svc
-Namespace:              default
+Namespace:              dev
 Labels:                 app=vote
 Selector:               app=vote
 Type:                   NodePort
