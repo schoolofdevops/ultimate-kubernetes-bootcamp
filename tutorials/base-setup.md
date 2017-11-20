@@ -26,4 +26,11 @@ apt-get install -y docker.io kubelet kubeadm kubectl kubernetes-cni
 rm -rf /var/lib/kubelet/*
 ```
 
+### Setup sysctl configs
+
+In order for many container networks to work, the following needs to be enabled on each node. 
+
+```
+sysctl net.bridge.bridge-nf-call-iptables=1
+```
 The above steps has to be followed in all the nodes.
