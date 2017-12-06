@@ -1,0 +1,6 @@
+site_name: Kubernetes Fundamentals
+pages:
+  - Home: index.md
+  - Install Kubernetes: "1. install_kubernetes.md"
+docs_dir: tutorials
+theme: readthedocs
