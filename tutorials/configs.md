@@ -1,12 +1,13 @@
-### Topics
 
-  * Monitor k8s
+In this lesson we are going to cover the following topics
+
+  * Setting up monitors
   * Configs
   * Context
   * Namespaces
 
 
-### Setup monitoring console for Kubernetes
+## Setup monitoring console for Kubernetes
 Unix **screen** is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a **screenrc** script as follows on kube-01 node (node where *kubectl* is configured)
 
 file: k8s-code/monitoring/rc.screenrc
@@ -27,7 +28,7 @@ screen -c monitoring/rc.screenrc
 ```
 
 
-### Configurations
+## Listing Configurations
 
 Check current config
 ```
@@ -36,7 +37,7 @@ kubectl config view
 
 You could also examine the current configs in file **cat ~/.kube/config**
 
-### Creating a dev namespace
+## Creating a dev namespace
 
 Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   
 

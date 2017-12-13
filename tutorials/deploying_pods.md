@@ -69,7 +69,7 @@ spec:
 ```
 
 
-### Launching the Pod
+### Launching and operating a Pod
 
 Syntax:
 
@@ -160,7 +160,7 @@ kubectl delete pod vote
 kubectl get pods
 ```
 
-## Attach a Volume to a Pod
+## Attach a Volume to the Pod
 
 Lets create a pod for database and attach a volume to it. To achieve this we will need to
 
@@ -244,6 +244,63 @@ For this change, pod needs to be re created.
 
 ```
 kubectl apply -f vote_pod.yaml
+```
+
+## Creating Multi Container Pods
+
+file: multi_container_pod.yml
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    app: nginx
+    role: ui
+    tier: front
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+      volumeMounts:
+      - name: data
+        mountPath: /opt/d1
+    - name: loop
+      image: schoolofdevops/loop
+      volumeMounts:
+      - name: data
+        mountPath: /opt/d1
+  volumes:
+  - name: data
+    emptyDir: {}
+```
+
+To create this pod
+
+```
+kubectl apply -f multi_container_pod.yml
+```
+
+Check Status
+
+```
+root@kube-01:~# kubectl get pods
+NAME      READY     STATUS              RESTARTS   AGE
+nginx     0/2       ContainerCreating   0          7s
+vote      1/1       Running             0          3m
+```
+
+Checking logs, logging in
+```
+kubectl logs  web  -c loop
+kubectl logs  web  -c nginx
+
+kubectl exec -it web  sh  -c nginx
+kubectl exec -it web  sh  -c loop
+
 ```
 
 ## Exercise
