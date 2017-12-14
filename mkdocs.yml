@@ -9,6 +9,7 @@ pages:
   - Service Endpoints: "exposing_app_with_service.md"
   - Using Configmaps and Secrets: "8. Using Configmaps and Secrets.md"
   - Auto Scaling Capacity with HPA : "6. Kubernetes Autoscaling.md"
+  - Troubleshooting: "troubleshooting.md"
   - Mini Project: "6. deploying_sample_app.md"
 docs_dir: tutorials
 theme: readthedocs
