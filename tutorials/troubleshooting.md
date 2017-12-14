@@ -131,3 +131,5 @@ Sometimes, your application(pod) may fail to start because of some configuration
 ```
 kubectl logs -f nginx-57c88d7bb8-c6kpc
 ```
+
+If you have any errors it will get populated in your logs.
