@@ -10,5 +10,6 @@ pages:
   - Rollouts, Rollbacks and Rolling Updates: "5. Rolling Update with Deployment.md"
   - Auto Scaling Capacity with HPA : "6. Kubernetes Autoscaling.md"
   - Mini Project: "6. deploying_sample_app.md"
+  - Troubleshooting Tips: "troubleshooting.md"
 docs_dir: tutorials
 theme: readthedocs
