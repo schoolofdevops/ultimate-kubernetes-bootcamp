@@ -19,7 +19,7 @@ voting-appp-pr2xz   1/1       Running   0          9m
 voting-appp-qpxbm   1/1       Running   0          15m
 ```
 
-Filename: vote_svc.yaml
+Filename: vote-svc.yaml
 
 ```
 ---
