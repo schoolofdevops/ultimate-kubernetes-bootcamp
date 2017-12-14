@@ -11,5 +11,6 @@ pages:
   - Auto Scaling Capacity with HPA : "6. Kubernetes Autoscaling.md"
   - Troubleshooting: "troubleshooting.md"
   - Mini Project: "6. deploying_sample_app.md"
+  - Troubleshooting Tips: "troubleshooting.md"
 docs_dir: tutorials
 theme: readthedocs
