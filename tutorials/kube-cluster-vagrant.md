@@ -32,7 +32,7 @@ git clone https://github.com/schoolofdevops/lab-setup.git
 Launch environments with Vagrant
 
 ```
-cd lab-setup/kubernetes/vagrant
+cd lab-setup/kubernetes/vagrant-kube-cluster
 
 vagrant up
 
