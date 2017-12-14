@@ -8,8 +8,7 @@
 
 
 
-## Import Box File
-
+## Importing a  VM Template
 
 ```
 vagrant box list
@@ -20,7 +19,7 @@ vagrant box list
 
 ```
 
-## Launch Env with Vagrant
+## Provisioning Vagrant Nodes
 
 Clone repo if not already
 
@@ -33,7 +32,7 @@ git clone https://github.com/schoolofdevops/lab-setup.git
 Launch environments with Vagrant
 
 ```
-cd lab-setup/kubernetes/vagrant
+cd lab-setup/kubernetes/vagrant-kube-cluster
 
 vagrant up
 

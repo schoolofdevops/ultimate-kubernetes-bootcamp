@@ -1,6 +1,14 @@
 site_name: Kubernetes Fundamentals
 pages:
   - Home: index.md
-  - Install Kubernetes: "1. install_kubernetes.md"
+  - Provisioning VMs with Vagrant: "kube-cluster-vagrant.md"
+  - Setup Kubernetes Cluster: "1. install_kubernetes.md"
+  - Configuring Cluster: "configs.md"
+  - Launching Pods: "deploying_pods.md"
+  - Creating Deployments: "2. kubernetes_deployment.md"
+  - Service Endpoints: "exposing_app_with_service.md"
+  - Rollouts, Rollbacks and Rolling Updates: "5. Rolling Update with Deployment.md"
+  - Auto Scaling Capacity with HPA : "6. Kubernetes Autoscaling.md"
+  - Mini Project: "6. deploying_sample_app.md"
 docs_dir: tutorials
 theme: readthedocs
