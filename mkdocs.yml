@@ -7,8 +7,9 @@ pages:
   - Launching Pods: "deploying_pods.md"
   - Creating Deployments: "2. kubernetes_deployment.md"
   - Service Endpoints: "exposing_app_with_service.md"
-  - Rollouts, Rollbacks and Rolling Updates: "5. Rolling Update with Deployment.md"
+  - Using Configmaps and Secrets: "8. Using Configmaps and Secrets.md"
   - Auto Scaling Capacity with HPA : "6. Kubernetes Autoscaling.md"
+  - Troubleshooting: "troubleshooting.md"
   - Mini Project: "6. deploying_sample_app.md"
   - Troubleshooting Tips: "troubleshooting.md"
 docs_dir: tutorials
