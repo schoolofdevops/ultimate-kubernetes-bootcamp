@@ -50,7 +50,7 @@ spec:
 
 Lets now create the  Pod config by adding the kind and specs to above schema.
 
-Filename: vote_pod.yaml
+Filename: vote-pod.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -80,7 +80,7 @@ Syntax:
 To Launch pod using configs above,
 
 ```
-kubectl apply -f vote_pod.yaml
+kubectl apply -f vote-pod.yaml
 
 ```
 
@@ -171,7 +171,7 @@ Volumes are of two types:
   * emptyDir
   * hostPath
 
-File: db_pod.yaml
+File: db-pod.yaml
 
 ```
 apiVersion: v1
@@ -199,7 +199,7 @@ spec:
 To create this pod,
 
 ```
-kubectl apply -f db_pod.yaml
+kubectl apply -f db-pod.yaml
 
 kubectl describe pod db
 
@@ -220,7 +220,7 @@ kubectl get nodes --show-labels
 
 Update pod definition with nodeSelector
 
-file: vote_pod.yml
+file: vote-pod.yml
 ```
 apiVersion: v1
 kind: Pod
@@ -243,7 +243,7 @@ spec:
 For this change, pod needs to be re created.
 
 ```
-kubectl apply -f vote_pod.yaml
+kubectl apply -f vote-pod.yaml
 ```
 
 ## Creating Multi Container Pods

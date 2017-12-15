@@ -5,7 +5,7 @@ Update the version of the image in vote_deploy.yaml
 File: vote_deploy.yaml
 ```
 ...
-        app: vote
+    app: vote
     spec:
       containers:
       - image: schoolofdevops/vote:movies
@@ -21,7 +21,7 @@ kubectl rollout status deployment/vote
 
 ## Rolling Back a Failed Update
 
-Lets update the image to a tag which us non existant. We introduce this intentional error to fail fail the deployment.
+Lets update the image to a tag which is non existant. We intentionally introduce this intentional error to fail fail the deployment.
 
 File: vote_deploy.yaml
 ```
