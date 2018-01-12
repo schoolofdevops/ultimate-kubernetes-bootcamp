@@ -1,6 +1,6 @@
 site_name: Kubernetes Fundamentals
 pages:
-  - Home: 1_index.md
+  - Home: "index.md"
   - Provisioning VMs with Vagrant: "2_kube-cluster-vagrant.md"
   - Setup Kubernetes Cluster: "3_install_kubernetes.md"
   - Configuring Cluster: "4_configs.md"
