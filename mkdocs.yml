@@ -13,5 +13,5 @@ pages:
   - Troubleshooting: "troubleshooting.md"
   - Mini Project: "6. deploying_sample_app.md"
   - Troubleshooting Tips: "troubleshooting.md"
-docs_dir: tutorials
+docs_dir: chapters
 theme: readthedocs
