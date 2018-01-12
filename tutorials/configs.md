@@ -23,8 +23,44 @@ focus bottom
 Open a dedicated terminal to run this utility.  Launch it using
 
 ```
-screen -c monitoring/rc.screenrc
+screen -c monitoring/deploy.screenrc
 
+```
+
+
+### Working with Unix Screen
+
+To detach
+
+```
+^a d  
+```
+
+To list existing screen sessions
+```
+screen -ls
+```
+
+To re attach
+```
+screen  -x <session_id>
+```
+
+To delete a session
+
+```
+screen -X -S <session_id> quit
+```
+
+e.g.
+```
+screen -ls
+There are screens on:
+	26484.pts-2.kube-01	(01/12/2018 06:47:41 AM)	(Detached)
+	18472.pts-2.kube-01	(01/12/2018 06:43:21 AM)	(Detached)
+2 Sockets in /var/run/screen/S-root.
+
+screen -X -S 26 quit
 ```
 
 
