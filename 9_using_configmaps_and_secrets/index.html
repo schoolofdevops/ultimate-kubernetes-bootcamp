@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Using Configmaps and Secrets - Kubernetes Fundamentals</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Using Configmaps and Secrets";
+    var mkdocs_page_input_path = "9_using_configmaps_and_secrets.md";
+    var mkdocs_page_url = "/9_using_configmaps_and_secrets/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../4_configs/">Configuring Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Using Configmaps and Secrets</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#injecting-env-variables-with-configmaps">Injecting env variables with configmaps</a></li>
+    
+
+    <li class="toctree-l2"><a href="#configmap-as-a-configuration-file">Configmap as a configuration file</a></li>
+    
+
+    <li class="toctree-l2"><a href="#secrets">Secrets</a></li>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Fundamentals</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Using Configmaps and Secrets</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p>Configmap is one of the ways to provide configurations to your application.</p>
+<h3 id="injecting-env-variables-with-configmaps">Injecting env variables with configmaps</h3>
+<p>Create our configmap for vote app</p>
+<p>file:  apps/voting/dev/vote-cm.yaml</p>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote
+  namespace: dev
+data:
+  OPTION_A: EMACS
+  OPTION_B: VI
+</code></pre>
+
+<p>In the above given configmap, we define two environment variables,
+  1. OPTION_A=EMACS
+  2. OPTION_B=VI</p>
+<p>In order to use this configmap in the deployment, we need to reference it from the deployment file.
+Check the deployment file for vote add for the following block.</p>
+<p>file: <code>vote-deploy.yaml</code></p>
+<pre><code>...
+    spec:
+      containers:
+      - image: schoolofdevops/vote
+        imagePullPolicy: Always
+        name: vote
+        envFrom:
+          - configMapRef:
+              name: vote
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      restartPolicy: Always
+</code></pre>
+
+<p>So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (EMACS and VI) will override the default values(CATS and DOGS) present in your source code.</p>
+<p><img alt="configmap" src="../images/Configmap.png" title="ConfigMap" /></p>
+<h3 id="configmap-as-a-configuration-file">Configmap as a configuration file</h3>
+<p>In the  topic above we have seen how to use configmap as environment variables. Now let us see how to use configmap as redis configuration file.</p>
+<p>Syntax for consuming file as a configmap is as follows</p>
+<pre><code>  kubectl create configmap --from-file &lt;CONF-FILE-PATH&gt; &lt;NAME-OF-CONFIGMAP&gt;
+</code></pre>
+
+<p>We have redis configuration as a file named <code>apps/voting/config/redis.conf</code>. We are going to convert this file into a configmap</p>
+<pre><code>kubectl create configmap --from-file apps/voting/config/redis.conf redis
+</code></pre>
+
+<p>Update your redis-deploy.yaml file to use this confimap.
+File: <code>redis-deploy.yaml</code></p>
+<pre><code>    spec:
+      containers:
+      - image: schoolofdevops/redis:latest
+        imagePullPolicy: Always
+        name: redis
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        volumeMounts:
+          - name: redis
+            subPath: redis.conf
+            mountPath: /etc/redis.conf
+      volumes:
+      - name: redis
+        configMap:
+          name: redis
+      restartPolicy: Always
+</code></pre>
+
+<h2 id="secrets">Secrets</h2>
+<p>Secrets are for storing sensitive data like <em>passwords and keychains</em>. We will see how db deployment uses username and password in form of a secret.</p>
+<p>You would define two fields for db,
+  * username
+  * password</p>
+<p>To create secrets for db you need to generate  <em>base64</em> format as follows,</p>
+<pre><code>echo &quot;admin&quot; | base64
+echo &quot;password&quot; | base64
+</code></pre>
+
+<p>where <strong>admin</strong> and <strong>password</strong> are the actual values that you would want to inject into the pod environment.</p>
+<p>If you do not have a unix host, you can make use of online base64 utility to generate these strings.</p>
+<pre><code>http://www.utilities-online.info/base64
+</code></pre>
+
+<p>Lets now add it to the secrets file,</p>
+<p>File: apps/voting/dev/db-secrets.yaml</p>
+<pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: db
+  namespace: dev
+type: Opaque
+data:
+  POSTGRES_USER: YWRtaW4=
+  # base64 of admin
+  POSTGRES_PASSWD: cGFzc3dvcmQ=
+  # base64 of password
+</code></pre>
+
+<p>To consume these secrets, update the deployment as</p>
+<p>file: db-deploy.yaml.</p>
+<pre><code>apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: db
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: back
+      app: postgres
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: postgres
+        role: db
+        tier: back
+    spec:
+      containers:
+      - image: postgres:9.4
+        imagePullPolicy: Always
+        name: db
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+# Secret definition
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: db
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWD
+            valueFrom:
+              secretKeyRef:
+                name: db
+                key: POSTGRES_PASSWD
+      restartPolicy: Always
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../10_kubernetes_autoscaling/" class="btn btn-neutral float-right" title="Auto Scaling Capacity with HPA">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../8_rollouts-and-rollbacks/" class="btn btn-neutral" title="Rollouts and Rollbacks"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../8_rollouts-and-rollbacks/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../10_kubernetes_autoscaling/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

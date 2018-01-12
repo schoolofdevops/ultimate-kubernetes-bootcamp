@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Service Endpoints - Kubernetes Fundamentals</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Service Endpoints";
+    var mkdocs_page_input_path = "7_exposing_app_with_service.md";
+    var mkdocs_page_url = "/7_exposing_app_with_service/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../4_configs/">Configuring Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Service Endpoints</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#exposing-application-with-a-service">Exposing Application with  a Service</a></li>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Fundamentals</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Service Endpoints</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="exposing-application-with-a-service">Exposing Application with  a Service</h2>
+<p>Types of Services:
+  * ClusterIP
+  * NodePort
+  * LoadBalancer
+  * ExternalName</p>
+<pre><code>kubectl get pods
+kubectl get svc
+</code></pre>
+
+<p>Sample Output:</p>
+<pre><code>NAME                READY     STATUS    RESTARTS   AGE
+voting-appp-1j52x   1/1       Running   0          12m
+voting-appp-pr2xz   1/1       Running   0          9m
+voting-appp-qpxbm   1/1       Running   0          15m
+</code></pre>
+
+<p>Filename: vote-svc.yaml</p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    role: svc
+    tier: front
+  name: vote-svc
+  namespace: dev
+spec:
+  selector:
+    app: vote
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  type: NodePort
+</code></pre>
+
+<p>Save the file.</p>
+<p>Now to create a service:</p>
+<pre><code>kubectl create -f vote_svc.yaml
+kubectl get svc
+</code></pre>
+
+<p>Now to check which port the pod is connected</p>
+<pre><code>kubectl describe service vote-svc
+</code></pre>
+
+<p>Check for the Nodeport here</p>
+<p>Sample Output</p>
+<pre><code>Name:                   vote-svc
+Namespace:              dev
+Labels:                 app=vote
+Selector:               app=vote
+Type:                   NodePort
+IP:                     10.99.147.158
+Port:                   &lt;unset&gt; 80/TCP
+NodePort:               &lt;unset&gt; 30308/TCP
+Endpoints:              10.40.0.2:80,10.40.0.3:80,10.40.0.4:80 + 1 more...
+Session Affinity:       None
+No events.
+</code></pre>
+
+<p>Go to browser and check hostip:NodePort</p>
+<p>Here the node port is 30308.</p>
+<p>Sample output will be:</p>
+<p><img alt="Vote" src="../images/vote.png" /></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../8_rollouts-and-rollbacks/" class="btn btn-neutral float-right" title="Rollouts and Rollbacks">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../6_kubernetes_deployment/" class="btn btn-neutral" title="Creating Deployments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../6_kubernetes_deployment/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../8_rollouts-and-rollbacks/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

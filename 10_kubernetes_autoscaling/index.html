@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Auto Scaling Capacity with HPA - Kubernetes Fundamentals</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Auto Scaling Capacity with HPA";
+    var mkdocs_page_input_path = "10_kubernetes_autoscaling.md";
+    var mkdocs_page_url = "/10_kubernetes_autoscaling/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../4_configs/">Configuring Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Auto Scaling Capacity with HPA</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#kubernetes-horizonntal-pod-autoscaling">Kubernetes Horizonntal Pod Autoscaling</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#prerequisites">Prerequisites</a></li>
+        
+            <li><a class="toctree-l3" href="#run-expose-php-apache-server">Run &amp; expose php-apache server</a></li>
+        
+            <li><a class="toctree-l3" href="#create-horizontal-pod-autoscaler">Create Horizontal Pod Autoscaler</a></li>
+        
+            <li><a class="toctree-l3" href="#increase-load">Increase load</a></li>
+        
+            <li><a class="toctree-l3" href="#stop-load">Stop load</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Fundamentals</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Auto Scaling Capacity with HPA</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="kubernetes-horizonntal-pod-autoscaling">Kubernetes Horizonntal Pod Autoscaling</h1>
+<p>With Horizontal Pod Autoscaling, Kubernetes automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with alpha support, on some other, application-provided metrics).</p>
+<p>The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>Heapster monitoring needs to be deployed in the cluster as Horizontal Pod Autoscaler uses it to collect metrics.</p>
+<h4 id="deploying-heapster">Deploying Heapster</h4>
+<p>Go to the below directory and create the deployment and services.</p>
+<pre><code>git clone https://github.com/kubernetes/heapster.git
+cd heapster
+kubectl apply -f deploy/kube-config/influxdb/
+kubectl apply -f deploy/kube-config/rbac/heapster-rbac.yaml
+</code></pre>
+
+<p>Validate that heapster, influxdb and grafana are started</p>
+<pre><code>kubectl get pods -n kube-system
+kubectl get svc -n kube-system
+
+</code></pre>
+
+<p>Now this will deploy the heapster monitoring.</p>
+<h3 id="run-expose-php-apache-server">Run &amp; expose php-apache server</h3>
+<p>To demonstrate Horizontal Pod Autoscaler we will use a custom docker image based on the php-apache image</p>
+<pre><code>kubectl run php-apache --image=gcr.io/google_containers/hpa-example --requests=cpu=200m --expose --port=80  
+</code></pre>
+
+<p>Sample Output</p>
+<pre><code>kubectl run php-apache --image=gcr.io/google_containers/hpa-example --requests=cpu=200m --expose --port=80
+service &quot;php-apache&quot; created
+deployment &quot;php-apache&quot; created
+</code></pre>
+
+<p>To verify the created pod:</p>
+<pre><code>kubectl get pods
+</code></pre>
+
+<p>Wait untill the pod changes to running state.</p>
+<h3 id="create-horizontal-pod-autoscaler">Create Horizontal Pod Autoscaler</h3>
+<p>Now that the server is running, we will create the autoscaler using kubectl autoscale. The following command will create a Horizontal Pod Autoscaler that maintains between 1 and 10 replicas of the Pods controlled by the php-apache deployment we created in the first step of these instructions.</p>
+<pre><code>kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+</code></pre>
+
+<p>Sample Output</p>
+<pre><code>kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+deployment &quot;php-apache&quot; autoscaled
+</code></pre>
+
+<p>We may check the current status of autoscaler by running:</p>
+<pre><code>kubectl get hpa
+</code></pre>
+
+<p>Sample Output:</p>
+<pre><code>kubectl get hpa
+NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
+php-apache   Deployment/php-apache   50%       0%        1         10        18s
+</code></pre>
+
+<h3 id="increase-load">Increase load</h3>
+<p>Now we can increase the load and trying testing what will happen.
+We will start a container, and send an infinite loop of queries to the php-apache service</p>
+<pre><code>kubectl run -i --tty -n dev load-generator --image=busybox /bin/sh
+
+Hit enter for command prompt
+
+while true; do wget -q -O- http://php-apache; done
+
+</code></pre>
+
+<p>Now open a new window of the same machine.</p>
+<p>And check the status of the hpa</p>
+<pre><code>kubectl get hpa
+</code></pre>
+
+<p>Sample Output:</p>
+<pre><code>kubectl get hpa
+NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
+php-apache   Deployment/php-apache/scale   50%       305%      1         10        3m
+</code></pre>
+
+<p>Now if you check the pods it will be automatically scaled to the desired value.</p>
+<pre><code>kubectl get pods
+</code></pre>
+
+<p>Sample Output</p>
+<pre><code>kubectl get pods
+NAME                              READY     STATUS    RESTARTS   AGE
+load-generator-1930141919-1pqn0   1/1       Running   0          1h
+php-apache-3815965786-2jmm9       1/1       Running   0          1h
+php-apache-3815965786-4f0ck       1/1       Running   0          1h
+php-apache-3815965786-73w24       1/1       Running   0          1h
+php-apache-3815965786-80n2x       1/1       Running   0          1h
+php-apache-3815965786-c6w0k       1/1       Running   0          1h
+php-apache-3815965786-f06dg       1/1       Running   0          1h
+php-apache-3815965786-nfs8d       1/1       Running   0          1h
+php-apache-3815965786-phrhs       1/1       Running   0          1h
+php-apache-3815965786-z6rnm       1/1       Running   0          1h
+</code></pre>
+
+<h3 id="stop-load">Stop load</h3>
+<p>In the terminal where we created the container with busybox image, terminate the load generation by typing <Ctrl> + C</p>
+<p>Then we will verify the result state (after a minute or so)</p>
+<pre><code>kubectl get hpa
+NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
+php-apache   Deployment/php-apache/scale   50%       0%        1         10        11m
+
+$ kubectl get deployment php-apache
+NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+php-apache   1         1         1            1           27m
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../12_troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../9_using_configmaps_and_secrets/" class="btn btn-neutral" title="Using Configmaps and Secrets"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../9_using_configmaps_and_secrets/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../12_troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Configuring Cluster - Kubernetes Fundamentals</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Configuring Cluster";
+    var mkdocs_page_input_path = "4_configs.md";
+    var mkdocs_page_url = "/4_configs/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Configuring Cluster</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#working-with-unix-screen">Working with Unix Screen</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#listing-configurations">Listing Configurations</a></li>
+    
+
+    <li class="toctree-l2"><a href="#creating-a-dev-namespace">Creating a dev namespace</a></li>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Fundamentals</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Configuring Cluster</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p>In this lesson we are going to cover the following topics</p>
+<ul>
+<li>Setting up monitors</li>
+<li>Configs</li>
+<li>Context</li>
+<li>Namespaces</li>
+</ul>
+<h2 id="setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</h2>
+<p>Unix <strong>screen</strong> is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a <strong>screenrc</strong> script as follows on kube-01 node (node where <em>kubectl</em> is configured)</p>
+<p>file: k8s-code/monitoring/rc.screenrc</p>
+<pre><code>screen watch -n 1 kubectl get pods
+split
+focus down
+screen watch -n 1 kubectl get rc
+focus bottom
+</code></pre>
+
+<p>Open a dedicated terminal to run this utility.  Launch it using</p>
+<pre><code>screen -c monitoring/deploy.screenrc
+
+</code></pre>
+
+<h3 id="working-with-unix-screen">Working with Unix Screen</h3>
+<p>To detach</p>
+<pre><code>^a d  
+</code></pre>
+
+<p>To list existing screen sessions</p>
+<pre><code>screen -ls
+</code></pre>
+
+<p>To re attach</p>
+<pre><code>screen  -x &lt;session_id&gt;
+</code></pre>
+
+<p>To delete a session</p>
+<pre><code>screen -X -S &lt;session_id&gt; quit
+</code></pre>
+
+<p>e.g.</p>
+<pre><code>screen -ls
+There are screens on:
+    26484.pts-2.kube-01 (01/12/2018 06:47:41 AM)    (Detached)
+    18472.pts-2.kube-01 (01/12/2018 06:43:21 AM)    (Detached)
+2 Sockets in /var/run/screen/S-root.
+
+screen -X -S 26 quit
+</code></pre>
+
+<h2 id="listing-configurations">Listing Configurations</h2>
+<p>Check current config</p>
+<pre><code>kubectl config view
+</code></pre>
+
+<p>You could also examine the current configs in file <strong>cat ~/.kube/config</strong></p>
+<h2 id="creating-a-dev-namespace">Creating a dev namespace</h2>
+<p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
+<p>Lets create a namespace called <strong>dev</strong>  </p>
+<p>file: dev_ns.yaml</p>
+<pre><code>kind: Namespace
+apiVersion: v1
+metadata:
+  name: dev
+  labels:
+    name: dev
+</code></pre>
+
+<p>To create namespace</p>
+<pre><code>kubectl apply -f dev_ns.yaml
+</code></pre>
+
+<p>And switch to it</p>
+<pre><code>kubectl config set-context $(kubectl config current-context) --namespace=dev
+
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../3_install_kubernetes/" class="btn btn-neutral" title="Setup Kubernetes Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../3_install_kubernetes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

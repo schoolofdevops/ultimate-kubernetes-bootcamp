@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Troubleshooting Tips - Kubernetes Fundamentals</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Troubleshooting Tips";
+    var mkdocs_page_input_path = "12_troubleshooting.md";
+    var mkdocs_page_url = "/12_troubleshooting/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../4_configs/">Configuring Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="./">Troubleshooting</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#troubleshooting-the-kubernetes-cluster">Troubleshooting the Kubernetes cluster</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#troubleshooting-the-control-plane">Troubleshooting the control plane</a></li>
+        
+            <li><a class="toctree-l3" href="#listing-the-nodes-in-a-cluster">Listing the nodes in a cluster</a></li>
+        
+            <li><a class="toctree-l3" href="#list-the-control-plane-pods">List the control plane pods</a></li>
+        
+            <li><a class="toctree-l3" href="#log-files">Log files</a></li>
+        
+            <li><a class="toctree-l3" href="#troubleshooting-the-application">Troubleshooting the application</a></li>
+        
+            <li><a class="toctree-l3" href="#checking-the-status-of-deployment">Checking the status of Deployment</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Troubleshooting Tips</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#troubleshooting-the-kubernetes-cluster">Troubleshooting the Kubernetes cluster</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#troubleshooting-the-control-plane">Troubleshooting the control plane</a></li>
+        
+            <li><a class="toctree-l3" href="#listing-the-nodes-in-a-cluster">Listing the nodes in a cluster</a></li>
+        
+            <li><a class="toctree-l3" href="#list-the-control-plane-pods">List the control plane pods</a></li>
+        
+            <li><a class="toctree-l3" href="#log-files">Log files</a></li>
+        
+            <li><a class="toctree-l3" href="#troubleshooting-the-application">Troubleshooting the application</a></li>
+        
+            <li><a class="toctree-l3" href="#checking-the-status-of-deployment">Checking the status of Deployment</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Fundamentals</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Troubleshooting Tips</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="troubleshooting-the-kubernetes-cluster">Troubleshooting the Kubernetes cluster</h2>
+<p>In this chapter we will learn about how to trouble shoot our Kubernetes cluster at <em>control plane</em> level and at <em>application level</em>.</p>
+<h3 id="troubleshooting-the-control-plane">Troubleshooting the control plane</h3>
+<h3 id="listing-the-nodes-in-a-cluster">Listing the nodes in a cluster</h3>
+<p>First thing to check if your cluster is working fine or not is to list the nodes associated with your cluster.</p>
+<pre><code>kubectl get nodes
+</code></pre>
+
+<p>Make sure that all nodes are in <code>Ready</code> state.</p>
+<h3 id="list-the-control-plane-pods">List the control plane pods</h3>
+<p>If your nodes are up and running, next thing to check is the status of Kubernetes components.
+Run,</p>
+<pre><code>kubectl get pods -n kube-system
+</code></pre>
+
+<p>If any of the pod is <em>restarting or crashing</em>, look in to the issue.
+This can be done by getting the pod's description.
+For example, in my cluster <em>kube-dns</em> is crashing. In order to fix this first check the deployment for errors.</p>
+<pre><code>kubectl describe deployment -n kube-system kube-dns
+</code></pre>
+
+<h3 id="log-files">Log files</h3>
+<h4 id="master">Master</h4>
+<p>If your deployment is good, the next thing to look for is log files.
+The locations of log files are given below...</p>
+<pre><code>/var/log/kube-apiserver.log - For API Server logs
+/var/log/kube-scheduler.log - For Scheduler logs
+/var/log/kube-controller-manager.log - For Replication Controller logs
+</code></pre>
+
+<p>If your Kubernetes components are running as pods, then you can get their logs by following the steps given below,
+Keep in mind that the <em>actual pod's name may differ</em> from cluster to cluster...</p>
+<pre><code>kubectl logs -n kube-system -f kube-apiserver-node1
+kubectl logs -n kube-system -f kube-scheduler-node1
+kubectl logs -n kube-system -f kube-controller-manager-node1
+</code></pre>
+
+<h4 id="worker-nodes">Worker Nodes</h4>
+<p>In your worker, you will need to check for errors in kubelet's log...</p>
+<pre><code>sudo journalctl -u  kubelet
+</code></pre>
+
+<h3 id="troubleshooting-the-application">Troubleshooting the application</h3>
+<p>Sometimes your application(pod) may fail to start because of various reasons. Let's see how to troubleshoot.</p>
+<h3 id="checking-the-status-of-deployment">Checking the status of Deployment</h3>
+<p>For this example I have a sample deployment called nginx.</p>
+<p><code>FILE: nginx-deployment.yml</code></p>
+<pre><code>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: ngnix:latest
+          ports:
+            - containerPort: 80
+</code></pre>
+
+<p>List the deployment to check for the <em>availability of pods</em></p>
+<pre><code>kubectl get deployment nginx
+
+NAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx         1         1         1            0           20h
+</code></pre>
+
+<p>It is clear that my pod is unavailable. Lets dig further.</p>
+<p>Check the <em>events</em> of your deployment.</p>
+<pre><code>kubectl describe deployment nginx
+</code></pre>
+
+<p>List the pods to check for any <em>registry related error</em></p>
+<pre><code>kubectl get pods
+
+NAME                           READY     STATUS             RESTARTS   AGE
+nginx-57c88d7bb8-c6kpc         0/1       ImagePullBackOff   0          7m
+</code></pre>
+
+<p>As we can see, we are not able to pull the image(<em>ImagePullBackOff</em>). Let's investigate further.</p>
+<pre><code>kubectl describe pod nginx-57c88d7bb8-c6kpc
+</code></pre>
+
+<p>Check the events of the pod's description.</p>
+<pre><code>Events:
+  Type     Reason                 Age               From                                               Message
+  ----     ------                 ----              ----                                               -------
+  Normal   Scheduled              9m                default-scheduler                                  Successfully assigned nginx-57c88d7bb8-c6kpc to ip-11-0-1-111.us-west-2.compute.internal
+  Normal   SuccessfulMountVolume  9m                kubelet, ip-11-0-1-111.us-west-2.compute.internal  MountVolume.SetUp succeeded for volume &quot;default-token-8cwn4&quot;
+  Normal   Pulling                8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  pulling image &quot;ngnix&quot;
+  Warning  Failed                 8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Failed to pull image &quot;ngnix&quot;: rpc error: code = Unknown desc = Error response from daemon: repository ngnix not found: does not exist or no pull access
+  Normal   BackOff                7m (x6 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Back-off pulling image &quot;ngnix&quot;
+  Warning  FailedSync             4m (x24 over 9m)  kubelet, ip-11-0-1-111.us-west-2.compute.internal  Error syncing pod
+</code></pre>
+
+<p>Bingo! The name of the image is <code>ngnix</code> instead of <code>nginx</code>. So <em>fix the typo in your deployment file and redo the deployment</em>.</p>
+<p>Sometimes, your application(pod) may fail to start because of some configuration issues. For those errors, we can follow the logs of the pod.</p>
+<pre><code>kubectl logs -f nginx-57c88d7bb8-c6kpc
+</code></pre>
+
+<p>If you have any errors it will get populated in your logs.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../11_deploying_sample_app/" class="btn btn-neutral" title="Mini Project"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../11_deploying_sample_app/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>
