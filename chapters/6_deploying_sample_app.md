@@ -49,7 +49,7 @@ service "results" created
 
 
 
-#### To Validatecheck it:
+#### To Validate:
 
 ```
 kubectl get svc -n dev

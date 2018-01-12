@@ -2,7 +2,7 @@
 
 Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
 
-The below steps are applicabe for the below mentioned OS
+The below steps are applicable for the below mentioned OS
 
 
 | OS | Version | Codename |  

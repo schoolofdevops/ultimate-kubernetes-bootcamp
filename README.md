@@ -11,7 +11,7 @@
 
 ## Objectives
 
-This course follows a hands on  workshop method and builds container orchestration skills  on top of existing skills learnt in Docker Fundamentals. Participants learn how to built a production grade resilient, self healing infrastructure  with kubernetes. They take the container images built earlier and deploy with the high availability, fault tolerance, scalablility provided by kubernetes.
+This course follows a hands on  workshop method and builds container orchestration skills  on top of existing skills learnt in Docker Fundamentals. Participants learn how to built a production grade resilient, self healing infrastructure  with kubernetes. They take the container images built earlier and deploy with the high availability, fault tolerance, scalability provided by kubernetes.
 
 ## Flipped Classroom Methodology
 

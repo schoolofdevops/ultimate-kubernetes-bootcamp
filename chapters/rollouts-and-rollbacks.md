@@ -21,7 +21,7 @@ kubectl rollout status deployment/vote
 
 ## Rolling Back a Failed Update
 
-Lets update the image to a tag which is non existant. We intentionally introduce this intentional error to fail fail the deployment.
+Lets update the image to a tag which is non existent. We intentionally introduce this intentional error to fail fail the deployment.
 
 File: vote_deploy.yaml
 ```

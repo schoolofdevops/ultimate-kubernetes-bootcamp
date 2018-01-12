@@ -30,7 +30,7 @@ Spec Schema: https://kubernetes.io/docs/user-guide/pods/multi-container/
 
 #### Common Configurations
 
-Througout this tutorial, we would be deploying differnt components of  example voting application. Lets assume we are deploying it in a **dev** environment.  Lets create the common specs for this app with the AKMS schema discussed above.
+Throughout this tutorial, we would be deploying different components of  example voting application. Lets assume we are deploying it in a **dev** environment. Lets create the common specs for this app with the AKMS schema discussed above.
 
 file: common.yml
 

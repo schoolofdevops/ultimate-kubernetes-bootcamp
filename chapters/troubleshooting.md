@@ -1,6 +1,6 @@
 ## Troubleshooting the Kubernetes cluster
 
-In this chapter we wll learn about how to trouble shoot our Kubernetes cluster at *control plane* level and at *application level*.
+In this chapter we will learn about how to trouble shoot our Kubernetes cluster at *control plane* level and at *application level*.
 
 ### Troubleshooting the control plane
 ### Listing the nodes in a cluster

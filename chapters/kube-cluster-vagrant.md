@@ -8,7 +8,7 @@
 
 
 
-## Importing a  VM Template
+## Importing a VM Template
 
 ```
 vagrant box list
