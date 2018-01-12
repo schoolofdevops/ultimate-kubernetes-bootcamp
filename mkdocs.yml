@@ -2,16 +2,16 @@ site_name: Kubernetes Fundamentals
 pages:
   - Home: index.md
   - Provisioning VMs with Vagrant: "kube-cluster-vagrant.md"
-  - Setup Kubernetes Cluster: "1. install_kubernetes.md"
+  - Setup Kubernetes Cluster: "1_install_kubernetes.md"
   - Configuring Cluster: "configs.md"
   - Launching Pods: "deploying_pods.md"
-  - Creating Deployments: "2. kubernetes_deployment.md"
+  - Creating Deployments: "2_kubernetes_deployment.md"
   - Service Endpoints: "exposing_app_with_service.md"
   - Rollouts and Rollbacks: "rollouts-and-rollbacks.md"
-  - Using Configmaps and Secrets: "8. Using Configmaps and Secrets.md"
-  - Auto Scaling Capacity with HPA : "6. Kubernetes Autoscaling.md"
+  - Using Configmaps and Secrets: "8_using_configmaps_and_secrets.md"
+  - Auto Scaling Capacity with HPA : "6_kubernetes_autoscaling.md"
   - Troubleshooting: "troubleshooting.md"
-  - Mini Project: "6. deploying_sample_app.md"
+  - Mini Project: "6_deploying_sample_app.md"
   - Troubleshooting Tips: "troubleshooting.md"
 docs_dir: chapters
 theme: readthedocs
