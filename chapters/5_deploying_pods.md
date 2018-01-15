@@ -309,5 +309,4 @@ Create a pod definition for redis and deploy.
 
 #### Reading List :
 
-Node Selectors, Affinity
-https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+[Node Selectors, Affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)

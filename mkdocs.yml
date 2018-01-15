@@ -15,3 +15,5 @@ pages:
   - Troubleshooting Tips: "12_troubleshooting.md"
 docs_dir: chapters
 theme: readthedocs
+plugins:
+    - search
