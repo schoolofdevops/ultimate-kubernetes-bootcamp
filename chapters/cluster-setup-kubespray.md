@@ -89,17 +89,169 @@ sudo apt update
 sudo apt install python
 ```
 
-
-
----
-<sup>1</sup> You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.
-
 ## Configuring Kubespray
 
 ### Clone the Repository
+
+`On Workstation`
 
 Kubespray is hosted on GitHub. Let us the clone the [official repository](https://github.com/kubernetes-incubator/kubespray.git).
 
 ```
 git clone https://github.com/kubernetes-incubator/kubespray.git
+cd kubespray
 ```
+
+### Set Remote User for Ansible
+
+`On Workstation`
+
+Add the following section in ansible.cfg file
+
+```
+remote_user=ubuntu
+```
+
+Your *ansible.cfg* file should look this.
+
+```
+[ssh_connection]
+pipelining=True
+ssh_args = -o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100 -o UserKnownHostsFile=/dev/null
+#control_path = ~/.ssh/ansible-%%r@%%h:%%p
+[defaults]
+host_key_checking=False
+gathering = smart
+fact_caching = jsonfile
+fact_caching_connection = /tmp
+stdout_callback = skippy
+library = ./library
+callback_whitelist = profile_tasks
+roles_path = roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles
+deprecation_warnings=False
+remote_user=ubuntu
+```
+
+### Download Inventory Builder
+
+`On Workstation`
+
+Inventory builder (a python script) helps us to create inventory file. **Inventory** file is something with which we specify the groups of masters and nodes of our cluster.
+
+```
+cd inventory
+wget https://raw.githubusercontent.com/kubernetes-incubator/kubespray/master/contrib/inventory_builder/inventory.py
+```
+
+To build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments
+
+```
+python inventory.py 10.40.1.26 10.40.1.25 10.40.1.20 10.40.1.11
+```
+
+These IPs are different for you. Please replace them with your corresponding IPs.
+This step will result in the creation of a new file **inventory.cfg**. This is our inventory file.
+
+`inventory.cfg`
+```
+[all]
+node1    ansible_host=10.40.1.26 ip=10.40.1.26
+node2    ansible_host=10.40.1.25 ip=10.40.1.25
+node3    ansible_host=10.40.1.20 ip=10.40.1.20
+node4    ansible_host=10.40.1.11 ip=10.40.1.11
+
+[kube-master]
+node1
+node2
+
+[kube-node]
+node1
+node2
+node3
+node4
+
+[etcd]
+node1
+node2
+node3
+
+[k8s-cluster:children]
+kube-node
+kube-master
+
+[calico-rr]
+
+[vault]
+node1
+node2
+node3
+```
+
+## Provisioning Our Kubernetes Cluster
+
+`On Workstation`
+
+We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.
+
+```
+ansible-playbook -i inventory/inventory.cfg cluster.yml -b -v
+```
+
+Option -i = Inventory file path
+Option -b = Become as root user
+Option -v = Give verbose output
+
+This Ansible run will take around 30 mins to complete.
+
+## Install Kubectl
+
+`On Workstation`
+
+Before we proceed further, we will need to install **kubectl** binary in our workstation. Read installation procedure from this [link](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+
+## Getting the Kubernetes Configuration File
+
+`On Workstation`
+
+Once the cluster setup is done, we have to copy over the cluster config file from the master machine.
+
+```
+ssh ubuntu@10.40.1.26
+sudo su
+cp /etc/kubernetes/admin.conf /home/ubuntu
+chown ubuntu:ubuntu /home/ubuntu/admin.conf
+exit
+exit
+scp ubuntu@10.40.1.26:~/admin.conf .
+cd
+mkdir .kube
+mv admin.conf .kube/config
+```
+
+## Check the State of the Cluster
+
+Let us check the state of the cluster by running,
+
+```
+kubectl cluster-info
+
+Kubernetes master is running at https://10.40.1.26:6443
+KubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+```
+
+```
+kubectl get nodes
+
+NAME      STATUS    ROLES         AGE       VERSION
+node1     Ready     master,node   21h       v1.9.0+coreos.0
+node2     Ready     master,node   21h       v1.9.0+coreos.0
+node3     Ready     node          21h       v1.9.0+coreos.0
+node4     Ready     node          21h       v1.9.0+coreos.0
+```
+
+If you are able to see this, your cluster has been set up successfully.
+
+---
+<sup>1</sup> You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.
