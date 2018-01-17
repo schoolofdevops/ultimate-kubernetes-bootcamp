@@ -213,7 +213,7 @@ Before we proceed further, we will need to install **kubectl** binary in our wor
 
 `On Workstation`
 
-Once the cluster setup is done, we have to copy over the cluster config file from the master machine.
+Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.
 
 ```
 ssh ubuntu@10.40.1.26
@@ -229,6 +229,8 @@ mv admin.conf .kube/config
 ```
 
 ## Check the State of the Cluster
+
+`On Workstation`
 
 Let us check the state of the cluster by running,
 
