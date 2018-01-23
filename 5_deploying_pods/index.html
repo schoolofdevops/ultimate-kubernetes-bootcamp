@@ -101,7 +101,7 @@
     
         <ul>
         
-            <li><a class="toctree-l3" href="#reading-list">Reading List :</a></li>
+            <li><a class="toctree-l3" href="#reading-list">Reading List</a></li>
         
         </ul>
     
@@ -396,7 +396,7 @@ spec:
   - name: db-data
     hostPath:
       path: /pgdata
-    type: DirectoryOrCreate
+      type: DirectoryOrCreate
 </code></pre>
 
 <p>To create this pod,</p>
@@ -410,7 +410,7 @@ kubectl get events
 <h2 id="selecting-node-to-run-on">Selecting Node to run on</h2>
 <pre><code>kubectl get nodes --show-labels
 
-kubectl label nodes &lt;node-name&gt; rack=1
+kubectl label nodes &lt;node-name&gt; zone=aaa
 
 kubectl get nodes --show-labels
 
@@ -433,7 +433,7 @@ spec:
       ports:
         - containerPort: 80
   nodeSelector:
-    rack: '1'
+    zone: 'aaa'
 </code></pre>
 
 <p>For this change, pod needs to be re created.</p>
@@ -453,7 +453,7 @@ metadata:
 spec:
   containers:
     - name: nginx
-      image: schoolofdevops/nginx-synch
+      image: nginx:stable-alpine
       ports:
         - containerPort: 80
       volumeMounts:
@@ -491,9 +491,12 @@ kubectl exec -it web  sh  -c sync
 
 <h2 id="exercise">Exercise</h2>
 <p>Create a pod definition for redis and deploy.</p>
-<h4 id="reading-list">Reading List :</h4>
-<p><a href="https://kubernetes.io/docs/concepts/storage/volumes/">Managing Volumes with Kubernetes</a>
-<a href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/">Node Selectors, Affinity</a></p>
+<h4 id="reading-list">Reading List</h4>
+<ul>
+<li>PodSpec: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core</li>
+<li>Managing Volumes with Kubernetes: https://kubernetes.io/docs/concepts/storage/volumes/</li>
+<li>Node Selectors, Affinity: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/</li>
+</ul>
               
             </div>
           </div>

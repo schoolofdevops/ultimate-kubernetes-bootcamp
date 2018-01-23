@@ -155,15 +155,11 @@
               
                 <h2 id="creating-a-deployment">Creating a Deployment</h2>
 <p>A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.</p>
-<p>Deployment has mainly two responsibilities,
-  * Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.
-  * Update Strategy: Define a release strategy and update the pods accordingly.</p>
-<p><em>Topics</em>*  <br />
-  * Rollout a Replicaset<br />
-  * Deploy a new version : Creates a new replica set every time, moves pods from RS(n) to RS(n+1)<br />
-  * Rollback to previous RS    <br />
-  * Auto Scaling<br />
-  * Pause Deployments  </p>
+<p>Deployment has mainly two responsibilities,</p>
+<ul>
+<li>Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.</li>
+<li>Update Strategy: Define a release strategy and update the pods accordingly.</li>
+</ul>
 <p>File: vote-deploy.yaml</p>
 <pre><code>apiVersion: extensions/v1beta1
 kind: Deployment
