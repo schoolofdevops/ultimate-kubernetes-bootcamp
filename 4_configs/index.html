@@ -171,11 +171,17 @@
 </ul>
 <h2 id="setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</h2>
 <p>Unix <strong>screen</strong> is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a <strong>screenrc</strong> script as follows on kube-01 node (node where <em>kubectl</em> is configured)</p>
-<p>file: k8s-code/monitoring/rc.screenrc</p>
+<p>file: k8s-code/monitoring/deploy.screenrc</p>
 <pre><code>screen watch -n 1 kubectl get pods
 split
 focus down
-screen watch -n 1 kubectl get rc
+screen watch -n 1 kubectl get deploy
+split
+focus down
+screen watch -n 1 kubectl get services
+split
+focus down
+screen watch -n 1 kubectl get replicasets
 focus bottom
 </code></pre>
 
@@ -220,7 +226,7 @@ screen -X -S 26 quit
 <h2 id="creating-a-namespace-for-instavote-project">Creating a namespace for instavote project</h2>
 <p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
 <p>Lets create a namespace called <strong>instavote</strong>  </p>
-<p>file: instavote_ns.yaml</p>
+<p>file: k8s-code/namespaces/instavote_ns.yaml</p>
 <pre><code>kind: Namespace
 apiVersion: v1
 metadata:

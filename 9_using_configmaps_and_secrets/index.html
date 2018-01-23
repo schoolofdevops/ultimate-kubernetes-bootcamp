@@ -159,7 +159,7 @@
                 <p>Configmap is one of the ways to provide configurations to your application.</p>
 <h3 id="injecting-env-variables-with-configmaps">Injecting env variables with configmaps</h3>
 <p>Create our configmap for vote app</p>
-<p>file:  apps/instavote/dev/vote-cm.yaml</p>
+<p>file:  projects/instavote/dev/vote-cm.yaml</p>
 <pre><code>apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -199,8 +199,8 @@ Check the deployment file for vote add for the following block.</p>
 <pre><code>  kubectl create configmap --from-file &lt;CONF-FILE-PATH&gt; &lt;NAME-OF-CONFIGMAP&gt;
 </code></pre>
 
-<p>We have redis configuration as a file named <code>apps/instavote/config/redis.conf</code>. We are going to convert this file into a configmap</p>
-<pre><code>kubectl create configmap --from-file apps/instavote/config/redis.conf redis
+<p>We have redis configuration as a file named <code>projects/instavote/config/redis.conf</code>. We are going to convert this file into a configmap</p>
+<pre><code>kubectl create configmap --from-file projects/instavote/config/redis.conf redis
 </code></pre>
 
 <p>Update your redis-deploy.yaml file to use this confimap.
@@ -240,7 +240,7 @@ echo &quot;password&quot; | base64
 </code></pre>
 
 <p>Lets now add it to the secrets file,</p>
-<p>File: apps/instavote/dev/db-secrets.yaml</p>
+<p>File: projects/instavote/dev/db-secrets.yaml</p>
 <pre><code>apiVersion: v1
 kind: Secret
 metadata:
