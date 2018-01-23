@@ -167,9 +167,12 @@ Lets create a pod for database and attach a volume to it. To achieve this we wil
   * create a **volumes** definition
   * attach volume to container using **VolumeMounts** property
 
-Volumes are of two types:
+Local host volumes are of two types:
   * emptyDir
   * hostPath
+
+We will pick hostPath. [Refer to this doc to read more about hostPath.](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
+
 
 File: db-pod.yaml
 
@@ -193,9 +196,11 @@ spec:
         mountPath: /var/lib/postgresql/data
   volumes:
   - name: db-data
-    emptyDir: {}
-
+    hostPath:
+      path: /pgdata
+    type: DirectoryOrCreate
 ```
+
 To create this pod,
 
 ```
@@ -309,4 +314,5 @@ Create a pod definition for redis and deploy.
 
 #### Reading List :
 
+[Managing Volumes with Kubernetes](https://kubernetes.io/docs/concepts/storage/volumes/)
 [Node Selectors, Affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)

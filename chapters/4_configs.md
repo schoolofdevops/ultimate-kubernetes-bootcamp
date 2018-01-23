@@ -77,27 +77,25 @@ You could also examine the current configs in file **cat ~/.kube/config**
 
 Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   
 
-Lets create a namespace called **dev**  
+Lets create a namespace called **instavote**  
 
-file: dev_ns.yaml
+file: instavote_ns.yaml
 ```
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: dev
-  labels:
-    name: dev
+  name: instavote
 ```
 
 To create namespace
 
 ```
-kubectl apply -f dev_ns.yaml
+kubectl apply -f dev_instavote.yaml
 ```
 
 
 And switch to it
 ```
-kubectl config set-context $(kubectl config current-context) --namespace=dev
+kubectl config set-context $(kubectl config current-context) --namespace=instavote
 
 ```

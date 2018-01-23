@@ -179,6 +179,6 @@ Kubernetes API typically runs on two ports.
 ### RoleBindings
   * RoleBidings are used to grant permission defined in a Role to **a user or a set of users**.
   * RoleBindings can also refer to *ClusterRoles*.
-  
+
 ### ClusrerRoleBindings
   * ClusterRoleBindings works same as RoleBindings, but cluster-wide.

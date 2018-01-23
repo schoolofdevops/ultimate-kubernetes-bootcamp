@@ -6,6 +6,9 @@ Types of Services:
   * LoadBalancer
   * ExternalName
 
+![kubernetes service](../images/k8s_service.jpg)
+
+
 ```
 kubectl get pods
 kubectl get svc
@@ -30,7 +33,7 @@ metadata:
     role: svc
     tier: front
   name: vote-svc
-  namespace: dev
+  namespace: instavote
 spec:
   selector:
     app: vote
@@ -59,7 +62,7 @@ Check for the Nodeport here
 Sample Output
 ```
 Name:                   vote-svc
-Namespace:              dev
+Namespace:              instavote
 Labels:                 app=vote
 Selector:               app=vote
 Type:                   NodePort

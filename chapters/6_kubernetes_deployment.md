@@ -2,12 +2,17 @@
 
 A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.
 
-Topics    
+Deployment has mainly two responsibilities,
+  * Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.
+  * Update Strategy: Define a release strategy and update the pods accordingly.
+
+*Topics**    
   * Rollout a Replicaset  
   * Deploy a new version : Creates a new replica set every time, moves pods from RS(n) to RS(n+1)  
   * Rollback to previous RS      
   * Auto Scaling  
   * Pause Deployments  
+
 
 
 File: vote-deploy.yaml
@@ -17,15 +22,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: vote
-  namespace: dev
+  namespace: instavote
 spec:
   replicas: 8
   selector:
     matchLabels:
       tier: front
       app: vote
-    matchExpressions:
-      - {key: tier, operator: In, values: [front]}
   revisionHistoryLimit: 4
   strategy:
     type: RollingUpdate

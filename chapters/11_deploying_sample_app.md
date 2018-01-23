@@ -30,7 +30,7 @@ Following table depicts the state of readiness of the above services.
 To create deploy the sample applications,
 
 ```
-kubectl create -f apps/voting/dev
+kubectl create -f apps/instavote/dev
 ```
 
 Sample output is like:
@@ -52,12 +52,12 @@ service "results" created
 #### To Validate:
 
 ```
-kubectl get svc -n dev
+kubectl get svc -n instavote
 ```
 
 Sample Output is:
 ```
-kubectl get service voting-app
+kubectl get service vote
 NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 vote   10.97.104.243   <pending>     80:31808/TCP   1h
 ```
