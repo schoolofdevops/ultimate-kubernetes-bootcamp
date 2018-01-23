@@ -370,7 +370,7 @@ kubectl get pods
 <li>create a <strong>volumes</strong> definition</li>
 <li>attach volume to container using <strong>VolumeMounts</strong> property</li>
 </ul>
-<p>Local host volumes are of two types:
+<p>Local host volumes are of two types:<br />
   * emptyDir
   * hostPath</p>
 <p>We will pick hostPath. <a href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">Refer to this doc to read more about hostPath.</a></p>
@@ -453,17 +453,17 @@ metadata:
 spec:
   containers:
     - name: nginx
-      image: nginx
+      image: schoolofdevops/nginx-synch
       ports:
         - containerPort: 80
       volumeMounts:
       - name: data
-        mountPath: /opt/d1
-    - name: loop
-      image: schoolofdevops/loop
+        mountPath: /var/www/html-sample-app
+    - name: sync
+      image: schoolofdevops/synch
       volumeMounts:
       - name: data
-        mountPath: /opt/d1
+        mountPath: /var/www/html-sample-app
   volumes:
   - name: data
     emptyDir: {}
@@ -481,11 +481,11 @@ vote      1/1       Running             0          3m
 </code></pre>
 
 <p>Checking logs, logging in</p>
-<pre><code>kubectl logs  web  -c loop
+<pre><code>kubectl logs  web  -c sync
 kubectl logs  web  -c nginx
 
 kubectl exec -it web  sh  -c nginx
-kubectl exec -it web  sh  -c loop
+kubectl exec -it web  sh  -c sync
 
 </code></pre>
 
