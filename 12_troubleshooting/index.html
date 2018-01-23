@@ -116,6 +116,8 @@
         
             <li><a class="toctree-l3" href="#troubleshooting-the-application">Troubleshooting the application</a></li>
         
+            <li><a class="toctree-l3" href="#getting-detailed-status-of-an-object-pods-deployments">Getting detailed status of an object (pods, deployments)</a></li>
+        
             <li><a class="toctree-l3" href="#checking-the-status-of-deployment">Checking the status of Deployment</a></li>
         
         </ul>
@@ -147,6 +149,8 @@
             <li><a class="toctree-l3" href="#log-files">Log files</a></li>
         
             <li><a class="toctree-l3" href="#troubleshooting-the-application">Troubleshooting the application</a></li>
+        
+            <li><a class="toctree-l3" href="#getting-detailed-status-of-an-object-pods-deployments">Getting detailed status of an object (pods, deployments)</a></li>
         
             <li><a class="toctree-l3" href="#checking-the-status-of-deployment">Checking the status of Deployment</a></li>
         
@@ -232,6 +236,26 @@ kubectl logs -n kube-system -f kube-controller-manager-node1
 
 <h3 id="troubleshooting-the-application">Troubleshooting the application</h3>
 <p>Sometimes your application(pod) may fail to start because of various reasons. Let's see how to troubleshoot.</p>
+<h3 id="getting-detailed-status-of-an-object-pods-deployments">Getting detailed status of an object (pods, deployments)</h3>
+<p><strong>object.status</strong> shows a detailed information about whats the status of an object ( e.g. pod) and why its in that condition. This can be very useful to identify the issues.</p>
+<p>Example</p>
+<pre><code>kubectl get pod vote -o yaml
+
+</code></pre>
+
+<p>example output snippet when a wrong image was used to create a pod. </p>
+<pre><code>status:
+...
+containerStatuses:
+....
+state:
+  waiting:
+    message: 'rpc error: code = Unknown desc = Error response from daemon: manifest
+      for schoolofdevops/vote:latst not found'
+    reason: ErrImagePull
+hostIP: 139.59.232.248
+</code></pre>
+
 <h3 id="checking-the-status-of-deployment">Checking the status of Deployment</h3>
 <p>For this example I have a sample deployment called nginx.</p>
 <p><code>FILE: nginx-deployment.yml</code></p>

@@ -226,7 +226,7 @@ screen -X -S 26 quit
 <h2 id="creating-a-namespace-for-instavote-project">Creating a namespace for instavote project</h2>
 <p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
 <p>Lets create a namespace called <strong>instavote</strong>  </p>
-<p>file: k8s-code/namespaces/instavote_ns.yaml</p>
+<p>file: k8s-code/projects/instavote/instavote-ns.yaml</p>
 <pre><code>kind: Namespace
 apiVersion: v1
 metadata:
@@ -234,7 +234,10 @@ metadata:
 </code></pre>
 
 <p>To create namespace</p>
-<pre><code>kubectl apply -f dev_instavote.yaml
+<pre><code>cd k8s-code/projects/instavote
+kubectl get ns
+kubectl apply -f dev_instavote.yaml
+kubectl get ns
 </code></pre>
 
 <p>And switch to it</p>
