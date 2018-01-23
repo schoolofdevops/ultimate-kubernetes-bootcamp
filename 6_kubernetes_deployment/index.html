@@ -168,10 +168,6 @@ metadata:
   namespace: instavote
 spec:
   replicas: 8
-  selector:
-    matchLabels:
-      tier: front
-      app: vote
   revisionHistoryLimit: 4
   strategy:
     type: RollingUpdate
@@ -222,6 +218,7 @@ spec:
 <p>Now that the deployment is created. To validate,</p>
 <pre><code>kubectl get deployment
 kubectl get rs
+kubectl get deploy,pods,rs
 kubectl rollout status deployment/vote
 kubectl get pods --show-labels
 </code></pre>
