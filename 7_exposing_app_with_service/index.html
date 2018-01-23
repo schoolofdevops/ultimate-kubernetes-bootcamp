@@ -84,6 +84,14 @@
             
     <li class="toctree-l2"><a href="#exposing-application-with-a-service">Exposing Application with  a Service</a></li>
     
+        <ul>
+        
+            <li><a class="toctree-l3" href="#publishing-a-service-with-nodeport">Publishing a service with NodePort</a></li>
+        
+            <li><a class="toctree-l3" href="#exposing-the-app-with-externalip">Exposing the app with ExternalIP</a></li>
+        
+        </ul>
+    
 
     </ul>
 	    </li>
@@ -150,7 +158,7 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="exposing-application-with-a-service">Exposing Application with  a Service</h2>
+                <h1 id="exposing-application-with-a-service">Exposing Application with  a Service</h1>
 <p>Types of Services:   </p>
 <ul>
 <li>ClusterIP</li>
@@ -170,6 +178,7 @@ voting-appp-pr2xz   1/1       Running   0          9m
 voting-appp-qpxbm   1/1       Running   0          15m
 </code></pre>
 
+<h2 id="publishing-a-service-with-nodeport">Publishing a service with NodePort</h2>
 <p>Filename: vote-svc.yaml</p>
 <pre><code>---
 apiVersion: v1
@@ -192,33 +201,56 @@ spec:
 
 <p>Save the file.</p>
 <p>Now to create a service:</p>
-<pre><code>kubectl create -f vote_svc.yaml
+<pre><code>kubectl apply -f vote-svc.yaml
 kubectl get svc
 </code></pre>
 
 <p>Now to check which port the pod is connected</p>
-<pre><code>kubectl describe service vote-svc
+<pre><code>kubectl describe service vote
 </code></pre>
 
 <p>Check for the Nodeport here</p>
 <p>Sample Output</p>
-<pre><code>Name:                   vote-svc
-Namespace:              instavote
-Labels:                 app=vote
-Selector:               app=vote
-Type:                   NodePort
-IP:                     10.99.147.158
-Port:                   &lt;unset&gt; 80/TCP
-NodePort:               &lt;unset&gt; 30308/TCP
-Endpoints:              10.40.0.2:80,10.40.0.3:80,10.40.0.4:80 + 1 more...
-Session Affinity:       None
-No events.
+<pre><code>Name:                     vote
+Namespace:                instavote
+Labels:                   role=svc
+                          tier=front
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;vote&quot;,&quot;namespace&quot;:&quot;instavote&quot;},&quot;spec&quot;:{...
+Selector:                 app=vote
+Type:                     NodePort
+IP:                       10.108.108.157
+Port:                     &lt;unset&gt;  80/TCP
+TargetPort:               80/TCP
+NodePort:                 &lt;unset&gt;  31429/TCP
+Endpoints:                10.38.0.4:80,10.38.0.5:80,10.38.0.6:80 + 2 more...
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   &lt;none&gt;
 </code></pre>
 
 <p>Go to browser and check hostip:NodePort</p>
-<p>Here the node port is 30308.</p>
+<p>Here the node port is 31429.</p>
 <p>Sample output will be:</p>
 <p><img alt="Vote" src="../images/vote.png" /></p>
+<h2 id="exposing-the-app-with-externalip">Exposing the app with ExternalIP</h2>
+<pre><code>spec:
+  selector:
+    app: vote
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  type: NodePort
+  externalIPs:
+    - 192.168.12.11
+    - 192.168.12.12
+</code></pre>
+
+<p>apply</p>
+<pre><code>kubectl apply -f vote-svc.yaml
+kubectl  get svc
+kubectl describe svc vote
+</code></pre>
               
             </div>
           </div>
