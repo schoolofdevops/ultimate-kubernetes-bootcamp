@@ -219,22 +219,20 @@ screen -X -S 26 quit
 <p>You could also examine the current configs in file <strong>cat ~/.kube/config</strong></p>
 <h2 id="creating-a-dev-namespace">Creating a dev namespace</h2>
 <p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
-<p>Lets create a namespace called <strong>dev</strong>  </p>
-<p>file: dev_ns.yaml</p>
+<p>Lets create a namespace called <strong>instavote</strong>  </p>
+<p>file: instavote_ns.yaml</p>
 <pre><code>kind: Namespace
 apiVersion: v1
 metadata:
-  name: dev
-  labels:
-    name: dev
+  name: instavote
 </code></pre>
 
 <p>To create namespace</p>
-<pre><code>kubectl apply -f dev_ns.yaml
+<pre><code>kubectl apply -f dev_instavote.yaml
 </code></pre>
 
 <p>And switch to it</p>
-<pre><code>kubectl config set-context $(kubectl config current-context) --namespace=dev
+<pre><code>kubectl config set-context $(kubectl config current-context) --namespace=instavote
 
 </code></pre>
               

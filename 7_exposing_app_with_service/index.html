@@ -176,7 +176,7 @@ metadata:
     role: svc
     tier: front
   name: vote-svc
-  namespace: dev
+  namespace: instavote
 spec:
   selector:
     app: vote
@@ -200,7 +200,7 @@ kubectl get svc
 <p>Check for the Nodeport here</p>
 <p>Sample Output</p>
 <pre><code>Name:                   vote-svc
-Namespace:              dev
+Namespace:              instavote
 Labels:                 app=vote
 Selector:               app=vote
 Type:                   NodePort

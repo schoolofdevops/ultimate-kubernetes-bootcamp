@@ -210,7 +210,7 @@
 </table>
 <h3 id="deploying-the-sample-application">Deploying the sample application</h3>
 <p>To create deploy the sample applications,</p>
-<pre><code>kubectl create -f apps/voting/dev
+<pre><code>kubectl create -f apps/instavote/dev
 </code></pre>
 
 <p>Sample output is like:</p>
@@ -226,11 +226,11 @@ service &quot;results&quot; created
 </code></pre>
 
 <h4 id="to-validate">To Validate:</h4>
-<pre><code>kubectl get svc -n dev
+<pre><code>kubectl get svc -n instavote
 </code></pre>
 
 <p>Sample Output is:</p>
-<pre><code>kubectl get service voting-app
+<pre><code>kubectl get service vote
 NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 vote   10.97.104.243   &lt;pending&gt;     80:31808/TCP   1h
 </code></pre>

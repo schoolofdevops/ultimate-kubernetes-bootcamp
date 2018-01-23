@@ -318,9 +318,10 @@ kubectl get pods
 <li>create a <strong>volumes</strong> definition</li>
 <li>attach volume to container using <strong>VolumeMounts</strong> property</li>
 </ul>
-<p>Volumes are of two types:
+<p>Local host volumes are of two types:
   * emptyDir
   * hostPath</p>
+<p>We will pick hostPath. <a href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">Refer to this doc to read more about hostPath.</a></p>
 <p>File: db-pod.yaml</p>
 <pre><code>apiVersion: v1
 kind: Pod
@@ -341,8 +342,9 @@ spec:
         mountPath: /var/lib/postgresql/data
   volumes:
   - name: db-data
-    emptyDir: {}
-
+    hostPath:
+      path: /pgdata
+    type: DirectoryOrCreate
 </code></pre>
 
 <p>To create this pod,</p>
@@ -438,7 +440,8 @@ kubectl exec -it web  sh  -c loop
 <h2 id="exercise">Exercise</h2>
 <p>Create a pod definition for redis and deploy.</p>
 <h4 id="reading-list">Reading List :</h4>
-<p><a href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/">Node Selectors, Affinity</a></p>
+<p><a href="https://kubernetes.io/docs/concepts/storage/volumes/">Managing Volumes with Kubernetes</a>
+<a href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/">Node Selectors, Affinity</a></p>
               
             </div>
           </div>

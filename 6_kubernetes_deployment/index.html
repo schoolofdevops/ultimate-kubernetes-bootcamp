@@ -155,7 +155,10 @@
               
                 <h2 id="creating-a-deployment">Creating a Deployment</h2>
 <p>A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.</p>
-<p>Topics  <br />
+<p>Deployment has mainly two responsibilities,
+  * Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.
+  * Update Strategy: Define a release strategy and update the pods accordingly.</p>
+<p><em>Topics</em>*  <br />
   * Rollout a Replicaset<br />
   * Deploy a new version : Creates a new replica set every time, moves pods from RS(n) to RS(n+1)<br />
   * Rollback to previous RS    <br />
@@ -166,15 +169,13 @@
 kind: Deployment
 metadata:
   name: vote
-  namespace: dev
+  namespace: instavote
 spec:
   replicas: 8
   selector:
     matchLabels:
       tier: front
       app: vote
-    matchExpressions:
-      - {key: tier, operator: In, values: [front]}
   revisionHistoryLimit: 4
   strategy:
     type: RollingUpdate
