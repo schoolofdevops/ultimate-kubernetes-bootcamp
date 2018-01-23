@@ -30,7 +30,7 @@ Following table depicts the state of readiness of the above services.
 To create deploy the sample applications,
 
 ```
-kubectl create -f apps/instavote/dev
+kubectl create -f projects/instavote/dev
 ```
 
 Sample output is like:

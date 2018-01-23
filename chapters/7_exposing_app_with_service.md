@@ -1,12 +1,13 @@
 ## Exposing Application with  a Service
 
-Types of Services:
+Types of Services:  
   * ClusterIP
   * NodePort
   * LoadBalancer
   * ExternalName
 
-![kubernetes service](../images/k8s_service.jpg)
+
+![kubernetes service](https://github.com/schoolofdevops/ultimate-kubernetes-bootcamp/blob/master/images/k8s_service.jpg?raw=true)
 
 
 ```

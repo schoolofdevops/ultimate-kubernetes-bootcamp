@@ -3,7 +3,7 @@ Configmap is one of the ways to provide configurations to your application.
 ### Injecting env variables with configmaps
 Create our configmap for vote app
 
-file:  apps/instavote/dev/vote-cm.yaml
+file:  projects/instavote/dev/vote-cm.yaml
 
 ```
 apiVersion: v1
@@ -55,10 +55,10 @@ Syntax for consuming file as a configmap is as follows
   kubectl create configmap --from-file <CONF-FILE-PATH> <NAME-OF-CONFIGMAP>
 ```
 
-We have redis configuration as a file named `apps/instavote/config/redis.conf`. We are going to convert this file into a configmap
+We have redis configuration as a file named `projects/instavote/config/redis.conf`. We are going to convert this file into a configmap
 
 ```
-kubectl create configmap --from-file apps/instavote/config/redis.conf redis
+kubectl create configmap --from-file projects/instavote/config/redis.conf redis
 ```
 
 
@@ -110,7 +110,7 @@ http://www.utilities-online.info/base64
 
 Lets now add it to the secrets file,
 
-File: apps/instavote/dev/db-secrets.yaml
+File: projects/instavote/dev/db-secrets.yaml
 
 ```
 apiVersion: v1
