@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Kubernetes RBAC - Kubernetes Fundamentals</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Kubernetes RBAC";
+    var mkdocs_page_input_path = "configuring-authentication-and-authorization.md";
+    var mkdocs_page_url = "/configuring-authentication-and-authorization/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Bootcamp</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4_configs/">Configuring Cluster</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Kubernetes RBAC</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#configuring-authentication-and-authorization">Configuring Authentication and Authorization</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
+        
+            <li><a class="toctree-l4" href="#authentication">Authentication</a></li>
+        
+            <li><a class="toctree-l4" href="#configurations">Configurations</a></li>
+        
+            <li><a class="toctree-l4" href="#create-namespace-for-a-useroptional">Create namespace for a user(Optional)</a></li>
+        
+            <li><a class="toctree-l4" href="#create-the-user-credentials">Create the user credentials</a></li>
+        
+            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
+        
+            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
+        
+            <li><a class="toctree-l4" href="#kubernetes-access-control">Kubernetes Access Control</a></li>
+        
+            <li><a class="toctree-l4" href="#how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</a></li>
+        
+            <li><a class="toctree-l4" href="#who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</a></li>
+        
+            <li><a class="toctree-l4" href="#stages-of-a-request">Stages of a Request</a></li>
+        
+            <li><a class="toctree-l4" href="#role-based-access-control-rbac_1">Role Based Access Control (RBAC)</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Additional Topics</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../cluster-setup-kubespray/">Production grade setup with Kubespray</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Fundamentals</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Bootcamp &raquo;</li>
+        
+      
+    
+    <li>Kubernetes RBAC</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="configuring-authentication-and-authorization">Configuring Authentication and Authorization</h1>
+<h2 id="role-based-access-control-rbac">Role Based Access Control (RBAC)</h2>
+<h3 id="role">Role</h3>
+<h3 id="cluster-role">Cluster Role</h3>
+<h3 id="role-binding">Role Binding</h3>
+<h3 id="cluster-role-binding">Cluster Role Binding</h3>
+<h2 id="authentication">Authentication</h2>
+<h3 id="tokens">Tokens</h3>
+<h3 id="certificates">Certificates</h3>
+<h3 id="contexts">Contexts</h3>
+<h2 id="configurations">Configurations</h2>
+<h3 id="master-config">Master Config</h3>
+<h3 id="node-config">Node Config</h3>
+<h2 id="create-namespace-for-a-useroptional">Create namespace for a user(Optional)</h2>
+<h2 id="create-the-user-credentials">Create the user credentials</h2>
+<pre><code>openssl genrsa -out vibe.key 2048
+openssl req -new -key vibe.key -out vibe.csr -subj &quot;/CN=vibe/O=initcron&quot;
+#copy over all key files from /etc/kubernetes directory of master when you run this command
+openssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500
+# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)
+# Execute the following commands on the users system
+kubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key
+kubectl config set-context vibe-context --cluster=&lt;YOUR-CLUSTER-NAME&gt; --namespace=&lt;NAMESPACE-FOR-USER&gt;  --user=vibe
+# This step will throw an error
+kubectl --context=vibe-context get pods
+</code></pre>
+
+<h2 id="create-role-for-the-developers">Create role for the developers</h2>
+<p>These steps (3,4) has to be executed from kube-master or the controller machine
+<code>dev-role.yml</code></p>
+<pre><code>kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: dev
+  name: developer
+rules:
+- apiGroups: [&quot;&quot;, &quot;extensions&quot;, &quot;apps&quot;]
+  resources: [&quot;deployments&quot;, &quot;replicasets&quot;, &quot;pods&quot;]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;, &quot;delete&quot;]
+</code></pre>
+
+<pre><code>kubectl create -f dev-role.yml
+</code></pre>
+
+<h2 id="create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</h2>
+<p><code>dev-rolebinding.yml</code></p>
+<pre><code>kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: developer
+  namespace: developer
+subjects:
+- kind: User
+  name: vibe
+  apiGroup: &quot;&quot;
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: &quot;&quot;
+</code></pre>
+
+<pre><code>kubectl create -f dev-rolebinding.yaml
+</code></pre>
+
+<h2 id="kubernetes-access-control">Kubernetes Access Control</h2>
+<p>In this chapter, we will see about how to use authentication and authorisation of Kubernetes.</p>
+<h2 id="how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</h2>
+<p>The Kubernetes API can be accessed by three ways.
+  * Kubeclt - A command line utility of Kubernetes
+  * Client libraries - Go, Python, etc.,
+  * REST requests</p>
+<h2 id="who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</h2>
+<p>Kubernetes API can be accessed by,
+  * Human users
+  * Service Accounts
+Each of these topics will be discussed in detail in the later part of this chapter.</p>
+<h2 id="stages-of-a-request">Stages of a Request</h2>
+<p>When a request tries to contact the API , it goes through various stages as illustrated in the image given below.</p>
+<p><img alt="request-stages" src="../images/access-control.svg" /></p>
+<h3 id="tls-in-kubernetes">TLS in Kubernetes</h3>
+<p>Kubernetes API typically runs on two ports.
+  * 8080
+    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).
+    * This port is insecure.
+  * 6443
+    * TLS Enabled.
+    * Available for kubectl and others.</p>
+<h3 id="stage-1-authentication">Stage 1: Authentication</h3>
+<ul>
+<li>Authentication operation checks whether the <em>user/service account</em> has the permission to talk to the api server or not.</li>
+<li>Authentication is done by the authentication modules which are configured with the api server.</li>
+<li>Cluster uses with one or more authentication modules enabled.</li>
+<li>If the request fails to authenticate itself, it will be served with <strong>401 error</strong>.</li>
+</ul>
+<h4 id="authentication-for-normal-user">Authentication for Normal User</h4>
+<ul>
+<li>Kubernetes uses <strong>usernames</strong> for access control.</li>
+<li>But it neither has an api object nor stores information about users in its data store.</li>
+<li>Users need to be managed externally by the cluster administrator.</li>
+</ul>
+<h4 id="authentication-for-service-accounts">Authentication for Service Accounts</h4>
+<ul>
+<li>Unlike user accounts, service accounts are managed by Kubernetes.</li>
+<li><em>service accounts</em> are bound to specific namespaces.</li>
+<li>Credentials for <em>service Accounts</em> are stored as <em>secrets</em>.</li>
+<li>These secrets are mounted to pods when a deployment starts using the Service Account.</li>
+</ul>
+<h3 id="stage-2-authorization">Stage 2: Authorization</h3>
+<ul>
+<li>After a request successfully authenticated, it goes through the authorization process.</li>
+<li>In order for a request to be authorized, it must consist following attributes.<ul>
+<li>Username of the requester(User)</li>
+<li>Requested action(Verb)</li>
+<li>The object affected(Resource)</li>
+</ul>
+</li>
+<li>Authorization is done by the following modules. Each of these modules has a special purpose.<ul>
+<li>Attribute Based Access Control(ABAC)</li>
+<li>Role Based Access Control(RBAC)</li>
+<li>Node Authorizer</li>
+<li>Webhook module</li>
+</ul>
+</li>
+<li>If a request is failed to get authorized, it will be served with <strong>403 error</strong>.</li>
+<li>Among these modules, RBAC is the most used authorizer while,<ul>
+<li>ABAC is used for,</li>
+<li>Policy based, fine grained access control</li>
+<li>The caveat is api server has to be restarted whenever we define a ABAC policy</li>
+<li>Node Authorizer is,</li>
+<li>Enabled in all the worker nodes</li>
+<li>Grants access to kubelet for some of the resources.</li>
+</ul>
+</li>
+<li>We have already talked about the user in detail. Now lets focus on <strong>verbs</strong> and <strong>resources</strong></li>
+<li>We will talk about RBAC in detail in the later part</li>
+</ul>
+<h4 id="verbs">Verbs</h4>
+<ul>
+<li>Verbs are the <strong>action</strong> to be taken on resources.</li>
+<li>Some of the verbs in Kubernetes are,<ul>
+<li>get</li>
+<li>list</li>
+<li>create</li>
+<li>update</li>
+<li>patch</li>
+<li>watch</li>
+<li>delete</li>
+</ul>
+</li>
+</ul>
+<h4 id="resources">Resources</h4>
+<ul>
+<li>Resources are the object being manipulated by the verb.</li>
+<li>Ex: pods, deployments, service, namespaces, nodes, etc.,</li>
+</ul>
+<h3 id="stage-3-admission-control">Stage 3: Admission Control</h3>
+<ul>
+<li>Admission control part is taken care of by the software modules that can modify/reject requests.</li>
+<li>Admission control is mainly used for fine-tuning access control.</li>
+<li>Admission control can directly act on the object being modified.</li>
+</ul>
+<h2 id="role-based-access-control-rbac_1">Role Based Access Control (RBAC)</h2>
+<ul>
+<li>RBAC is the most used form of access control to <strong>grant or revoke</strong> permissions to users.</li>
+<li>It is used for dynamically configuring policies through API.</li>
+<li>RBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.</li>
+<li>Objects that are used to create policies,<ul>
+<li>Roles,</li>
+<li>ClusterRoles.</li>
+</ul>
+</li>
+<li>Objects that are used to implement policies,<ul>
+<li>RoleBindings,</li>
+<li>ClusterRoleBindings.</li>
+</ul>
+</li>
+</ul>
+<h3 id="roles">Roles</h3>
+<ul>
+<li>Roles grant access to resources <strong>within a single namespace</strong>.</li>
+<li>Roles cannot grant permission for global(cluster-wide) resources.</li>
+</ul>
+<h3 id="clusterroles">ClusterRoles</h3>
+<ul>
+<li>ClusterRoles works similar to Roles, but for <strong>cluster-wide</strong> resources.</li>
+</ul>
+<h3 id="rolebindings">RoleBindings</h3>
+<ul>
+<li>RoleBidings are used to grant permission defined in a Role to <strong>a user or a set of users</strong>.</li>
+<li>RoleBindings can also refer to <em>ClusterRoles</em>.</li>
+</ul>
+<h3 id="clusrerrolebindings">ClusrerRoleBindings</h3>
+<ul>
+<li>ClusterRoleBindings works same as RoleBindings, but cluster-wide.</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../4_configs/" class="btn btn-neutral" title="Configuring Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../4_configs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>
