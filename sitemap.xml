@@ -30,12 +30,6 @@
     </url>
         
     <url>
-     <loc>/configuring-authentication-and-authorization/</loc>
-     <lastmod>2018-01-24</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
      <loc>/5_deploying_pods/</loc>
      <lastmod>2018-01-24</lastmod>
      <changefreq>daily</changefreq>
@@ -89,6 +83,16 @@
         
     <url>
      <loc>/12_troubleshooting/</loc>
+     <lastmod>2018-01-24</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>/configuring-authentication-and-authorization/</loc>
      <lastmod>2018-01-24</lastmod>
      <changefreq>daily</changefreq>
     </url>
