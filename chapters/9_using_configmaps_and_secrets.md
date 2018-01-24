@@ -17,10 +17,12 @@ data:
 ```
 
 In the above given configmap, we define two environment variables,
+
   1. OPTION_A=EMACS
   2. OPTION_B=VI
 
 In order to use this configmap in the deployment, we need to reference it from the deployment file.
+
 Check the deployment file for vote add for the following block.
 
 file: `vote-deploy.yaml`
@@ -38,7 +40,7 @@ file: `vote-deploy.yaml`
         ports:
         - containerPort: 80
           protocol: TCP
-      restartPolicy: Always
+        restartPolicy: Always
 ```
 
 So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (EMACS and VI) will override the default values(CATS and DOGS) present in your source code.
@@ -172,3 +174,14 @@ spec:
                 key: POSTGRES_PASSWD
       restartPolicy: Always
 ```
+
+### Note: Automatic Updation of deployments on ConfigMap  Updates
+
+Currently, updating configMap does not ensure a new rollout of a deployment. What this means is even after updading configMaps, pods will not immediately reflect the changes.  
+
+There is a feature request for this https://github.com/kubernetes/kubernetes/issues/22368
+
+Currently, this can be done by using immutable configMaps.   
+  * Create a configMaps and apply it with deployment
+  * To update, create a new configMaps and do not update the previous one. Treat it as immutable.
+  * Update deployment spec to use the new version of the configMaps. This will ensure immediate update.

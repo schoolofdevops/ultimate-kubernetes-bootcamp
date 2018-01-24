@@ -85,7 +85,7 @@ Namespaces offers separation of resources running on the same physical infrastru
 
 Lets create a namespace called **instavote**  
 
-file: k8s-code/namespaces/instavote_ns.yaml
+file: k8s-code/projects/instavote/instavote-ns.yaml
 ```
 kind: Namespace
 apiVersion: v1
@@ -96,7 +96,10 @@ metadata:
 To create namespace
 
 ```
+cd k8s-code/projects/instavote
+kubectl get ns
 kubectl apply -f dev_instavote.yaml
+kubectl get ns
 ```
 
 

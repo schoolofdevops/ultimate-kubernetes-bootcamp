@@ -3,23 +3,31 @@
 Kubespray is an *Ansible* based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.
 
 ## Prerequisites
-  * Operating System: Ubuntu 16.04
-  * Number of VMs: 3/4
-  * Memory: 2 GB
-  * Hard disk: 10/20 GB
 
-## Setting up the environment
-### Step 1: Install Ansible
+Hardware Pre requisites
+  * 4 Nodes: Virtual/Physical Machines
+  * Memory: 2GB each
+  * CPU: 2 cores recommended
+  * Hard disk: 20GB available
 
-`On workstation`
+Software Pre Requisites
+  * Ubuntu 16.04 Operating System
+  * Python
+
+## Architecture of a high available kubernetes cluster
+
+
+## Preparing the kubernetes nodes
+
+`On control node`
 
 Ansible is the base provisioner in our cluster. But installing Ansible is out of the scope of this training. You can learn about installing and configuring Ansible from [here.](http://docs.ansible.com/ansible/latest/intro_installation.html)
 
-### Step 2: Setup passwordless SSH
+### Setup passwordless SSH between control and kubernetes nodes
 
-`On workstation`
+`On control node`
 
-Ansible uses passwordless ssh<sup>1</sup> to create the cluster. Let us see how to set it up from your *workstation*.
+Ansible uses passwordless ssh<sup>1</sup> to create the cluster. Let us see how to set it up from your *control node*.
 ```
 ssh-keygen -t rsa
 Generating public/private rsa key pair.
@@ -52,7 +60,7 @@ cat ~/.ssh/id_rsa.pub | ssh ubuntu@10.40.1.26 'cat >> ~/.ssh/authorized_keys'
 
 This will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace *10.40.1.26* with your respective machine's IP.
 
-### Step 3: Enable IPv4 Forwarding
+### Enable IPv4 Forwarding
 
 `On all nodes`
 
@@ -67,7 +75,7 @@ Enalbe IPv4 forwarding by uncommenting the following line
 net.ipv4.ip_forward=1
 ```
 
-### Step 4: Stop and Disable UFW Service
+### Stop and Disable UFW Service
 
 `On all nodes`
 
@@ -78,7 +86,7 @@ systemctl stop ufw.service
 systemctl disable ufw.service
 ```
 
-### Step 5: Install Python
+### Install Python
 
 `On all nodes`
 
@@ -89,11 +97,10 @@ sudo apt update
 sudo apt install python
 ```
 
-## Configuring Kubespray
+## Configuring Ansible Control node and Kubespray
 
-### Clone the Repository
 
-`On Workstation`
+`On control node`
 
 Kubespray is hosted on GitHub. Let us the clone the [official repository](https://github.com/kubernetes-incubator/kubespray.git).
 
@@ -104,7 +111,7 @@ cd kubespray
 
 ### Set Remote User for Ansible
 
-`On Workstation`
+`On control node`
 
 Add the following section in ansible.cfg file
 
@@ -112,7 +119,7 @@ Add the following section in ansible.cfg file
 remote_user=ubuntu
 ```
 
-Your *ansible.cfg* file should look this.
+Your *ansible.cfg* file should look like this.
 
 ```
 [ssh_connection]
@@ -134,7 +141,7 @@ remote_user=ubuntu
 
 ### Download Inventory Builder
 
-`On Workstation`
+`On control node`
 
 Inventory builder (a python script) helps us to create inventory file. **Inventory** file is something with which we specify the groups of masters and nodes of our cluster.
 
@@ -187,9 +194,9 @@ node2
 node3
 ```
 
-## Provisioning Our Kubernetes Cluster
+## Provisioning  kubernetes cluster with kubespray
 
-`On Workstation`
+`On control node`
 
 We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.
 
@@ -205,13 +212,13 @@ This Ansible run will take around 30 mins to complete.
 
 ## Install Kubectl
 
-`On Workstation`
+`On control node`
 
-Before we proceed further, we will need to install **kubectl** binary in our workstation. Read installation procedure from this [link](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+Before we proceed further, we will need to install **kubectl** binary in our control node. Read installation procedure from this [link](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ## Getting the Kubernetes Configuration File
 
-`On Workstation`
+`On control node`
 
 Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.
 
@@ -230,7 +237,7 @@ mv admin.conf .kube/config
 
 ## Check the State of the Cluster
 
-`On Workstation`
+`On control node`
 
 Let us check the state of the cluster by running,
 

@@ -3,16 +3,9 @@
 A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.
 
 Deployment has mainly two responsibilities,
+
   * Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.
   * Update Strategy: Define a release strategy and update the pods accordingly.
-
-*Topics**    
-  * Rollout a Replicaset  
-  * Deploy a new version : Creates a new replica set every time, moves pods from RS(n) to RS(n+1)  
-  * Rollback to previous RS      
-  * Auto Scaling  
-  * Pause Deployments  
-
 
 
 File: vote-deploy.yaml
@@ -25,10 +18,6 @@ metadata:
   namespace: instavote
 spec:
   replicas: 8
-  selector:
-    matchLabels:
-      tier: front
-      app: vote
   revisionHistoryLimit: 4
   strategy:
     type: RollingUpdate
@@ -78,6 +67,7 @@ Now that the deployment is created. To validate,
 ```
 kubectl get deployment
 kubectl get rs
+kubectl get deploy,pods,rs
 kubectl rollout status deployment/vote
 kubectl get pods --show-labels
 ```
