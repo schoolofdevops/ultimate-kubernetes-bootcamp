@@ -170,6 +170,10 @@
                     
     <a class="" href="../configuring-authentication-and-authorization/">Authentication and Authorization</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../pod_security/">Setting up Pod Security Policy</a>
+                </li>
     </ul>
 	    </li>
           
@@ -329,7 +333,9 @@ kube-03   Ready     &lt;none&gt;    4m        v1.8.2
 </code></pre>
 
 <p>Additional Status Commands</p>
-<pre><code>kubectl version
+<pre><code>kubectl get componentstatuses
+
+kubectl version
 
 kubectl cluster-info
 
