@@ -28,6 +28,12 @@ spec:
 
 Spec Schema: https://kubernetes.io/docs/user-guide/pods/multi-container/
 
+To list supported version of apis
+
+```
+kubectl api-versions
+```
+
 #### Common Configurations
 
 Throughout this tutorial, we would be deploying different components of  example voting application. Lets assume we are deploying it in a **dev** environment. Lets create the common specs for this app with the AKMS schema discussed above.
@@ -50,7 +56,7 @@ spec:
 
 Lets now create the  Pod config by adding the kind and specs to above schema.
 
-Filename: vote-pod.yaml
+Filename: k8s-code/pods/vote-pod.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -64,9 +70,9 @@ spec:
   containers:
     - name: vote
       image: schoolofdevops/vote:latest
-      ports:
-        - containerPort: 80
 ```
+
+[Use this link to refer to pod spec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core)
 
 
 ### Launching and operating a Pod
@@ -88,6 +94,8 @@ To view pods
 
 ```
 kubectl get pods
+
+kubectl get po -o wide
 
 kubectl get pods vote
 ```
@@ -153,7 +161,70 @@ kubectl logs vote
 
 ```
 
-delete
+## Troubleshooting Tip
+
+If you would like to know whats the current status of the pod, and if its in a error state, find out the cause of the error, following command could be very handy.
+
+```
+kubectl get pod vote -o yaml
+```
+
+Lets learn by example. Update pod spec and change the image to something that does not exist.
+
+```
+kubectl edit pod vote
+```
+
+This will open a editor. Go to the line which defines image  and change it to a tag that does not exist
+
+e.g.
+
+```
+spec:
+  containers:
+  - image: schoolofdevops/vote:latst
+    imagePullPolicy: Always
+```
+
+where tag **latst** does not exist. As soon as you save this file, kubernetes will apply the change.
+
+Now check the status,
+```
+kubectl get pods  
+
+NAME      READY     STATUS             RESTARTS   AGE
+vote      0/1       ImagePullBackOff   0          27m
+```
+
+The above output will only show the status, with a vague error. To find the exact error, lets get the stauts of the pod.
+
+Observe the **status** field.  
+
+
+```
+kubectl get pod vote -o yaml
+```
+
+Now the status field shows a detailed information, including what the exact error. Observe the following snippet...
+
+```
+status:
+...
+containerStatuses:
+....
+state:
+  waiting:
+    message: 'rpc error: code = Unknown desc = Error response from daemon: manifest
+      for schoolofdevops/vote:latst not found'
+    reason: ErrImagePull
+hostIP: 139.59.232.248
+```
+
+This will help you to pinpoint to the exact cause and fix it quickly.
+
+
+Now that you  are done experimenting with pod, delete it with the following command,
+
 ```
 kubectl delete pod vote
 
@@ -167,9 +238,12 @@ Lets create a pod for database and attach a volume to it. To achieve this we wil
   * create a **volumes** definition
   * attach volume to container using **VolumeMounts** property
 
-Volumes are of two types:
+Local host volumes are of two types:  
   * emptyDir
   * hostPath
+
+We will pick hostPath. [Refer to this doc to read more about hostPath.](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
+
 
 File: db-pod.yaml
 
@@ -193,9 +267,11 @@ spec:
         mountPath: /var/lib/postgresql/data
   volumes:
   - name: db-data
-    emptyDir: {}
-
+    hostPath:
+      path: /pgdata
+      type: DirectoryOrCreate
 ```
+
 To create this pod,
 
 ```
@@ -212,7 +288,7 @@ kubectl get events
 ```
 kubectl get nodes --show-labels
 
-kubectl label nodes <node-name> rack=1
+kubectl label nodes <node-name> zone=aaa
 
 kubectl get nodes --show-labels
 
@@ -237,7 +313,7 @@ spec:
       ports:
         - containerPort: 80
   nodeSelector:
-    rack: '1'
+    zone: 'aaa'
 ```
 
 For this change, pod needs to be re created.
@@ -262,17 +338,17 @@ metadata:
 spec:
   containers:
     - name: nginx
-      image: nginx
+      image: nginx:stable-alpine
       ports:
         - containerPort: 80
       volumeMounts:
       - name: data
-        mountPath: /opt/d1
-    - name: loop
-      image: schoolofdevops/loop
+        mountPath: /var/www/html-sample-app
+    - name: sync
+      image: schoolofdevops/synch
       volumeMounts:
       - name: data
-        mountPath: /opt/d1
+        mountPath: /var/www/html-sample-app
   volumes:
   - name: data
     emptyDir: {}
@@ -295,11 +371,11 @@ vote      1/1       Running             0          3m
 
 Checking logs, logging in
 ```
-kubectl logs  web  -c loop
+kubectl logs  web  -c sync
 kubectl logs  web  -c nginx
 
 kubectl exec -it web  sh  -c nginx
-kubectl exec -it web  sh  -c loop
+kubectl exec -it web  sh  -c sync
 
 ```
 
@@ -307,6 +383,8 @@ kubectl exec -it web  sh  -c loop
 
 Create a pod definition for redis and deploy.
 
-#### Reading List :
+#### Reading List
 
-[Node Selectors, Affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)
+  * PodSpec: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core
+  * Managing Volumes with Kubernetes: https://kubernetes.io/docs/concepts/storage/volumes/
+  * Node Selectors, Affinity: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/

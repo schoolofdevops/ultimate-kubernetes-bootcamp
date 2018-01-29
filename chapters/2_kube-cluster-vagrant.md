@@ -10,6 +10,8 @@
 
 ## Importing a VM Template
 
+If you have already copied/downloaded the box file **ubuntu-xenial64.box**, go to the directory which contains that file. If you do not have a box file, skip to next section.
+
 ```
 vagrant box list
 

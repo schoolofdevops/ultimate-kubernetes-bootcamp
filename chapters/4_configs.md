@@ -10,13 +10,19 @@ In this lesson we are going to cover the following topics
 ## Setup monitoring console for Kubernetes
 Unix **screen** is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a **screenrc** script as follows on kube-01 node (node where *kubectl* is configured)
 
-file: k8s-code/monitoring/rc.screenrc
+file: k8s-code/monitoring/deploy.screenrc
 
 ```
 screen watch -n 1 kubectl get pods
 split
 focus down
-screen watch -n 1 kubectl get rc
+screen watch -n 1 kubectl get deploy
+split
+focus down
+screen watch -n 1 kubectl get services
+split
+focus down
+screen watch -n 1 kubectl get replicasets
 focus bottom
 ```
 
@@ -73,31 +79,32 @@ kubectl config view
 
 You could also examine the current configs in file **cat ~/.kube/config**
 
-## Creating a dev namespace
+## Creating a namespace for instavote project
 
 Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   
 
-Lets create a namespace called **dev**  
+Lets create a namespace called **instavote**  
 
-file: dev_ns.yaml
+file: k8s-code/projects/instavote/instavote-ns.yaml
 ```
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: dev
-  labels:
-    name: dev
+  name: instavote
 ```
 
 To create namespace
 
 ```
-kubectl apply -f dev_ns.yaml
+cd k8s-code/projects/instavote
+kubectl get ns
+kubectl apply -f dev_instavote.yaml
+kubectl get ns
 ```
 
 
 And switch to it
 ```
-kubectl config set-context $(kubectl config current-context) --namespace=dev
+kubectl config set-context $(kubectl config current-context) --namespace=instavote
 
 ```

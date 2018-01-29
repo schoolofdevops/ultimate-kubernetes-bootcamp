@@ -3,6 +3,7 @@
 In this chapter we will learn about how to trouble shoot our Kubernetes cluster at *control plane* level and at *application level*.
 
 ### Troubleshooting the control plane
+
 ### Listing the nodes in a cluster
 First thing to check if your cluster is working fine or not is to list the nodes associated with your cluster.
 
@@ -26,6 +27,7 @@ For example, in my cluster *kube-dns* is crashing. In order to fix this first ch
 kubectl describe deployment -n kube-system kube-dns
 ```
 ### Log files
+
 #### Master
 If your deployment is good, the next thing to look for is log files.
 The locations of log files are given below...
@@ -54,6 +56,34 @@ sudo journalctl -u  kubelet
 
 ### Troubleshooting the application
 Sometimes your application(pod) may fail to start because of various reasons. Let's see how to troubleshoot.
+
+### Getting detailed status of an object (pods, deployments)
+
+**object.status** shows a detailed information about whats the status of an object ( e.g. pod) and why its in that condition. This can be very useful to identify the issues.
+
+Example
+```
+kubectl get pod vote -o yaml
+
+```
+
+example output snippet when a wrong image was used to create a pod. 
+
+```
+status:
+...
+containerStatuses:
+....
+state:
+  waiting:
+    message: 'rpc error: code = Unknown desc = Error response from daemon: manifest
+      for schoolofdevops/vote:latst not found'
+    reason: ErrImagePull
+hostIP: 139.59.232.248
+```
+
+
+
 ### Checking the status of Deployment
 For this example I have a sample deployment called nginx.
 
