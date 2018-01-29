@@ -1,20 +1,4 @@
 # Configuring Authentication and Authorization
-## Role Based Access Control (RBAC)
-
-### Role
-### Cluster Role
-### Role Binding
-### Cluster Role Binding
-
-## Authentication
-### Tokens
-### Certificates
-### Contexts
-
-## Configurations
-### Master Config
-### Node Config
-
 
 ## Create namespace for a user(Optional)
 
