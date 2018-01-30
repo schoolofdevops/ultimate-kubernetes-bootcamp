@@ -2,19 +2,19 @@ site_name: Kubernetes Fundamentals
 pages:
   - Home: "index.md"
   - Bootcamp: 
-     - Provisioning VMs with Vagrant: "2_kube-cluster-vagrant.md"
+     - Provisioning VMs with Vagrant: "2_kube_cluster_vagrant.md"
      - Setup Kubernetes Cluster: "3_install_kubernetes.md"
      - Configuring Cluster: "4_configs.md"
-     - Kubernetes RBAC: "configuring-authentication-and-authorization.md"
+     - Kubernetes RBAC: "configuring_authentication_and_authorization.md"
      - Launching Pods: "5_deploying_pods.md"
      - Creating Deployments: "6_kubernetes_deployment.md"
      - Service Endpoints: "7_exposing_app_with_service.md"
-     - Rollouts and Rollbacks: "8_rollouts-and-rollbacks.md"
+     - Rollouts and Rollbacks: "8_rollouts_and_rollbacks.md"
      - Using Configmaps and Secrets: "9_using_configmaps_and_secrets.md"
      - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
      - Mini Project: "11_deploying_sample_app.md"
   - Additional Topics: 
-     - Production grade setup with Kubespray: "cluster-setup-kubespray.md"
+     - Production grade setup with Kubespray: "cluster_setup_kubespray.md"
      - Troubleshooting Tips: "12_troubleshooting.md"
 docs_dir: chapters
 theme: readthedocs
