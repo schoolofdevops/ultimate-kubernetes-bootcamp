@@ -318,10 +318,12 @@ spec:
 <h3 id="note-automatic-updation-of-deployments-on-configmap-updates">Note: Automatic Updation of deployments on ConfigMap  Updates</h3>
 <p>Currently, updating configMap does not ensure a new rollout of a deployment. What this means is even after updading configMaps, pods will not immediately reflect the changes.  </p>
 <p>There is a feature request for this https://github.com/kubernetes/kubernetes/issues/22368</p>
-<p>Currently, this can be done by using immutable configMaps. <br />
-  * Create a configMaps and apply it with deployment
-  * To update, create a new configMaps and do not update the previous one. Treat it as immutable.
-  * Update deployment spec to use the new version of the configMaps. This will ensure immediate update.</p>
+<p>Currently, this can be done by using immutable configMaps. </p>
+<ul>
+<li>Create a configMaps and apply it with deployment. </li>
+<li>To update, create a new configMaps and do not update the previous one. Treat it as immutable. </li>
+<li>Update deployment spec to use the new version of the configMaps. This will ensure immediate update.</li>
+</ul>
               
             </div>
           </div>
