@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Authentication and Authorization - Kubernetes Fundamentals</title>
+  <title>Kubernetes RBAC - Kubernetes Fundamentals</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Authentication and Authorization";
-    var mkdocs_page_input_path = "configuring-authentication-and-authorization.md";
-    var mkdocs_page_url = "/configuring-authentication-and-authorization/";
+    var mkdocs_page_name = "Kubernetes RBAC";
+    var mkdocs_page_input_path = "configuring_authentication_and_authorization.md";
+    var mkdocs_page_url = "/configuring_authentication_and_authorization/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -58,7 +58,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../2_kube-cluster-vagrant/">Provisioning VMs with Vagrant</a>
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
                 </li>
                 <li class="">
                     
@@ -67,6 +67,40 @@
                 <li class="">
                     
     <a class="" href="../4_configs/">Configuring Cluster</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Kubernetes RBAC</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#configuring-authentication-and-authorization">Configuring Authentication and Authorization</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#create-namespace-for-a-useroptional">Create namespace for a user(Optional)</a></li>
+        
+            <li><a class="toctree-l4" href="#create-the-user-credentials">Create the user credentials</a></li>
+        
+            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
+        
+            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
+        
+            <li><a class="toctree-l4" href="#kubernetes-access-control">Kubernetes Access Control</a></li>
+        
+            <li><a class="toctree-l4" href="#how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</a></li>
+        
+            <li><a class="toctree-l4" href="#who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</a></li>
+        
+            <li><a class="toctree-l4" href="#stages-of-a-request">Stages of a Request</a></li>
+        
+            <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
+        
+            <li><a class="toctree-l4" href="#example">Example</a></li>
+        
+        </ul>
+    
+
+    </ul>
                 </li>
                 <li class="">
                     
@@ -82,7 +116,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../8_rollouts-and-rollbacks/">Rollouts and Rollbacks</a>
+    <a class="" href="../8_rollouts_and_rollbacks/">Rollouts and Rollbacks</a>
                 </li>
                 <li class="">
                     
@@ -105,60 +139,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../cluster-setup-kubespray/">Production grade setup with Kubespray</a>
+    <a class="" href="../cluster_setup_kubespray/">Production grade setup with Kubespray</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Securing Kubernetes</span>
-    <ul class="subnav">
-                <li class=" current">
-                    
-    <a class="current" href="./">Authentication and Authorization</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#configuring-authentication-and-authorization">Configuring Authentication and Authorization</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
-        
-            <li><a class="toctree-l4" href="#authentication">Authentication</a></li>
-        
-            <li><a class="toctree-l4" href="#configurations">Configurations</a></li>
-        
-            <li><a class="toctree-l4" href="#create-namespace-for-a-useroptional">Create namespace for a user(Optional)</a></li>
-        
-            <li><a class="toctree-l4" href="#create-the-user-credentials">Create the user credentials</a></li>
-        
-            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
-        
-            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
-        
-            <li><a class="toctree-l4" href="#kubernetes-access-control">Kubernetes Access Control</a></li>
-        
-            <li><a class="toctree-l4" href="#how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</a></li>
-        
-            <li><a class="toctree-l4" href="#who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</a></li>
-        
-            <li><a class="toctree-l4" href="#stages-of-a-request">Stages of a Request</a></li>
-        
-            <li><a class="toctree-l4" href="#role-based-access-control-rbac_1">Role Based Access Control (RBAC)</a></li>
-        
-        </ul>
-    
-
-    </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../pod_security/">Setting up Pod Security Policy</a>
                 </li>
     </ul>
 	    </li>
@@ -185,11 +170,11 @@
     
       
         
-          <li>Securing Kubernetes &raquo;</li>
+          <li>Bootcamp &raquo;</li>
         
       
     
-    <li>Authentication and Authorization</li>
+    <li>Kubernetes RBAC</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -200,18 +185,6 @@
             <div class="section">
               
                 <h1 id="configuring-authentication-and-authorization">Configuring Authentication and Authorization</h1>
-<h2 id="role-based-access-control-rbac">Role Based Access Control (RBAC)</h2>
-<h3 id="role">Role</h3>
-<h3 id="cluster-role">Cluster Role</h3>
-<h3 id="role-binding">Role Binding</h3>
-<h3 id="cluster-role-binding">Cluster Role Binding</h3>
-<h2 id="authentication">Authentication</h2>
-<h3 id="tokens">Tokens</h3>
-<h3 id="certificates">Certificates</h3>
-<h3 id="contexts">Contexts</h3>
-<h2 id="configurations">Configurations</h2>
-<h3 id="master-config">Master Config</h3>
-<h3 id="node-config">Node Config</h3>
 <h2 id="create-namespace-for-a-useroptional">Create namespace for a user(Optional)</h2>
 <h2 id="create-the-user-credentials">Create the user credentials</h2>
 <pre><code>openssl genrsa -out vibe.key 2048
@@ -277,7 +250,8 @@ roleRef:
 Each of these topics will be discussed in detail in the later part of this chapter.</p>
 <h2 id="stages-of-a-request">Stages of a Request</h2>
 <p>When a request tries to contact the API , it goes through various stages as illustrated in the image given below.</p>
-<p><img alt="request-stages" src="../images/access-control.svg" /></p>
+<p><img alt="request-stages" src="../images/access-control.svg" />
+<sub><a href="https://kubernetes.io/docs/home/">source: official kubernetes site</a></sub></p>
 <h3 id="tls-in-kubernetes">TLS in Kubernetes</h3>
 <p>Kubernetes API typically runs on two ports.
   * 8080
@@ -360,7 +334,7 @@ Each of these topics will be discussed in detail in the later part of this chapt
 <li>Admission control is mainly used for fine-tuning access control.</li>
 <li>Admission control can directly act on the object being modified.</li>
 </ul>
-<h2 id="role-based-access-control-rbac_1">Role Based Access Control (RBAC)</h2>
+<h2 id="role-based-access-control-rbac">Role Based Access Control (RBAC)</h2>
 <ul>
 <li>RBAC is the most used form of access control to <strong>grant or revoke</strong> permissions to users.</li>
 <li>It is used for dynamically configuring policies through API.</li>
@@ -394,6 +368,35 @@ Each of these topics will be discussed in detail in the later part of this chapt
 <ul>
 <li>ClusterRoleBindings works same as RoleBindings, but cluster-wide.</li>
 </ul>
+<h2 id="example">Example</h2>
+<p>Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.</p>
+<h3 id="step-1-create-the-namespace">Step 1: Create the Namespace</h3>
+<p>Create the <strong>dev</strong> namespace if it has not been created already.</p>
+<p><code>dev-namespace.yml</code></p>
+<pre><code>apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    name: dev
+</code></pre>
+
+<pre><code>kubectl apply -f dev-namespace.yml
+</code></pre>
+
+<h3 id="step-2-create-the-user-credentials">Step 2: Create the user credentials</h3>
+<p>Next step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.</p>
+<pre><code>openssl genrsa -out john.key 2048
+openssl req -new -key vibe.key -out john.csr -subj &quot;/CN=john/O=my-org&quot;
+#copy over all key files from /etc/kubernetes directory of master when you run this command
+openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500
+# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)
+# Execute the following commands on the users system
+kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key
+kubectl config set-context developer --cluster=&lt;YOUR-CLUSTER-NAME&gt; --namespace=dev  --user=dev
+# This step will throw an error
+kubectl --context=developer get pods
+</code></pre>
               
             </div>
           </div>
@@ -401,10 +404,10 @@ Each of these topics will be discussed in detail in the later part of this chapt
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../pod_security/" class="btn btn-neutral float-right" title="Setting up Pod Security Policy">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../12_troubleshooting/" class="btn btn-neutral" title="Troubleshooting Tips"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../4_configs/" class="btn btn-neutral" title="Configuring Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -430,10 +433,10 @@ Each of these topics will be discussed in detail in the later part of this chapt
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../12_troubleshooting/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../4_configs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../pod_security/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

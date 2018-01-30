@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,62 +12,68 @@
     
         
     <url>
-     <loc>/2_kube-cluster-vagrant/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <loc>/2_kube_cluster_vagrant/</loc>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/3_install_kubernetes/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/4_configs/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/configuring_authentication_and_authorization/</loc>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/5_deploying_pods/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/6_kubernetes_deployment/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/7_exposing_app_with_service/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>/8_rollouts-and-rollbacks/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <loc>/8_rollouts_and_rollbacks/</loc>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/9_using_configmaps_and_secrets/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/10_kubernetes_autoscaling/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/11_deploying_sample_app/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -76,30 +82,14 @@
     
         
     <url>
-     <loc>/cluster-setup-kubespray/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <loc>/cluster_setup_kubespray/</loc>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/12_troubleshooting/</loc>
-     <lastmod>2018-01-25</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    
-
-    
-        
-    <url>
-     <loc>/configuring-authentication-and-authorization/</loc>
-     <lastmod>2018-01-25</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>/pod_security/</loc>
-     <lastmod>2018-01-25</lastmod>
+     <lastmod>2018-01-30</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
