@@ -239,8 +239,8 @@ Lets create a pod for database and attach a volume to it. To achieve this we wil
   * attach volume to container using **VolumeMounts** property
 
 Local host volumes are of two types:  
-  * emptyDir
-  * hostPath
+  * emptyDir  
+  * hostPath  
 
 We will pick hostPath. [Refer to this doc to read more about hostPath.](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
 
@@ -268,7 +268,7 @@ spec:
   volumes:
   - name: db-data
     hostPath:
-      path: /pgdata
+      path: /var/lib/pgdata
       type: DirectoryOrCreate
 ```
 
