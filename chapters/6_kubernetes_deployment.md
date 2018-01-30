@@ -8,7 +8,7 @@ Deployment has mainly two responsibilities,
   * Update Strategy: Define a release strategy and update the pods accordingly.
 
 
-File: vote-deploy.yaml
+File: /k8s-code/projects/instavote/dev/vote-deploy.yaml
 
 ```
 apiVersion: extensions/v1beta1
