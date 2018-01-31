@@ -59,7 +59,7 @@ Deployment spec (deployment.spec) contains the following,
 
 Lets  create the Deployment
 ```
-kubectl apply -f vote_deploy.yaml --record
+kubectl apply -f vote-deploy.yaml --record
 ```
 
 Now that the deployment is created. To validate,
