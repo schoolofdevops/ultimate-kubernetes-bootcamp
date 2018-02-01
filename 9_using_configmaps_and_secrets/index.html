@@ -93,10 +93,15 @@
     <a class="current" href="./">Using Configmaps and Secrets</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#injecting-env-variables-with-configmaps">Injecting env variables with configmaps</a></li>
+    <li class="toctree-l3"><a href="#configmap">Configmap</a></li>
     
-
-    <li class="toctree-l3"><a href="#configmap-as-a-configuration-file">Configmap as a configuration file</a></li>
+        <ul>
+        
+            <li><a class="toctree-l4" href="#injecting-env-variables-with-configmaps">Injecting env variables with configmaps</a></li>
+        
+            <li><a class="toctree-l4" href="#configmap-as-a-configuration-file">Configmap as a configuration file</a></li>
+        
+        </ul>
     
 
     <li class="toctree-l3"><a href="#secrets">Secrets</a></li>
@@ -172,7 +177,8 @@
           <div role="main">
             <div class="section">
               
-                <p>Configmap is one of the ways to provide configurations to your application.</p>
+                <h2 id="configmap">Configmap</h2>
+<p>Configmap is one of the ways to provide configurations to your application.</p>
 <h3 id="injecting-env-variables-with-configmaps">Injecting env variables with configmaps</h3>
 <p>Create our configmap for vote app</p>
 <p>file:  projects/instavote/dev/vote-cm.yaml</p>
