@@ -165,7 +165,7 @@
               
                 <h2 id="rolling-updates-with-deployments">Rolling updates with deployments</h2>
 <p>Update the version of the image in vote_deploy.yaml</p>
-<p>File: vote_deploy.yaml</p>
+<p>File: vote-deploy.yaml</p>
 <pre><code>...
     app: vote
     spec:
@@ -181,7 +181,7 @@ kubectl rollout status deployment/vote
 
 <h2 id="rolling-back-a-failed-update">Rolling Back a Failed Update</h2>
 <p>Lets update the image to a tag which is non existent. We intentionally introduce this intentional error to fail fail the deployment.</p>
-<p>File: vote_deploy.yaml</p>
+<p>File: vote-deploy.yaml</p>
 <pre><code>...
     app: vote
     spec:
@@ -191,7 +191,7 @@ kubectl rollout status deployment/vote
 </code></pre>
 
 <p>Do a new rollout and monitor</p>
-<pre><code>kubectl apply -f vote_deploy.yaml
+<pre><code>kubectl apply -f vote-deploy.yaml
 kubectl rollout status deployment/vote
 </code></pre>
 
