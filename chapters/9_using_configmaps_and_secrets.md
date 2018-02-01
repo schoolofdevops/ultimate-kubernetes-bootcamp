@@ -94,7 +94,8 @@ File: `redis-deploy.yaml`
 Secrets are for storing sensitive data like *passwords and keychains*. We will see how db deployment uses username and password in form of a secret.
 
 You would define two fields for db,
-  * username
+
+  * username 
   * password
 
 To create secrets for db you need to generate  *base64* format as follows,
