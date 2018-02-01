@@ -181,7 +181,7 @@ Currently, updating configMap does not ensure a new rollout of a deployment. Wha
 
 There is a feature request for this https://github.com/kubernetes/kubernetes/issues/22368
 
-Currently, this can be done by using immutable configMaps. 
+Currently, this can be done by using immutable configMaps.  
   * Create a configMaps and apply it with deployment.  
   * To update, create a new configMaps and do not update the previous one. Treat it as immutable. 
   * Update deployment spec to use the new version of the configMaps. This will ensure immediate update. 
