@@ -2,7 +2,7 @@
 
 Update the version of the image in vote_deploy.yaml
 
-File: vote_deploy.yaml
+File: vote-deploy.yaml
 ```
 ...
     app: vote
@@ -23,7 +23,7 @@ kubectl rollout status deployment/vote
 
 Lets update the image to a tag which is non existent. We intentionally introduce this intentional error to fail fail the deployment.
 
-File: vote_deploy.yaml
+File: vote-deploy.yaml
 ```
 ...
     app: vote
@@ -36,7 +36,7 @@ File: vote_deploy.yaml
 Do a new rollout and monitor
 
 ```
-kubectl apply -f vote_deploy.yaml
+kubectl apply -f vote-deploy.yaml
 kubectl rollout status deployment/vote
 ```
 
