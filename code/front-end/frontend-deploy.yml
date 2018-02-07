@@ -1,0 +1,23 @@
+apiVersioin: apps/v1beta1
+kind: Deployment
+metadata:
+  name: front-end
+  namespace: instavote
+  labels:
+    app: front-end
+    env: dev
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: front-end
+        env: dev
+    spec:
+      containers:
+        - name: front-end
+          image: schoolofdevops/frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8079
+
