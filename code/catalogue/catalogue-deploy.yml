@@ -1,0 +1,19 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: catalogue
+  namespace: catalogue
+  labels:
+    app: catalogue
+    env: dev
+spec:
+  replicas: 1
+  template:
+    labels: 
+      app: catalogue
+      env: dev
+    spec:
+      containers:
+        - name: catalogue
+          image: schoolofdevops/catalogue
+          imagePullPolicy: Always
