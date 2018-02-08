@@ -2,7 +2,7 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: catalogue
-  namespace: catalogue
+  namespace: instavote
   labels:
     app: catalogue
     env: dev
