@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: catalogue-db
+  namespace: instavote
+  labels:
+    app: catalogue-db
+    env: dev
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: catalogue-db
+          image: schoolofdevops/catalogue-db
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3306
+          envFrom:
+            - configMapRef:
+                name: catalogue-db

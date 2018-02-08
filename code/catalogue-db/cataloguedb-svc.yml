@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogue-db
+  namespace: instavote
+spec:
+  selectors:
+    app: catalogue-db
+  ports:
+    - protocol: TCP
+      port: 3306
