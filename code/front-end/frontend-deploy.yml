@@ -14,10 +14,36 @@ spec:
         app: front-end
         env: dev
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              matchExpressions:
+              - key: fruit
+                operator: In
+                values:
+                - orange
       containers:
         - name: front-end
           image: schoolofdevops/frontend
           imagePullPolicy: Always
           ports:
             - containerPort: 8079
-
+          livenessProbe:
+            tcpSocket:
+              port: 8079
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8079
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
