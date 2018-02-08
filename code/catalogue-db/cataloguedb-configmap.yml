@@ -4,6 +4,6 @@ metadata:
   name: catalogue-db
   namespace: instavote
 data:
-  MYSQL_ROOT_PASSWORD:
-  MYSQL_ALLOW_EMPTY_PASSWORD: true
+  MYSQL_ROOT_PASSWORD: ""
+  MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   MYSQL_DATABASE: socksdb

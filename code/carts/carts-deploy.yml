@@ -9,9 +9,14 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        app: carts
+        env: dev
     spec:
       containers:
         - name: carts
           image: schoolofdevops/carts
           imagePullPolicy: Always
-          
+          ports:
+            - containerPort: 80 

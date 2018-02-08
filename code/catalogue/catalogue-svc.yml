@@ -9,3 +9,8 @@ metadata:
 spec:
   selector:
     app: catalogue
+  ports:
+    - protocol: TCP
+      port: 80
+      
+     

@@ -9,11 +9,14 @@ metadata:
 spec:
   replicas: 1
   template:
-    labels: 
-      app: catalogue
-      env: dev
+    metadata:
+      labels: 
+        app: catalogue
+        env: dev
     spec:
       containers:
         - name: catalogue
           image: schoolofdevops/catalogue
           imagePullPolicy: Always
+          ports:
+            - containerPort: 80

@@ -6,3 +6,6 @@ metadata:
 spec:
   selector:
     app: carts
+  ports:
+    - protocol: TCP
+      port: 80

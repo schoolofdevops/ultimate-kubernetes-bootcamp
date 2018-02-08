@@ -4,7 +4,7 @@ metadata:
   name: catalogue-db
   namespace: instavote
 spec:
-  selectors:
+  selector:
     app: catalogue-db
   ports:
     - protocol: TCP

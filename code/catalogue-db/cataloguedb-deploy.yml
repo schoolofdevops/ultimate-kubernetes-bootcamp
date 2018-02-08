@@ -9,6 +9,10 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        app: catalogue-db
+        env: dev
     spec:
       containers:
         - name: catalogue-db
