@@ -10,10 +10,15 @@ spec:
   replicas: 1
   template:
     metadata:
-      labels: 
+      labels:
         app: catalogue
         env: dev
     spec:
+      tolerations:
+        - key: "dedicate"
+          operator: "Equal"
+          value: "catalogue"
+          effect: "NoExecute"
       containers:
         - name: catalogue
           image: schoolofdevops/catalogue

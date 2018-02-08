@@ -15,14 +15,17 @@ spec:
         env: dev
     spec:
       affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              matchExpressions:
-              - key: fruit
-                operator: In
-                values:
-                - orange
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - catalogue
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: front-end
           image: schoolofdevops/frontend

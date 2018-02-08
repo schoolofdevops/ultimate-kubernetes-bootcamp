@@ -19,7 +19,7 @@ Liveness probe checks the status of the pod(whether it is running or not). If li
 
 Let us add liveness probe to our *frontend* deployment. The following probe will check whether it is able to *access the port or not*.
 
-`File: code/front-end/fronend-deploy.yml`
+`File: code/frontend-deploy.yml`
 
 ```
 apiVersion: apps/v1beta1
@@ -84,7 +84,7 @@ Apply this deployment file and check the description of the pod
 
 `Expected output:`
 ```
-kubectl apply -f front-end/frontend-deploy.yml
+kubectl apply -f frontend-deploy.yml
 kubectl get pods
 kubectl describe pod front-end-bf86ffd8b-bjb7p
 
@@ -107,7 +107,7 @@ Readiness probe checks whether your application is ready to serve the requests. 
 
 Readiness probe is configured just like liveness probe. But this time we will use *httpGet request*.
 
-`File: code/front-end/fronend-deploy.yml`
+`File: code/frontend-deploy.yml`
 
 ```
 apiVersion: apps/v1beta1
@@ -171,7 +171,7 @@ Events:
 We can control the amount of resource requested and used by all the pods. This can be done by adding following data the deployment template.
 
 ### Resource Request
-`File: code/front-end/fronend-deploy.yml`
+`File: code/frontend-deploy.yml`
 
 ```
 apiVersion: apps/v1beta1
@@ -237,7 +237,7 @@ Containers:
 
 ### Resource limit
 
-`File: code/front-end/fronend-deploy.yml`
+`File: code/frontend-deploy.yml`
 
 ```
 apiVersion: apps/v1beta1
@@ -321,7 +321,7 @@ kubectl label node node1 fruit=apple
 
 Let us modify our deployment file to take advantage of this newly labeled node.
 
-`File: code/front-end/fronend-deploy.yml`
+`File: code/frontend-deploy.yml`
 
 ```
 apiVersion: apps/v1beta1
@@ -380,18 +380,264 @@ This is a soft affinity. If there are no nodes labeled as apple, the pod would h
 
 **Task:** Change the label value to some other fruit name and check the scheduling.
 
-Let us test the hard node affinity. This condition must be met for the pod to be scheduled. Change the deployment file as given below.
+Let us test the **hard node affinity**. This condition must be met for the pod to be scheduled. Change the deployment file as given below.
 
-`File: code/front-end/fronend-deploy.yml`
+`File: code/frontend-deploy.yml`
 
 ```
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: front-end
+  namespace: instavote
+  labels:
+    app: front-end
+    env: dev
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: front-end
+        env: dev
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: fruit
+                operator: In
+                values:
+                - orange
+      containers:
+        - name: front-end
+          image: schoolofdevops/frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8079
+          livenessProbe:
+            tcpSocket:
+              port: 8079
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8079
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+```
 
+`Expected output:`
+
+```
+kubectl describe pod front-end-d7b787cdf-hhvfr
+
+[...]
+Events:
+  Type     Reason            Age               From               Message
+  ----     ------            ----              ----               -------
+  Warning  FailedScheduling  32s (x8 over 1m)  default-scheduler  0/4 nodes are available: 4 MatchNodeSelector.
 ```
 
 ### Node Anti-Affinity
 
+Node anti-affinity can be achieved by using **NotIn** operator. This will help us to ignore nodes while scheduling.
+
+`File: code/frontend-deploy.yml`
+
+```
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: front-end
+  namespace: instavote
+  labels:
+    app: front-end
+    env: dev
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: front-end
+        env: dev
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: fruit
+                operator: NotIn
+                values:
+                - orange
+      containers:
+        - name: front-end
+          image: schoolofdevops/frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8079
+          livenessProbe:
+            tcpSocket:
+              port: 8079
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8079
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+```
+
+This will schedule the pod on nodes other than node1.
+
 ### Pod Affinity
+
+Node affinity allows you to schedule pods on selective nodes. But what if you want to run pods along with other pods selectively. Pod affinity helps us with that.
+
+`File: code/frontend-deploy.yml`
+
+```
+[..]
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - catalogue
+              topologyKey: kubernetes.io/hostname
+```
+
+`Expected output:`
+
+```
+kubectl describe pod front-end-85cc68d56b-4djtt
+
+[...]
+Events:
+  Type     Reason            Age               From               Message
+  ----     ------            ----              ----               -------
+  Warning  FailedScheduling  7s (x5 over 14s)  default-scheduler  0/4 nodes are available: 4 MatchInterPodAffinity, 4 PodAffinityRulesNotMatch
+```
+
+This is a hard pod affinity. If none of the node has a pod running with label **app=catalogue**, the pod will not be scheduled at all. Here **topologyKey** is a label of a node. This can be any node label.
 
 ### Pod Anti-Affinity
 
+Pod anti-affinity works the opposite way of pod affinity.
+
+Lets create **catalogue** deployment this time.
+
+```
+kubectl apply -f catalogue-deploy.yml
+```
+
+Catalogue deployment has a label called **app=catalogue**. Check on which node catalogue pod is running.
+
+```
+kubectl get pods -o wide
+
+NAME                         READY     STATUS    RESTARTS   AGE       IP             NODE
+catalogue-86647dcb5b-f6t2j   1/1       Running   0          9s        10.233.71.52   node3
+```
+
+Change the front-end deployment file as follows.
+
+`File: code/frontend-deploy.yml`
+
+```
+[...]
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - catalogue
+              topologyKey: kubernetes.io/hostname
+```
+
+Now apply the deployment.
+
+```
+kubectl apply -f frontend-deploy.yml
+kubectl get pods -o wide
+
+NAME                         READY     STATUS    RESTARTS   AGE       IP               NODE
+catalogue-86647dcb5b-f6t2j   1/1       Running   0          2m        10.233.71.52     node3
+front-end-5cbc986f44-mjr5m   1/1       Running   0          1m        10.233.102.134   node1
+```
+
 ## Taints and tolerations
+
+Taint the node.
+
+```
+kubectl taint node node4 dedicate=catalogue:NoExecute
+```
+
+Apply toleration in the Deployment.
+
+`File: code/catalogue-deploy.yml`
+
+```
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: catalogue
+  namespace: instavote
+  labels:
+    app: catalogue
+    env: dev
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: catalogue
+        env: dev
+    spec:
+      tolerations:
+        - key: "dedicate"
+          operator: "Equal"
+          value: "catalogue"
+          effect: "NoExecute"
+      containers:
+        - name: catalogue
+          image: schoolofdevops/catalogue
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+```
+
+Check the pod list. This catalogue pod will only be scheduled in node4. If there were any pod running in node4, before it got tainted, will be evicted to other hosts.
+
+---
+
+Need to talk about what a hard and soft affinity is. May need the change the node label used.
