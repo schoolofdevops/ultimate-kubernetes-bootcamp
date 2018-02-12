@@ -107,7 +107,7 @@
         
             <li><a class="toctree-l4" href="#set-up">Set up</a></li>
         
-            <li><a class="toctree-l4" href="#testing">Testing</a></li>
+            <li><a class="toctree-l4" href="#test">Test</a></li>
         
         </ul>
     
@@ -209,8 +209,11 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
 
 <p>In my case, port <strong>30073</strong> is the nodeport.</p>
 <p>Visit the port from the browser.</p>
+<pre><code>http://&lt;NODE_IP:NODE_PORT&gt;
+</code></pre>
+
 <p><img alt="kube-visualizer" src="../images/kube-visualizer.png" /></p>
-<h3 id="testing">Testing</h3>
+<h3 id="test">Test</h3>
 <p>Let us test how kubernetes cluster works.</p>
 <p>Clone kubernetes code repository from School of Devops.</p>
 <pre><code>git clone https://github.com/schoolofdevops/k8s-code
@@ -235,6 +238,8 @@ kubectl apply  -f vote-deploy.yaml
 [output]
 deployment &quot;vote&quot; created
 </code></pre>
+
+<p><img alt="kube-visualizer-deployment" src="../images/kube-visualizer-deployment.png" /></p>
               
             </div>
           </div>
