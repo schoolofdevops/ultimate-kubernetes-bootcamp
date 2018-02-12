@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: instavote
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: frontend.instavote.com
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: front-end
+            servicePort: 8079
