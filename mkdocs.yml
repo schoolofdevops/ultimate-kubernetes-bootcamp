@@ -1,7 +1,7 @@
 site_name: Kubernetes Fundamentals
 pages:
   - Home: "index.md"
-  - Bootcamp: 
+  - Bootcamp:
      - Provisioning VMs with Vagrant: "2_kube_cluster_vagrant.md"
      - Setup Kubernetes Cluster: "3_install_kubernetes.md"
      - Configuring Cluster: "4_configs.md"
@@ -12,8 +12,9 @@ pages:
      - Rollouts and Rollbacks: "8_rollouts_and_rollbacks.md"
      - Using Configmaps and Secrets: "9_using_configmaps_and_secrets.md"
      - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
+     - Kuberentes Visualizer : "kube_visualizer.md"
      - Mini Project: "11_deploying_sample_app.md"
-  - Additional Topics: 
+  - Additional Topics:
      - Production grade setup with Kubespray: "cluster_setup_kubespray.md"
      - Troubleshooting Tips: "12_troubleshooting.md"
 docs_dir: chapters
