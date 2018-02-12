@@ -81,3 +81,5 @@ kubectl apply  -f vote-deploy.yaml
 [output]
 deployment "vote" created
 ```
+
+![kube-visualizer-deployment](images/kube-visualizer-deployment.png)
