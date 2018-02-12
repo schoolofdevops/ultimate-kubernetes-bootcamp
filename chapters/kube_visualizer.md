@@ -46,9 +46,13 @@ In my case, port **30073** is the nodeport.
 
 Visit the port from the browser.
 
+```
+http://<NODE_IP:NODE_PORT>
+```
+
 ![kube-visualizer](images/kube-visualizer.png)
 
-### Testing
+### Test
 
 Let us test how kubernetes cluster works.
 
