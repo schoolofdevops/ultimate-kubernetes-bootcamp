@@ -281,7 +281,7 @@ Ingress can be used for,
 Let us see about different implementation of ingress.
 
 ```
-Keep or delete the following(Not enough use cases).
+Keep or delete the following(Need to come up with use cases).
 ### Single Service Ingress
 
 ### Simple fanout Ingress
