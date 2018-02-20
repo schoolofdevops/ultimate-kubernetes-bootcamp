@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Kubernetes RBAC - Kubernetes Fundamentals</title>
+  <title>Authentication and Authorization - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Kubernetes RBAC";
+    var mkdocs_page_name = "Authentication and Authorization";
     var mkdocs_page_input_path = "configuring_authentication_and_authorization.md";
     var mkdocs_page_url = "/configuring_authentication_and_authorization/";
   </script>
@@ -35,7 +35,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> Kubernetes Fundamentals</a>
+        <a href=".." class="icon icon-home"> Ultimate Kubernetes Bootcamp</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -54,8 +54,12 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Bootcamp</span>
+    <span class="caption-text">Setup</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
@@ -64,43 +68,16 @@
                     
     <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
                 </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Bootcamp</span>
+    <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../4_configs/">Configuring Cluster</a>
-                </li>
-                <li class=" current">
-                    
-    <a class="current" href="./">Kubernetes RBAC</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#configuring-authentication-and-authorization">Configuring Authentication and Authorization</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#create-namespace-for-a-useroptional">Create namespace for a user(Optional)</a></li>
-        
-            <li><a class="toctree-l4" href="#create-the-user-credentials">Create the user credentials</a></li>
-        
-            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
-        
-            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
-        
-            <li><a class="toctree-l4" href="#kubernetes-access-control">Kubernetes Access Control</a></li>
-        
-            <li><a class="toctree-l4" href="#how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</a></li>
-        
-            <li><a class="toctree-l4" href="#who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</a></li>
-        
-            <li><a class="toctree-l4" href="#stages-of-a-request">Stages of a Request</a></li>
-        
-            <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
-        
-            <li><a class="toctree-l4" href="#example">Example</a></li>
-        
-        </ul>
-    
-
-    </ul>
                 </li>
                 <li class="">
                     
@@ -152,6 +129,47 @@
     </ul>
 	    </li>
           
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Securing Kubernetes</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Authentication and Authorization</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#configuring-authentication-and-authorization">Configuring Authentication and Authorization</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#create-namespace-for-a-useroptional">Create namespace for a user(Optional)</a></li>
+        
+            <li><a class="toctree-l4" href="#create-the-user-credentials">Create the user credentials</a></li>
+        
+            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
+        
+            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
+        
+            <li><a class="toctree-l4" href="#kubernetes-access-control">Kubernetes Access Control</a></li>
+        
+            <li><a class="toctree-l4" href="#how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</a></li>
+        
+            <li><a class="toctree-l4" href="#who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</a></li>
+        
+            <li><a class="toctree-l4" href="#stages-of-a-request">Stages of a Request</a></li>
+        
+            <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
+        
+            <li><a class="toctree-l4" href="#example">Example</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+    </ul>
+	    </li>
+          
         </ul>
       </div>
       &nbsp;
@@ -162,7 +180,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">Kubernetes Fundamentals</a>
+        <a href="..">Ultimate Kubernetes Bootcamp</a>
       </nav>
 
       
@@ -174,11 +192,11 @@
     
       
         
-          <li>Bootcamp &raquo;</li>
+          <li>Securing Kubernetes &raquo;</li>
         
       
     
-    <li>Kubernetes RBAC</li>
+    <li>Authentication and Authorization</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -408,10 +426,8 @@ kubectl --context=developer get pods
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="../4_configs/" class="btn btn-neutral" title="Configuring Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../12_troubleshooting/" class="btn btn-neutral" title="Troubleshooting Tips"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -437,10 +453,8 @@ kubectl --context=developer get pods
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../4_configs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../12_troubleshooting/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

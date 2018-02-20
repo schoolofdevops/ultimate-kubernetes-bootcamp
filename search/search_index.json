@@ -2,18 +2,53 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Welcome to Kubernetes Fundamentals by School of Devops\n\n\nThis is a Lab Guide which goes along with the Docker and Kubernetes course by School of Devops.\n\n\nFor information about the devops trainign courses visit \nschoolofdevops.com\n.\n\n\nTeam\n\n\n\n\nGourav Shah\n\n\nVijayboopathy\n\n\nVenkat", 
+            "text": "Ultimate Kubernetes Bootcamp\n\n\nWelcome to Kubernetes Fundamentals by School of Devops\n\n\nThis is a Lab Guide which goes along with the Docker and Kubernetes course by School of Devops.\n\n\nFor information about the devops trainign courses visit \nschoolofdevops.com\n.\n\n\nTeam\n\n\n\n\nGourav Shah\n\n\nVijayboopathy\n\n\nVenkat", 
             "title": "Home"
         }, 
         {
-            "location": "/#welcome-to-kubernetes-fundamentals-by-school-of-devops", 
-            "text": "This is a Lab Guide which goes along with the Docker and Kubernetes course by School of Devops.  For information about the devops trainign courses visit  schoolofdevops.com .", 
-            "title": "Welcome to Kubernetes Fundamentals by School of Devops"
+            "location": "/#ultimate-kubernetes-bootcamp", 
+            "text": "Welcome to Kubernetes Fundamentals by School of Devops  This is a Lab Guide which goes along with the Docker and Kubernetes course by School of Devops.  For information about the devops trainign courses visit  schoolofdevops.com .", 
+            "title": "Ultimate Kubernetes Bootcamp"
         }, 
         {
             "location": "/#team", 
             "text": "Gourav Shah  Vijayboopathy  Venkat", 
             "title": "Team"
+        }, 
+        {
+            "location": "/minikube/", 
+            "text": "Single node k8s cluster with Minikube\n\n\nMinikube offers one of the easiest zero to dev experience\nto setup a single node kubernetes cluster. Its also the ideal way\nto create a local dev environment to test kubernetes code on.\n\n\nThis document explains how to setup and work with single node kubernetes cluster with minikube.\n\n\nInstall Minikube\n\n\nInstructions to install minikube may vary based on the operating system and choice of the hypervisor.\n\nThis is the official document\n which explains how to install minikube.\n\n\nStart all in one single node cluster with minikube\n\n\nminikube status\n\n\n\n\n[output]\n\n\nminikube:\ncluster:\nkubectl:\n\n\n\n\nminikube start\n\n\n\n\n[output]\n\n\nStarting local Kubernetes v1.8.0 cluster...\nStarting VM...\nGetting VM IP address...\nMoving files into cluster...\nSetting up certs...\nConnecting to cluster...\nSetting up kubeconfig...\nStarting cluster components...\nKubectl is now configured to use the cluster.\nLoading cached images from config file.\n\n\n\n\nminikube status\n\n\n\n\n\n[output]\n\n\nminikube: Running\ncluster: Running\nkubectl: Correctly Configured: pointing to minikube-vm at 192.168.99.100\n\n\n\n\nLaunch a kubernetes dashboard\n\n\nminikube dashboard\n\n\n\n\nSetting up docker environment\n\n\nminikube docker-env\nexport DOCKER_TLS_VERIFY=\n1\n\nexport DOCKER_HOST=\ntcp://192.168.99.100:2376\n\nexport DOCKER_CERT_PATH=\n/Users/gouravshah/.minikube/certs\n\nexport DOCKER_API_VERSION=\n1.23\n\n# Run this command to configure your shell:\n# eval $(minikube docker-env)\n\n\n\n\nRun the command given above,\ne.g.\n\n\neval $(minikube docker-env)\n\n\n\n\nNow your docker client should be able to connect with the minikube cluster\n\n\ndocker ps\n\n\n\n\nAdditional Commands\n\n\nminikube ip\nminikube get-k8s-versions\nminikube logs", 
+            "title": "Using minikube to setup single node environment"
+        }, 
+        {
+            "location": "/minikube/#single-node-k8s-cluster-with-minikube", 
+            "text": "Minikube offers one of the easiest zero to dev experience\nto setup a single node kubernetes cluster. Its also the ideal way\nto create a local dev environment to test kubernetes code on.  This document explains how to setup and work with single node kubernetes cluster with minikube.", 
+            "title": "Single node k8s cluster with Minikube"
+        }, 
+        {
+            "location": "/minikube/#install-minikube", 
+            "text": "Instructions to install minikube may vary based on the operating system and choice of the hypervisor. This is the official document  which explains how to install minikube.", 
+            "title": "Install Minikube"
+        }, 
+        {
+            "location": "/minikube/#start-all-in-one-single-node-cluster-with-minikube", 
+            "text": "minikube status  [output]  minikube:\ncluster:\nkubectl:  minikube start  [output]  Starting local Kubernetes v1.8.0 cluster...\nStarting VM...\nGetting VM IP address...\nMoving files into cluster...\nSetting up certs...\nConnecting to cluster...\nSetting up kubeconfig...\nStarting cluster components...\nKubectl is now configured to use the cluster.\nLoading cached images from config file.  minikube status  [output]  minikube: Running\ncluster: Running\nkubectl: Correctly Configured: pointing to minikube-vm at 192.168.99.100", 
+            "title": "Start all in one single node cluster with minikube"
+        }, 
+        {
+            "location": "/minikube/#launch-a-kubernetes-dashboard", 
+            "text": "minikube dashboard", 
+            "title": "Launch a kubernetes dashboard"
+        }, 
+        {
+            "location": "/minikube/#setting-up-docker-environment", 
+            "text": "minikube docker-env\nexport DOCKER_TLS_VERIFY= 1 \nexport DOCKER_HOST= tcp://192.168.99.100:2376 \nexport DOCKER_CERT_PATH= /Users/gouravshah/.minikube/certs \nexport DOCKER_API_VERSION= 1.23 \n# Run this command to configure your shell:\n# eval $(minikube docker-env)  Run the command given above,\ne.g.  eval $(minikube docker-env)  Now your docker client should be able to connect with the minikube cluster  docker ps", 
+            "title": "Setting up docker environment"
+        }, 
+        {
+            "location": "/minikube/#additional-commands", 
+            "text": "minikube ip\nminikube get-k8s-versions\nminikube logs", 
+            "title": "Additional Commands"
         }, 
         {
             "location": "/2_kube_cluster_vagrant/", 
@@ -134,136 +169,6 @@
             "location": "/4_configs/#creating-a-namespace-for-instavote-project", 
             "text": "Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.     Lets create a namespace called  instavote     file: k8s-code/projects/instavote/instavote-ns.yaml  kind: Namespace\napiVersion: v1\nmetadata:\n  name: instavote  To create namespace  cd k8s-code/projects/instavote\nkubectl get ns\nkubectl apply -f dev_instavote.yaml\nkubectl get ns  And switch to it  kubectl config set-context $(kubectl config current-context) --namespace=instavote", 
             "title": "Creating a namespace for instavote project"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/", 
-            "text": "Configuring Authentication and Authorization\n\n\nCreate namespace for a user(Optional)\n\n\nCreate the user credentials\n\n\nopenssl genrsa -out vibe.key 2048\nopenssl req -new -key vibe.key -out vibe.csr -subj \n/CN=vibe/O=initcron\n\n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key\nkubectl config set-context vibe-context --cluster=\nYOUR-CLUSTER-NAME\n --namespace=\nNAMESPACE-FOR-USER\n  --user=vibe\n# This step will throw an error\nkubectl --context=vibe-context get pods\n\n\n\n\nCreate role for the developers\n\n\nThese steps (3,4) has to be executed from kube-master or the controller machine\n\ndev-role.yml\n\n\nkind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [\n, \nextensions\n, \napps\n]\n  resources: [\ndeployments\n, \nreplicasets\n, \npods\n]\n  verbs: [\nget\n, \nlist\n, \nwatch\n, \ncreate\n, \nupdate\n, \npatch\n, \ndelete\n]\n\n\n\n\nkubectl create -f dev-role.yml\n\n\n\n\nCreate RoleBindings for the dev-role\n\n\ndev-rolebinding.yml\n\n\nkind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: vibe\n  apiGroup: \n\nroleRef:\n  kind: Role\n  name: developer\n  apiGroup: \n\n\n\n\n\nkubectl create -f dev-rolebinding.yaml\n\n\n\n\nKubernetes Access Control\n\n\nIn this chapter, we will see about how to use authentication and authorisation of Kubernetes.\n\n\nHow one can access the Kubernetes API?\n\n\nThe Kubernetes API can be accessed by three ways. \n  * Kubeclt - A command line utility of Kubernetes \n  * Client libraries - Go, Python, etc., \n  * REST requests \n\n\nWho can access the Kubernetes API?\n\n\nKubernetes API can be accessed by,\n  * Human users \n  * Service Accounts \nEach of these topics will be discussed in detail in the later part of this chapter.\n\n\nStages of a Request\n\n\nWhen a request tries to contact the API , it goes through various stages as illustrated in the image given below.\n\n\n\n\nsource: official kubernetes site\n\n\nTLS in Kubernetes\n\n\nKubernetes API typically runs on two ports.\n  * 8080 \n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager). \n    * This port is insecure. \n  * 6443 \n    * TLS Enabled. \n    * Available for kubectl and others. \n\n\nStage 1: Authentication\n\n\n\n\nAuthentication operation checks whether the \nuser/service account\n has the permission to talk to the api server or not.\n\n\nAuthentication is done by the authentication modules which are configured with the api server.\n\n\nCluster uses with one or more authentication modules enabled.\n\n\nIf the request fails to authenticate itself, it will be served with \n401 error\n.\n\n\n\n\nAuthentication for Normal User\n\n\n\n\nKubernetes uses \nusernames\n for access control.\n\n\nBut it neither has an api object nor stores information about users in its data store.\n\n\nUsers need to be managed externally by the cluster administrator.\n\n\n\n\nAuthentication for Service Accounts\n\n\n\n\nUnlike user accounts, service accounts are managed by Kubernetes.\n\n\nservice accounts\n are bound to specific namespaces.\n\n\nCredentials for \nservice Accounts\n are stored as \nsecrets\n.\n\n\nThese secrets are mounted to pods when a deployment starts using the Service Account.\n\n\n\n\nStage 2: Authorization\n\n\n\n\nAfter a request successfully authenticated, it goes through the authorization process.\n\n\nIn order for a request to be authorized, it must consist following attributes.\n\n\nUsername of the requester(User)\n\n\nRequested action(Verb)\n\n\nThe object affected(Resource)\n\n\n\n\n\n\nAuthorization is done by the following modules. Each of these modules has a special purpose.\n\n\nAttribute Based Access Control(ABAC)\n\n\nRole Based Access Control(RBAC)\n\n\nNode Authorizer\n\n\nWebhook module\n\n\n\n\n\n\nIf a request is failed to get authorized, it will be served with \n403 error\n.\n\n\nAmong these modules, RBAC is the most used authorizer while,\n\n\nABAC is used for,\n\n\nPolicy based, fine grained access control\n\n\nThe caveat is api server has to be restarted whenever we define a ABAC policy\n\n\nNode Authorizer is,\n\n\nEnabled in all the worker nodes\n\n\nGrants access to kubelet for some of the resources.\n\n\n\n\n\n\nWe have already talked about the user in detail. Now lets focus on \nverbs\n and \nresources\n\n\nWe will talk about RBAC in detail in the later part\n\n\n\n\nVerbs\n\n\n\n\nVerbs are the \naction\n to be taken on resources.\n\n\nSome of the verbs in Kubernetes are,\n\n\nget\n\n\nlist\n\n\ncreate\n\n\nupdate\n\n\npatch\n\n\nwatch\n\n\ndelete\n\n\n\n\n\n\n\n\nResources\n\n\n\n\nResources are the object being manipulated by the verb.\n\n\nEx: pods, deployments, service, namespaces, nodes, etc.,\n\n\n\n\nStage 3: Admission Control\n\n\n\n\nAdmission control part is taken care of by the software modules that can modify/reject requests.\n\n\nAdmission control is mainly used for fine-tuning access control.\n\n\nAdmission control can directly act on the object being modified.\n\n\n\n\nRole Based Access Control (RBAC)\n\n\n\n\nRBAC is the most used form of access control to \ngrant or revoke\n permissions to users.\n\n\nIt is used for dynamically configuring policies through API.\n\n\nRBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.\n\n\nObjects that are used to create policies,\n\n\nRoles,\n\n\nClusterRoles.\n\n\n\n\n\n\nObjects that are used to implement policies,\n\n\nRoleBindings,\n\n\nClusterRoleBindings.\n\n\n\n\n\n\n\n\nRoles\n\n\n\n\nRoles grant access to resources \nwithin a single namespace\n.\n\n\nRoles cannot grant permission for global(cluster-wide) resources.\n\n\n\n\nClusterRoles\n\n\n\n\nClusterRoles works similar to Roles, but for \ncluster-wide\n resources.\n\n\n\n\nRoleBindings\n\n\n\n\nRoleBidings are used to grant permission defined in a Role to \na user or a set of users\n.\n\n\nRoleBindings can also refer to \nClusterRoles\n.\n\n\n\n\nClusrerRoleBindings\n\n\n\n\nClusterRoleBindings works same as RoleBindings, but cluster-wide.\n\n\n\n\nExample\n\n\nLet us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.\n\n\nStep 1: Create the Namespace\n\n\nCreate the \ndev\n namespace if it has not been created already.\n\n\ndev-namespace.yml\n\n\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev\n\n\n\n\nkubectl apply -f dev-namespace.yml\n\n\n\n\nStep 2: Create the user credentials\n\n\nNext step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.\n\n\nopenssl genrsa -out john.key 2048\nopenssl req -new -key vibe.key -out john.csr -subj \n/CN=john/O=my-org\n\n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context developer --cluster=\nYOUR-CLUSTER-NAME\n --namespace=dev  --user=dev\n# This step will throw an error\nkubectl --context=developer get pods", 
-            "title": "Kubernetes RBAC"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#configuring-authentication-and-authorization", 
-            "text": "", 
-            "title": "Configuring Authentication and Authorization"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-namespace-for-a-useroptional", 
-            "text": "", 
-            "title": "Create namespace for a user(Optional)"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-the-user-credentials", 
-            "text": "openssl genrsa -out vibe.key 2048\nopenssl req -new -key vibe.key -out vibe.csr -subj  /CN=vibe/O=initcron \n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key\nkubectl config set-context vibe-context --cluster= YOUR-CLUSTER-NAME  --namespace= NAMESPACE-FOR-USER   --user=vibe\n# This step will throw an error\nkubectl --context=vibe-context get pods", 
-            "title": "Create the user credentials"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-role-for-the-developers", 
-            "text": "These steps (3,4) has to be executed from kube-master or the controller machine dev-role.yml  kind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [ ,  extensions ,  apps ]\n  resources: [ deployments ,  replicasets ,  pods ]\n  verbs: [ get ,  list ,  watch ,  create ,  update ,  patch ,  delete ]  kubectl create -f dev-role.yml", 
-            "title": "Create role for the developers"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-rolebindings-for-the-dev-role", 
-            "text": "dev-rolebinding.yml  kind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: vibe\n  apiGroup:  \nroleRef:\n  kind: Role\n  name: developer\n  apiGroup:    kubectl create -f dev-rolebinding.yaml", 
-            "title": "Create RoleBindings for the dev-role"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#kubernetes-access-control", 
-            "text": "In this chapter, we will see about how to use authentication and authorisation of Kubernetes.", 
-            "title": "Kubernetes Access Control"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#how-one-can-access-the-kubernetes-api", 
-            "text": "The Kubernetes API can be accessed by three ways. \n  * Kubeclt - A command line utility of Kubernetes \n  * Client libraries - Go, Python, etc., \n  * REST requests", 
-            "title": "How one can access the Kubernetes API?"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#who-can-access-the-kubernetes-api", 
-            "text": "Kubernetes API can be accessed by,\n  * Human users \n  * Service Accounts \nEach of these topics will be discussed in detail in the later part of this chapter.", 
-            "title": "Who can access the Kubernetes API?"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stages-of-a-request", 
-            "text": "When a request tries to contact the API , it goes through various stages as illustrated in the image given below.   source: official kubernetes site", 
-            "title": "Stages of a Request"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#tls-in-kubernetes", 
-            "text": "Kubernetes API typically runs on two ports.\n  * 8080 \n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager). \n    * This port is insecure. \n  * 6443 \n    * TLS Enabled. \n    * Available for kubectl and others.", 
-            "title": "TLS in Kubernetes"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stage-1-authentication", 
-            "text": "Authentication operation checks whether the  user/service account  has the permission to talk to the api server or not.  Authentication is done by the authentication modules which are configured with the api server.  Cluster uses with one or more authentication modules enabled.  If the request fails to authenticate itself, it will be served with  401 error .", 
-            "title": "Stage 1: Authentication"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#authentication-for-normal-user", 
-            "text": "Kubernetes uses  usernames  for access control.  But it neither has an api object nor stores information about users in its data store.  Users need to be managed externally by the cluster administrator.", 
-            "title": "Authentication for Normal User"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#authentication-for-service-accounts", 
-            "text": "Unlike user accounts, service accounts are managed by Kubernetes.  service accounts  are bound to specific namespaces.  Credentials for  service Accounts  are stored as  secrets .  These secrets are mounted to pods when a deployment starts using the Service Account.", 
-            "title": "Authentication for Service Accounts"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stage-2-authorization", 
-            "text": "After a request successfully authenticated, it goes through the authorization process.  In order for a request to be authorized, it must consist following attributes.  Username of the requester(User)  Requested action(Verb)  The object affected(Resource)    Authorization is done by the following modules. Each of these modules has a special purpose.  Attribute Based Access Control(ABAC)  Role Based Access Control(RBAC)  Node Authorizer  Webhook module    If a request is failed to get authorized, it will be served with  403 error .  Among these modules, RBAC is the most used authorizer while,  ABAC is used for,  Policy based, fine grained access control  The caveat is api server has to be restarted whenever we define a ABAC policy  Node Authorizer is,  Enabled in all the worker nodes  Grants access to kubelet for some of the resources.    We have already talked about the user in detail. Now lets focus on  verbs  and  resources  We will talk about RBAC in detail in the later part", 
-            "title": "Stage 2: Authorization"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#verbs", 
-            "text": "Verbs are the  action  to be taken on resources.  Some of the verbs in Kubernetes are,  get  list  create  update  patch  watch  delete", 
-            "title": "Verbs"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#resources", 
-            "text": "Resources are the object being manipulated by the verb.  Ex: pods, deployments, service, namespaces, nodes, etc.,", 
-            "title": "Resources"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stage-3-admission-control", 
-            "text": "Admission control part is taken care of by the software modules that can modify/reject requests.  Admission control is mainly used for fine-tuning access control.  Admission control can directly act on the object being modified.", 
-            "title": "Stage 3: Admission Control"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#role-based-access-control-rbac", 
-            "text": "RBAC is the most used form of access control to  grant or revoke  permissions to users.  It is used for dynamically configuring policies through API.  RBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.  Objects that are used to create policies,  Roles,  ClusterRoles.    Objects that are used to implement policies,  RoleBindings,  ClusterRoleBindings.", 
-            "title": "Role Based Access Control (RBAC)"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#roles", 
-            "text": "Roles grant access to resources  within a single namespace .  Roles cannot grant permission for global(cluster-wide) resources.", 
-            "title": "Roles"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#clusterroles", 
-            "text": "ClusterRoles works similar to Roles, but for  cluster-wide  resources.", 
-            "title": "ClusterRoles"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#rolebindings", 
-            "text": "RoleBidings are used to grant permission defined in a Role to  a user or a set of users .  RoleBindings can also refer to  ClusterRoles .", 
-            "title": "RoleBindings"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#clusrerrolebindings", 
-            "text": "ClusterRoleBindings works same as RoleBindings, but cluster-wide.", 
-            "title": "ClusrerRoleBindings"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#example", 
-            "text": "Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.", 
-            "title": "Example"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#step-1-create-the-namespace", 
-            "text": "Create the  dev  namespace if it has not been created already.  dev-namespace.yml  apiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev  kubectl apply -f dev-namespace.yml", 
-            "title": "Step 1: Create the Namespace"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#step-2-create-the-user-credentials", 
-            "text": "Next step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.  openssl genrsa -out john.key 2048\nopenssl req -new -key vibe.key -out john.csr -subj  /CN=john/O=my-org \n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context developer --cluster= YOUR-CLUSTER-NAME  --namespace=dev  --user=dev\n# This step will throw an error\nkubectl --context=developer get pods", 
-            "title": "Step 2: Create the user credentials"
         }, 
         {
             "location": "/5_deploying_pods/", 
@@ -624,6 +529,136 @@
             "location": "/12_troubleshooting/#checking-the-status-of-deployment", 
             "text": "For this example I have a sample deployment called nginx.  FILE: nginx-deployment.yml  apiVersion: apps/v1beta1\nkind: Deployment\nmetadata:\n  name: nginx\n  labels:\n    app: nginx\nspec:\n  replicas: 1\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n        - name: nginx\n          image: ngnix:latest\n          ports:\n            - containerPort: 80  List the deployment to check for the  availability of pods  kubectl get deployment nginx\n\nNAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE\nnginx         1         1         1            0           20h  It is clear that my pod is unavailable. Lets dig further.  Check the  events  of your deployment.  kubectl describe deployment nginx  List the pods to check for any  registry related error  kubectl get pods\n\nNAME                           READY     STATUS             RESTARTS   AGE\nnginx-57c88d7bb8-c6kpc         0/1       ImagePullBackOff   0          7m  As we can see, we are not able to pull the image( ImagePullBackOff ). Let's investigate further.  kubectl describe pod nginx-57c88d7bb8-c6kpc  Check the events of the pod's description.  Events:\n  Type     Reason                 Age               From                                               Message\n  ----     ------                 ----              ----                                               -------\n  Normal   Scheduled              9m                default-scheduler                                  Successfully assigned nginx-57c88d7bb8-c6kpc to ip-11-0-1-111.us-west-2.compute.internal\n  Normal   SuccessfulMountVolume  9m                kubelet, ip-11-0-1-111.us-west-2.compute.internal  MountVolume.SetUp succeeded for volume  default-token-8cwn4 \n  Normal   Pulling                8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  pulling image  ngnix \n  Warning  Failed                 8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Failed to pull image  ngnix : rpc error: code = Unknown desc = Error response from daemon: repository ngnix not found: does not exist or no pull access\n  Normal   BackOff                7m (x6 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Back-off pulling image  ngnix \n  Warning  FailedSync             4m (x24 over 9m)  kubelet, ip-11-0-1-111.us-west-2.compute.internal  Error syncing pod  Bingo! The name of the image is  ngnix  instead of  nginx . So  fix the typo in your deployment file and redo the deployment .  Sometimes, your application(pod) may fail to start because of some configuration issues. For those errors, we can follow the logs of the pod.  kubectl logs -f nginx-57c88d7bb8-c6kpc  If you have any errors it will get populated in your logs.", 
             "title": "Checking the status of Deployment"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/", 
+            "text": "Configuring Authentication and Authorization\n\n\nCreate namespace for a user(Optional)\n\n\nCreate the user credentials\n\n\nopenssl genrsa -out vibe.key 2048\nopenssl req -new -key vibe.key -out vibe.csr -subj \n/CN=vibe/O=initcron\n\n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key\nkubectl config set-context vibe-context --cluster=\nYOUR-CLUSTER-NAME\n --namespace=\nNAMESPACE-FOR-USER\n  --user=vibe\n# This step will throw an error\nkubectl --context=vibe-context get pods\n\n\n\n\nCreate role for the developers\n\n\nThese steps (3,4) has to be executed from kube-master or the controller machine\n\ndev-role.yml\n\n\nkind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [\n, \nextensions\n, \napps\n]\n  resources: [\ndeployments\n, \nreplicasets\n, \npods\n]\n  verbs: [\nget\n, \nlist\n, \nwatch\n, \ncreate\n, \nupdate\n, \npatch\n, \ndelete\n]\n\n\n\n\nkubectl create -f dev-role.yml\n\n\n\n\nCreate RoleBindings for the dev-role\n\n\ndev-rolebinding.yml\n\n\nkind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: vibe\n  apiGroup: \n\nroleRef:\n  kind: Role\n  name: developer\n  apiGroup: \n\n\n\n\n\nkubectl create -f dev-rolebinding.yaml\n\n\n\n\nKubernetes Access Control\n\n\nIn this chapter, we will see about how to use authentication and authorisation of Kubernetes.\n\n\nHow one can access the Kubernetes API?\n\n\nThe Kubernetes API can be accessed by three ways. \n  * Kubeclt - A command line utility of Kubernetes \n  * Client libraries - Go, Python, etc., \n  * REST requests \n\n\nWho can access the Kubernetes API?\n\n\nKubernetes API can be accessed by,\n  * Human users \n  * Service Accounts \nEach of these topics will be discussed in detail in the later part of this chapter.\n\n\nStages of a Request\n\n\nWhen a request tries to contact the API , it goes through various stages as illustrated in the image given below.\n\n\n\n\nsource: official kubernetes site\n\n\nTLS in Kubernetes\n\n\nKubernetes API typically runs on two ports.\n  * 8080 \n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager). \n    * This port is insecure. \n  * 6443 \n    * TLS Enabled. \n    * Available for kubectl and others. \n\n\nStage 1: Authentication\n\n\n\n\nAuthentication operation checks whether the \nuser/service account\n has the permission to talk to the api server or not.\n\n\nAuthentication is done by the authentication modules which are configured with the api server.\n\n\nCluster uses with one or more authentication modules enabled.\n\n\nIf the request fails to authenticate itself, it will be served with \n401 error\n.\n\n\n\n\nAuthentication for Normal User\n\n\n\n\nKubernetes uses \nusernames\n for access control.\n\n\nBut it neither has an api object nor stores information about users in its data store.\n\n\nUsers need to be managed externally by the cluster administrator.\n\n\n\n\nAuthentication for Service Accounts\n\n\n\n\nUnlike user accounts, service accounts are managed by Kubernetes.\n\n\nservice accounts\n are bound to specific namespaces.\n\n\nCredentials for \nservice Accounts\n are stored as \nsecrets\n.\n\n\nThese secrets are mounted to pods when a deployment starts using the Service Account.\n\n\n\n\nStage 2: Authorization\n\n\n\n\nAfter a request successfully authenticated, it goes through the authorization process.\n\n\nIn order for a request to be authorized, it must consist following attributes.\n\n\nUsername of the requester(User)\n\n\nRequested action(Verb)\n\n\nThe object affected(Resource)\n\n\n\n\n\n\nAuthorization is done by the following modules. Each of these modules has a special purpose.\n\n\nAttribute Based Access Control(ABAC)\n\n\nRole Based Access Control(RBAC)\n\n\nNode Authorizer\n\n\nWebhook module\n\n\n\n\n\n\nIf a request is failed to get authorized, it will be served with \n403 error\n.\n\n\nAmong these modules, RBAC is the most used authorizer while,\n\n\nABAC is used for,\n\n\nPolicy based, fine grained access control\n\n\nThe caveat is api server has to be restarted whenever we define a ABAC policy\n\n\nNode Authorizer is,\n\n\nEnabled in all the worker nodes\n\n\nGrants access to kubelet for some of the resources.\n\n\n\n\n\n\nWe have already talked about the user in detail. Now lets focus on \nverbs\n and \nresources\n\n\nWe will talk about RBAC in detail in the later part\n\n\n\n\nVerbs\n\n\n\n\nVerbs are the \naction\n to be taken on resources.\n\n\nSome of the verbs in Kubernetes are,\n\n\nget\n\n\nlist\n\n\ncreate\n\n\nupdate\n\n\npatch\n\n\nwatch\n\n\ndelete\n\n\n\n\n\n\n\n\nResources\n\n\n\n\nResources are the object being manipulated by the verb.\n\n\nEx: pods, deployments, service, namespaces, nodes, etc.,\n\n\n\n\nStage 3: Admission Control\n\n\n\n\nAdmission control part is taken care of by the software modules that can modify/reject requests.\n\n\nAdmission control is mainly used for fine-tuning access control.\n\n\nAdmission control can directly act on the object being modified.\n\n\n\n\nRole Based Access Control (RBAC)\n\n\n\n\nRBAC is the most used form of access control to \ngrant or revoke\n permissions to users.\n\n\nIt is used for dynamically configuring policies through API.\n\n\nRBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.\n\n\nObjects that are used to create policies,\n\n\nRoles,\n\n\nClusterRoles.\n\n\n\n\n\n\nObjects that are used to implement policies,\n\n\nRoleBindings,\n\n\nClusterRoleBindings.\n\n\n\n\n\n\n\n\nRoles\n\n\n\n\nRoles grant access to resources \nwithin a single namespace\n.\n\n\nRoles cannot grant permission for global(cluster-wide) resources.\n\n\n\n\nClusterRoles\n\n\n\n\nClusterRoles works similar to Roles, but for \ncluster-wide\n resources.\n\n\n\n\nRoleBindings\n\n\n\n\nRoleBidings are used to grant permission defined in a Role to \na user or a set of users\n.\n\n\nRoleBindings can also refer to \nClusterRoles\n.\n\n\n\n\nClusrerRoleBindings\n\n\n\n\nClusterRoleBindings works same as RoleBindings, but cluster-wide.\n\n\n\n\nExample\n\n\nLet us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.\n\n\nStep 1: Create the Namespace\n\n\nCreate the \ndev\n namespace if it has not been created already.\n\n\ndev-namespace.yml\n\n\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev\n\n\n\n\nkubectl apply -f dev-namespace.yml\n\n\n\n\nStep 2: Create the user credentials\n\n\nNext step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.\n\n\nopenssl genrsa -out john.key 2048\nopenssl req -new -key vibe.key -out john.csr -subj \n/CN=john/O=my-org\n\n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context developer --cluster=\nYOUR-CLUSTER-NAME\n --namespace=dev  --user=dev\n# This step will throw an error\nkubectl --context=developer get pods", 
+            "title": "Authentication and Authorization"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#configuring-authentication-and-authorization", 
+            "text": "", 
+            "title": "Configuring Authentication and Authorization"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-namespace-for-a-useroptional", 
+            "text": "", 
+            "title": "Create namespace for a user(Optional)"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-the-user-credentials", 
+            "text": "openssl genrsa -out vibe.key 2048\nopenssl req -new -key vibe.key -out vibe.csr -subj  /CN=vibe/O=initcron \n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key\nkubectl config set-context vibe-context --cluster= YOUR-CLUSTER-NAME  --namespace= NAMESPACE-FOR-USER   --user=vibe\n# This step will throw an error\nkubectl --context=vibe-context get pods", 
+            "title": "Create the user credentials"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-role-for-the-developers", 
+            "text": "These steps (3,4) has to be executed from kube-master or the controller machine dev-role.yml  kind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [ ,  extensions ,  apps ]\n  resources: [ deployments ,  replicasets ,  pods ]\n  verbs: [ get ,  list ,  watch ,  create ,  update ,  patch ,  delete ]  kubectl create -f dev-role.yml", 
+            "title": "Create role for the developers"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-rolebindings-for-the-dev-role", 
+            "text": "dev-rolebinding.yml  kind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: vibe\n  apiGroup:  \nroleRef:\n  kind: Role\n  name: developer\n  apiGroup:    kubectl create -f dev-rolebinding.yaml", 
+            "title": "Create RoleBindings for the dev-role"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#kubernetes-access-control", 
+            "text": "In this chapter, we will see about how to use authentication and authorisation of Kubernetes.", 
+            "title": "Kubernetes Access Control"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#how-one-can-access-the-kubernetes-api", 
+            "text": "The Kubernetes API can be accessed by three ways. \n  * Kubeclt - A command line utility of Kubernetes \n  * Client libraries - Go, Python, etc., \n  * REST requests", 
+            "title": "How one can access the Kubernetes API?"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#who-can-access-the-kubernetes-api", 
+            "text": "Kubernetes API can be accessed by,\n  * Human users \n  * Service Accounts \nEach of these topics will be discussed in detail in the later part of this chapter.", 
+            "title": "Who can access the Kubernetes API?"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stages-of-a-request", 
+            "text": "When a request tries to contact the API , it goes through various stages as illustrated in the image given below.   source: official kubernetes site", 
+            "title": "Stages of a Request"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#tls-in-kubernetes", 
+            "text": "Kubernetes API typically runs on two ports.\n  * 8080 \n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager). \n    * This port is insecure. \n  * 6443 \n    * TLS Enabled. \n    * Available for kubectl and others.", 
+            "title": "TLS in Kubernetes"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stage-1-authentication", 
+            "text": "Authentication operation checks whether the  user/service account  has the permission to talk to the api server or not.  Authentication is done by the authentication modules which are configured with the api server.  Cluster uses with one or more authentication modules enabled.  If the request fails to authenticate itself, it will be served with  401 error .", 
+            "title": "Stage 1: Authentication"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#authentication-for-normal-user", 
+            "text": "Kubernetes uses  usernames  for access control.  But it neither has an api object nor stores information about users in its data store.  Users need to be managed externally by the cluster administrator.", 
+            "title": "Authentication for Normal User"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#authentication-for-service-accounts", 
+            "text": "Unlike user accounts, service accounts are managed by Kubernetes.  service accounts  are bound to specific namespaces.  Credentials for  service Accounts  are stored as  secrets .  These secrets are mounted to pods when a deployment starts using the Service Account.", 
+            "title": "Authentication for Service Accounts"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stage-2-authorization", 
+            "text": "After a request successfully authenticated, it goes through the authorization process.  In order for a request to be authorized, it must consist following attributes.  Username of the requester(User)  Requested action(Verb)  The object affected(Resource)    Authorization is done by the following modules. Each of these modules has a special purpose.  Attribute Based Access Control(ABAC)  Role Based Access Control(RBAC)  Node Authorizer  Webhook module    If a request is failed to get authorized, it will be served with  403 error .  Among these modules, RBAC is the most used authorizer while,  ABAC is used for,  Policy based, fine grained access control  The caveat is api server has to be restarted whenever we define a ABAC policy  Node Authorizer is,  Enabled in all the worker nodes  Grants access to kubelet for some of the resources.    We have already talked about the user in detail. Now lets focus on  verbs  and  resources  We will talk about RBAC in detail in the later part", 
+            "title": "Stage 2: Authorization"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#verbs", 
+            "text": "Verbs are the  action  to be taken on resources.  Some of the verbs in Kubernetes are,  get  list  create  update  patch  watch  delete", 
+            "title": "Verbs"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#resources", 
+            "text": "Resources are the object being manipulated by the verb.  Ex: pods, deployments, service, namespaces, nodes, etc.,", 
+            "title": "Resources"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stage-3-admission-control", 
+            "text": "Admission control part is taken care of by the software modules that can modify/reject requests.  Admission control is mainly used for fine-tuning access control.  Admission control can directly act on the object being modified.", 
+            "title": "Stage 3: Admission Control"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#role-based-access-control-rbac", 
+            "text": "RBAC is the most used form of access control to  grant or revoke  permissions to users.  It is used for dynamically configuring policies through API.  RBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.  Objects that are used to create policies,  Roles,  ClusterRoles.    Objects that are used to implement policies,  RoleBindings,  ClusterRoleBindings.", 
+            "title": "Role Based Access Control (RBAC)"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#roles", 
+            "text": "Roles grant access to resources  within a single namespace .  Roles cannot grant permission for global(cluster-wide) resources.", 
+            "title": "Roles"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#clusterroles", 
+            "text": "ClusterRoles works similar to Roles, but for  cluster-wide  resources.", 
+            "title": "ClusterRoles"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#rolebindings", 
+            "text": "RoleBidings are used to grant permission defined in a Role to  a user or a set of users .  RoleBindings can also refer to  ClusterRoles .", 
+            "title": "RoleBindings"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#clusrerrolebindings", 
+            "text": "ClusterRoleBindings works same as RoleBindings, but cluster-wide.", 
+            "title": "ClusrerRoleBindings"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#example", 
+            "text": "Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.", 
+            "title": "Example"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#step-1-create-the-namespace", 
+            "text": "Create the  dev  namespace if it has not been created already.  dev-namespace.yml  apiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev  kubectl apply -f dev-namespace.yml", 
+            "title": "Step 1: Create the Namespace"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#step-2-create-the-user-credentials", 
+            "text": "Next step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.  openssl genrsa -out john.key 2048\nopenssl req -new -key vibe.key -out john.csr -subj  /CN=john/O=my-org \n#copy over all key files from /etc/kubernetes directory of master when you run this command\nopenssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500\n# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)\n# Execute the following commands on the users system\nkubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context developer --cluster= YOUR-CLUSTER-NAME  --namespace=dev  --user=dev\n# This step will throw an error\nkubectl --context=developer get pods", 
+            "title": "Step 2: Create the user credentials"
         }
     ]
 }
