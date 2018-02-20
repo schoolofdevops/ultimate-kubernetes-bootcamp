@@ -20,7 +20,7 @@ pages:
      - Troubleshooting Tips: "12_troubleshooting.md"
   - Securing Kubernetes:
      - Authentication and Authorization: "configuring_authentication_and_authorization.md"
-     - Setting up Pod Security Policy: "pod_security.md"
+#     - Setting up Pod Security Policy: "pod_security.md"
 docs_dir: chapters
 theme: readthedocs
 plugins:
