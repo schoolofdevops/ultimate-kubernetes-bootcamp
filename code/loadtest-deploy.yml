@@ -1,0 +1,22 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: load-test
+  namespace: instavote
+  labels:
+    app: load-test
+    env: dev
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: load-test
+        env: dev
+    spec:
+      containers:
+        - name: load-test
+          image: schoolofdevops/load-test
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8089 
