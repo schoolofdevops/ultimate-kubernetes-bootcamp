@@ -21,6 +21,11 @@ pages:
   - Securing Kubernetes:
      - Authentication and Authorization: "configuring_authentication_and_authorization.md"
 #     - Setting up Pod Security Policy: "pod_security.md"
+  - Advanced Stuff:
+     - Advanced Pod Scheduling: "advanced_pod_scheduling.md"
+     - Advanced Deployment: "advanced_deployment.md"
+     - Advanced Services: "advanced_services.md"
+     - Kubespray Setup: "cluster_setup_kubespray.md"
 docs_dir: chapters
 theme: readthedocs
 plugins:
