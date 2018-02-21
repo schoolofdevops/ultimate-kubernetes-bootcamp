@@ -18,5 +18,7 @@ spec:
         - name: load-test
           image: schoolofdevops/load-test
           imagePullPolicy: Always
+          args: ["-h frontend", "-c 3", "-r 1000"]
           ports:
-            - containerPort: 8089 
+            - containerPort: 8089
+ 
