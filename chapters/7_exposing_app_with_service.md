@@ -18,10 +18,10 @@ kubectl get svc
 
 Sample Output:
 ```
-NAME                READY     STATUS    RESTARTS   AGE
-voting-appp-1j52x   1/1       Running   0          12m
-voting-appp-pr2xz   1/1       Running   0          9m
-voting-appp-qpxbm   1/1       Running   0          15m
+NAME                         READY     STATUS    RESTARTS   AGE
+front-end-64597c55f8-dk6g7   1/1       Running   0          4m
+front-end-64597c55f8-mkp2h   1/1       Running   0          4m
+front-end-64597c55f8-r2c54   1/1       Running   0          4m
 ```
 
 ## Publishing a service with NodePort
@@ -36,15 +36,15 @@ metadata:
   labels:
     role: svc
     tier: front
-  name: vote-svc
-  namespace: instavote
+  name: front-end
+  namespace: mogambo
 spec:
   selector:
-    app: vote
+    app: front-end
   ports:
-  - port: 80
+  - port: 8079
     protocol: TCP
-    targetPort: 80
+    targetPort: 8079
   type: NodePort
 ```
 
@@ -53,30 +53,30 @@ Save the file.
 Now to create a service:
 
 ```
-kubectl apply -f vote-svc.yaml
+kubectl apply -f frontend-svc.yaml
 kubectl get svc
 ```
 
 Now to check which port the pod is connected
 ```
-kubectl describe service vote
+kubectl describe service front-end
 ```
 Check for the Nodeport here
 
 Sample Output
 ```
-Name:                     vote
-Namespace:                instavote
+Name:                     front-end
+Namespace:                mogambo
 Labels:                   role=svc
                           tier=front
-Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"role":"svc","tier":"front"},"name":"vote","namespace":"instavote"},"spec":{...
-Selector:                 app=vote
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"role":"svc","tier":"front"},"name":"front-end","namespace":"mogambo"},"spec...
+Selector:                 app=front-end
 Type:                     NodePort
-IP:                       10.108.108.157
-Port:                     <unset>  80/TCP
-TargetPort:               80/TCP
-NodePort:                 <unset>  31429/TCP
-Endpoints:                10.38.0.4:80,10.38.0.5:80,10.38.0.6:80 + 2 more...
+IP:                       10.11.248.77
+Port:                     <unset>  8079/TCP
+TargetPort:               8079/TCP
+NodePort:                 <unset>  30197/TCP
+Endpoints:                10.8.1.13:8079,10.8.1.14:8079,10.8.1.15:8079 + 3 more...
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   <none>
@@ -84,7 +84,7 @@ Events:                   <none>
 
 Go to browser and check hostip:NodePort
 
-Here the node port is 31429.
+Here the node port is 30197.
 
 Sample output will be:
 
@@ -92,10 +92,12 @@ Sample output will be:
 
 ## Exposing the app with ExternalIP
 
+`file: /k8s-code/projects/mogambo/dev/frontend-svc.yml`
+
 ```
 spec:
   selector:
-    app: vote
+    app: front-end
   ports:
   - port: 80
     protocol: TCP
@@ -108,7 +110,7 @@ spec:
 
 apply
 ```
-kubectl apply -f vote-svc.yaml
+kubectl apply -f frontend-svc.yml
 kubectl  get svc
-kubectl describe svc vote
+kubectl describe svc front-end
 ```
