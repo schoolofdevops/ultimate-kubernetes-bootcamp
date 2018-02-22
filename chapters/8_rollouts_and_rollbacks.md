@@ -2,7 +2,7 @@
 
 Update the version of the image in frontend-deploy.yml
 
-`File: k8s-code/projects/mogambo/dev/frontend-deploy.yaml`
+`File: k8s-code/projects/mogambo/dev/frontend-deploy.yml`
 
 ```
 ...
@@ -24,7 +24,8 @@ kubectl rollout status deployment/front-end
 
 Lets update the image to a tag which is non existent. We intentionally introduce this intentional error to fail fail the deployment.
 
-File: frontend-deploy.yaml
+`File: k8s-code/projects/mogambo/dev/frontend-deploy.yml`
+
 ```
 ...
     app: vote
@@ -44,11 +45,10 @@ kubectl rollout status deployment/front-end
 Also watch the pod status which might look like
 
 ```
-vote-3040199436-sdq17   1/1       Running            0          9m
-vote-4086029260-0vjjb   0/1       ErrImagePull       0          16s
-vote-4086029260-zvgmd   0/1       ImagePullBackOff   0          15s
-vote-rc-fsdsd               1/1       Running            0          27m
-vote-rc-mcxs5               1/1       Running            0
+front-end-645bb6fcd5-xsndp   1/1       Running            0          3m
+front-end-b9bc5495f-8nbz5    0/1       ImagePullBackOff   0          54s
+front-end-b9bc5495f-9x5gr    0/1       ImagePullBackOff   0          54s
+front-end-b9bc5495f-pdx2l    0/1       ImagePullBackOff   0          55s
 ```
 
 To get the revision history and details  
@@ -73,13 +73,11 @@ root@kube-01:~# kubectl rollout history deployment/front-end --revision=7
 deployments "front-end" with revision #7
 Pod Template:
   Labels:	app=front-end
-	env=dev
-	pod-template-hash=4086029260
+	pod-template-hash=656710519
 	role=ui
-	stack=mogambo
 	tier=front
   Containers:
-   vote:
+   front-end:
     Image:	schoolofdevops/frontend:movi
     Port:	8079/TCP
     Environment:	<none>
