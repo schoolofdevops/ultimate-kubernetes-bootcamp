@@ -83,28 +83,28 @@ You could also examine the current configs in file **cat ~/.kube/config**
 
 Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   
 
-Lets create a namespace called **instavote**  
+Lets create a namespace called **mogambo**  
 
-file: k8s-code/projects/instavote/instavote-ns.yaml
+file: k8s-code/projects/mogambo/mogambo-ns.yml
 ```
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: instavote
+  name: mogambo
 ```
 
 To create namespace
 
 ```
-cd k8s-code/projects/instavote
+cd k8s-code/projects/mogamgo
 kubectl get ns
-kubectl apply -f dev_instavote.yaml
+kubectl apply -f mogamgo-ns.yml
 kubectl get ns
 ```
 
 
 And switch to it
 ```
-kubectl config set-context $(kubectl config current-context) --namespace=instavote
+kubectl config set-context $(kubectl config current-context) --namespace=mogambo
 
 ```

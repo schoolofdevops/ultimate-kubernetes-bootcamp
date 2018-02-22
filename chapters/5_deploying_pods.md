@@ -38,15 +38,15 @@ kubectl api-versions
 
 Throughout this tutorial, we would be deploying different components of  example voting application. Lets assume we are deploying it in a **dev** environment. Lets create the common specs for this app with the AKMS schema discussed above.
 
-file: common.yml
+`file: k8s-code/projects/mogambo/common.yml`
 
 ```
 apiVersion: v1
 kind:
 metadata:
-  name: vote
+  name: front-end
   labels:
-    app: vote
+    app: front-end
     role: ui
     tier: front
 spec:
@@ -56,20 +56,20 @@ spec:
 
 Lets now create the  Pod config by adding the kind and specs to above schema.
 
-Filename: k8s-code/pods/vote-pod.yaml
+Filename: k8s-code/pods/frontend-pod.yml
 ```
 apiVersion: v1
 kind: Pod
 metadata:
-  name: vote
+  name: front-end
   labels:
-    app: vote
+    app: front-end
     role: ui
     tier: front
 spec:
   containers:
-    - name: vote
-      image: schoolofdevops/vote:latest
+    - name: front-end
+      image: schoolofdevops/front-end:latest
 ```
 
 [Use this link to refer to pod spec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core)
@@ -86,7 +86,7 @@ Syntax:
 To Launch pod using configs above,
 
 ```
-kubectl apply -f vote-pod.yaml
+kubectl apply -f frontend-pod.yml
 
 ```
 
@@ -97,57 +97,63 @@ kubectl get pods
 
 kubectl get po -o wide
 
-kubectl get pods vote
+kubectl get pods front-end
 ```
 
 To get detailed info
 
 ```
-kubectl describe pods vote
+kubectl describe pods front-end
 ```
 
 [Output:]
 ```
-Name:           vote
-Namespace:      default
-Node:           kube-3/192.168.0.80
-Start Time:     Tue, 07 Feb 2017 16:16:40 +0000
-Labels:         app=voting
-Status:         Running
-IP:             10.40.0.2
-Controllers:    <none>
+Name:         front-end
+Namespace:    mogambo
+Node:         gke-test-cluster-default-pool-d29bc0e9-jz8w/10.128.0.2
+Start Time:   Thu, 22 Feb 2018 14:13:01 +0530
+Labels:       app=front-end
+              role=ui
+              tier=front
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":"front-end","role":"ui","tier":"front"},"name":"front-end","namespace":"mo...
+Status:       Running
+IP:           10.8.1.12
 Containers:
-  vote:
-    Container ID:       docker://48304b35b9457d627b341e424228a725d05c2ed97cc9970bbff32a1b365d9a5d
-    Image:              schoolofdevops/vote:latest
-    Image ID:           docker-pullable://schoolofdevops/vote@sha256:3d89bfc1993d4630a58b831a6d44ef73d2be76a7862153e02e7a7c0cf2936731
-    Port:               80/TCP
-    State:              Running
-      Started:          Tue, 07 Feb 2017 16:16:52 +0000
-    Ready:              True
-    Restart Count:      0
-    Volume Mounts:
-      /var/run/secrets/kubernetes.io/serviceaccount from default-token-2n6j1 (ro)
-    Environment Variables:      <none>
+  front-end:
+    Container ID:   docker://587d8f8e40a23548eb2e2a70c1a43d32dce9922155781d1f76fbdd64f920c545
+    Image:          schoolofdevops/frontend:latest
+    Image ID:       docker-pullable://schoolofdevops/frontend@sha256:94b7a0843f99223a8a1d284fdeeb3fd5a731c03aea57a52751c6ebde40be1f50
+    Port:           <none>
+    State:          Running
+      Started:      Thu, 22 Feb 2018 14:13:12 +0530
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-lfsps (ro)
 Conditions:
-  Type          Status
-  Initialized   True
-  Ready         True
-  PodScheduled  True
+  Type           Status
+  Initialized    True
+  Ready          True
+  PodScheduled   True
 Volumes:
-  default-token-2n6j1:
-    Type:       Secret (a volume populated by a Secret)
-    SecretName: default-token-2n6j1
-QoS Class:      BestEffort
-Tolerations:    <none>
+  default-token-lfsps:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-lfsps
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
 Events:
-  FirstSeen     LastSeen        Count   From                    SubObjectPath           Type            Reason          Message
-  ---------     --------        -----   ----                    -------------           --------        ------          -------
-  21s           21s             1       {default-scheduler }                            Normal          Scheduled       Successfully assigned vote to kube-3
-  20s           20s             1       {kubelet kube-3}        spec.containers{vote}   Normal          Pulling         pulling image "schoolofdevops/vote:latest"
-  10s           10s             1       {kubelet kube-3}        spec.containers{vote}   Normal          Pulled          Successfully pulled image "schoolofdevops/vote:latest"
-  9s            9s              1       {kubelet kube-3}        spec.containers{vote}   Normal          Created         Created container with docker id 48304b35b945; Security:[seccomp=unconfined]
-  9s            9s              1       {kubelet kube-3}        spec.containers{vote}   Normal          Started         Started container with docker id 48304b35b945
+  Type    Reason                 Age   From                                                  Message
+  ----    ------                 ----  ----                                                  -------
+  Normal  Scheduled              32s   default-scheduler                                     Successfully assigned front-end to gke-test-cluster-default-pool-d29bc0e9-jz8w
+  Normal  SuccessfulMountVolume  31s   kubelet, gke-test-cluster-default-pool-d29bc0e9-jz8w  MountVolume.SetUp succeeded for volume "default-token-lfsps"
+  Normal  Pulling                30s   kubelet, gke-test-cluster-default-pool-d29bc0e9-jz8w  pulling image "schoolofdevops/frontend:latest"
+  Normal  Pulled                 21s   kubelet, gke-test-cluster-default-pool-d29bc0e9-jz8w  Successfully pulled image "schoolofdevops/frontend:latest"
+  Normal  Created                21s   kubelet, gke-test-cluster-default-pool-d29bc0e9-jz8w  Created container
+  Normal  Started                21s   kubelet, gke-test-cluster-default-pool-d29bc0e9-jz8w  Started container
 ```
 
 Commands to operate the pod
