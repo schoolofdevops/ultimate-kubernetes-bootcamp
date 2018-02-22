@@ -115,6 +115,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
                 </li>
                 <li class="">
@@ -154,29 +158,6 @@
                 <li class="">
                     
     <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Advanced Stuff</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../advanced_pod_scheduling/">Advanced Pod Scheduling</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../advanced_deployment/">Advanced Deployment</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../advanced_services/">Advanced Services</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../cluster_setup_kubespray/">Kubespray Setup</a>
                 </li>
     </ul>
 	    </li>
@@ -280,23 +261,23 @@ screen -X -S 26 quit
 <p>You could also examine the current configs in file <strong>cat ~/.kube/config</strong></p>
 <h2 id="creating-a-namespace-for-instavote-project">Creating a namespace for instavote project</h2>
 <p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
-<p>Lets create a namespace called <strong>instavote</strong>  </p>
-<p>file: k8s-code/projects/instavote/instavote-ns.yaml</p>
+<p>Lets create a namespace called <strong>mogambo</strong>  </p>
+<p>file: k8s-code/projects/mogambo/mogambo-ns.yml</p>
 <pre><code>kind: Namespace
 apiVersion: v1
 metadata:
-  name: instavote
+  name: mogambo
 </code></pre>
 
 <p>To create namespace</p>
-<pre><code>cd k8s-code/projects/instavote
+<pre><code>cd k8s-code/projects/mogamgo
 kubectl get ns
-kubectl apply -f dev_instavote.yaml
+kubectl apply -f mogamgo-ns.yml
 kubectl get ns
 </code></pre>
 
 <p>And switch to it</p>
-<pre><code>kubectl config set-context $(kubectl config current-context) --namespace=instavote
+<pre><code>kubectl config set-context $(kubectl config current-context) --namespace=mogambo
 
 </code></pre>
               

@@ -100,6 +100,10 @@
         
             <li><a class="toctree-l4" href="#exposing-the-app-with-externalip">Exposing the app with ExternalIP</a></li>
         
+            <li><a class="toctree-l4" href="#exposing-the-app-with-loadbalancer">Exposing the app with LoadBalancer</a></li>
+        
+            <li><a class="toctree-l4" href="#headless-services-with-endpointsexternal-names">Headless services with Endpoints/External Names</a></li>
+        
         </ul>
     
 
@@ -108,6 +112,10 @@
                 <li class="">
                     
     <a class="" href="../8_rollouts_and_rollbacks/">Rollouts and Rollbacks</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
                 </li>
                 <li class="">
                     
@@ -150,29 +158,6 @@
                 <li class="">
                     
     <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Advanced Stuff</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../advanced_pod_scheduling/">Advanced Pod Scheduling</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../advanced_deployment/">Advanced Deployment</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../advanced_services/">Advanced Services</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../cluster_setup_kubespray/">Kubespray Setup</a>
                 </li>
     </ul>
 	    </li>
@@ -227,10 +212,10 @@ kubectl get svc
 </code></pre>
 
 <p>Sample Output:</p>
-<pre><code>NAME                READY     STATUS    RESTARTS   AGE
-voting-appp-1j52x   1/1       Running   0          12m
-voting-appp-pr2xz   1/1       Running   0          9m
-voting-appp-qpxbm   1/1       Running   0          15m
+<pre><code>NAME                         READY     STATUS    RESTARTS   AGE
+front-end-64597c55f8-dk6g7   1/1       Running   0          4m
+front-end-64597c55f8-mkp2h   1/1       Running   0          4m
+front-end-64597c55f8-r2c54   1/1       Running   0          4m
 </code></pre>
 
 <h2 id="publishing-a-service-with-nodeport">Publishing a service with NodePort</h2>
@@ -242,55 +227,56 @@ metadata:
   labels:
     role: svc
     tier: front
-  name: vote-svc
-  namespace: instavote
+  name: front-end
+  namespace: mogambo
 spec:
   selector:
-    app: vote
+    app: front-end
   ports:
-  - port: 80
+  - port: 8079
     protocol: TCP
-    targetPort: 80
+    targetPort: 8079
   type: NodePort
 </code></pre>
 
 <p>Save the file.</p>
 <p>Now to create a service:</p>
-<pre><code>kubectl apply -f vote-svc.yaml
+<pre><code>kubectl apply -f frontend-svc.yaml
 kubectl get svc
 </code></pre>
 
 <p>Now to check which port the pod is connected</p>
-<pre><code>kubectl describe service vote
+<pre><code>kubectl describe service front-end
 </code></pre>
 
 <p>Check for the Nodeport here</p>
 <p>Sample Output</p>
-<pre><code>Name:                     vote
-Namespace:                instavote
+<pre><code>Name:                     front-end
+Namespace:                mogambo
 Labels:                   role=svc
                           tier=front
-Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;vote&quot;,&quot;namespace&quot;:&quot;instavote&quot;},&quot;spec&quot;:{...
-Selector:                 app=vote
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;front-end&quot;,&quot;namespace&quot;:&quot;mogambo&quot;},&quot;spec...
+Selector:                 app=front-end
 Type:                     NodePort
-IP:                       10.108.108.157
-Port:                     &lt;unset&gt;  80/TCP
-TargetPort:               80/TCP
-NodePort:                 &lt;unset&gt;  31429/TCP
-Endpoints:                10.38.0.4:80,10.38.0.5:80,10.38.0.6:80 + 2 more...
+IP:                       10.11.248.77
+Port:                     &lt;unset&gt;  8079/TCP
+TargetPort:               8079/TCP
+NodePort:                 &lt;unset&gt;  30197/TCP
+Endpoints:                10.8.1.13:8079,10.8.1.14:8079,10.8.1.15:8079 + 3 more...
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   &lt;none&gt;
 </code></pre>
 
 <p>Go to browser and check hostip:NodePort</p>
-<p>Here the node port is 31429.</p>
+<p>Here the node port is 30197.</p>
 <p>Sample output will be:</p>
 <p><img alt="Vote" src="../images/vote.png" /></p>
 <h2 id="exposing-the-app-with-externalip">Exposing the app with ExternalIP</h2>
+<p><code>file: /k8s-code/projects/mogambo/dev/frontend-svc.yml</code></p>
 <pre><code>spec:
   selector:
-    app: vote
+    app: front-end
   ports:
   - port: 80
     protocol: TCP
@@ -302,10 +288,59 @@ Events:                   &lt;none&gt;
 </code></pre>
 
 <p>apply</p>
-<pre><code>kubectl apply -f vote-svc.yaml
+<pre><code>kubectl apply -f frontend-svc.yml
 kubectl  get svc
-kubectl describe svc vote
+kubectl describe svc front-end
 </code></pre>
+
+<h2 id="exposing-the-app-with-loadbalancer">Exposing the app with LoadBalancer</h2>
+<p>Service type LoadBalancer is only supported on AWS,GCE,Azure and Openstack. If you have you cluster running on any of these clouds, give it a try. It will create a load balancer for us with a ephemeral IP. We can also specify a loadBalancerIP. Mostly not recommended to use. Using service type LoadBalancer will rise your cloud provider spendings. Think about launching 10 load balancers for 10 different services. Thats where <strong>ingress</strong> come into picture (explained in the later part).</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: front-end
+  namespace: mogambo
+  labels:
+    app: front-end
+    env: dev
+spec:
+  selector:
+    app: front-end
+  ports:
+    - protocol: TCP
+      port: 8079
+  type: LoadBalancer
+</code></pre>
+
+<h2 id="headless-services-with-endpointsexternal-names">Headless services with Endpoints/External Names</h2>
+<p>Sometimes you may to decouple the services from backend pods. Sometimes you may want to use some external services outside the cluster and want to integrate those external services with the cluster. For these kind of use cases we can use <strong>Headless services</strong>. Let us see an example.</p>
+<p>Let us consider a scenario where you have your redis cluster hosted outside the cluster. Your backend in cluster need to use this redis cluster. In this case, you will create a service with ExternalName, which is nothing but a CNAME record of your redis cluster. This type of services will neither have any ports defined nor have any selectors. But, how do you make sure the backend pods uses this service? For that, you will create a custom endpoint, in which map your service to specific endpoints.</p>
+<p><code>Ex: External Name service</code></p>
+<pre><code>kind: Service
+apiVersion: v1
+metadata:
+  name: redis-aws
+  namespace: mogambo
+spec:
+  type: ExternalName
+  externalName: redis.aws.schoolofdevops.com
+</code></pre>
+
+<p><code>Ex: Endpoints</code></p>
+<pre><code>kind: Endpoints
+apiVersion: v1
+metadata:
+  name: redis-aws
+subsets:
+  - addresses:
+      - ip: 10.40.30.123
+      - ip: 10.40.30.324
+      - ip: 10.40.30.478
+    ports:
+      - port: 9376
+</code></pre>
+
+<p>These IPs have to be manually managed by the cluster administrator.</p>
               
             </div>
           </div>
