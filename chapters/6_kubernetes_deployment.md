@@ -8,16 +8,16 @@ Deployment has mainly two responsibilities,
   * Update Strategy: Define a release strategy and update the pods accordingly.
 
 
-File: /k8s-code/projects/instavote/dev/vote-deploy.yaml
+`File: /k8s-code/projects/mogambo/dev/frontend-deploy.yml`
 
 ```
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: vote
-  namespace: instavote
+  name: front-end
+  namespace: mogambo
 spec:
-  replicas: 8
+  replicas: 3
   revisionHistoryLimit: 4
   strategy:
     type: RollingUpdate
@@ -29,14 +29,14 @@ spec:
   template:
     metadata:
       labels:
-        app: vote
+        app: front-end
         role: ui
         tier: front
     spec:
       containers:
-      - image: schoolofdevops/vote
+      - image: schoolofdevops/frontend
         imagePullPolicy: Always
-        name: vote
+        name: front-end
         ports:
         - containerPort: 80
           protocol: TCP
@@ -59,7 +59,7 @@ Deployment spec (deployment.spec) contains the following,
 
 Lets  create the Deployment
 ```
-kubectl apply -f vote-deploy.yaml --record
+kubectl apply -f frontend-deploy.yml --record
 ```
 
 Now that the deployment is created. To validate,
@@ -68,14 +68,16 @@ Now that the deployment is created. To validate,
 kubectl get deployment
 kubectl get rs
 kubectl get deploy,pods,rs
-kubectl rollout status deployment/vote
+kubectl rollout status deployment/front-end
 kubectl get pods --show-labels
 ```
 Sample Output
 ```
 kubectl get deployments
-NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-vote   3         3         3            1           3m
+
+[output]
+NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+front-end   3         3         3            3           59s
 ```
 
 
@@ -84,11 +86,8 @@ vote   3         3         3            1           3m
 To scale a deployment in Kubernetes:
 
 ```
-kubectl scale deployment/vote --replicas=5
-```
+kubectl scale deployment/front-end --replicas=5
 
-Sample output:
-```
-kubectl scale deployment/vote --replicas=5
-deployment "vote" scaled
+[output]
+deployment "front-end" scaled
 ```
