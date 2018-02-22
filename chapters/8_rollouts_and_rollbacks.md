@@ -28,7 +28,7 @@ Lets update the image to a tag which is non existent. We intentionally introduce
 
 ```
 ...
-    app: vote
+    app: front-end
     spec:
       containers:
       - image: schoolofdevops/frontend:movi

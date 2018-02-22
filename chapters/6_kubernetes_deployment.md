@@ -8,7 +8,7 @@ Deployment has mainly two responsibilities,
   * Update Strategy: Define a release strategy and update the pods accordingly.
 
 
-`File: /k8s-code/projects/mogambo/dev/frontend-deploy.yml`
+`File: k8s-code/projects/mogambo/dev/frontend-deploy.yml`
 
 ```
 apiVersion: extensions/v1beta1

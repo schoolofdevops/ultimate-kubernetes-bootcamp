@@ -114,3 +114,62 @@ kubectl apply -f frontend-svc.yml
 kubectl  get svc
 kubectl describe svc front-end
 ```
+
+## Exposing the app with LoadBalancer
+
+Service type LoadBalancer is only supported on AWS,GCE,Azure and Openstack. If you have you cluster running on any of these clouds, give it a try. It will create a load balancer for us with a ephemeral IP. We can also specify a loadBalancerIP. Mostly not recommended to use. Using service type LoadBalancer will rise your cloud provider spendings. Think about launching 10 load balancers for 10 different services. Thats where **ingress** come into picture (explained in the later part).
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end
+  namespace: mogambo
+  labels:
+    app: front-end
+    env: dev
+spec:
+  selector:
+    app: front-end
+  ports:
+    - protocol: TCP
+      port: 8079
+  type: LoadBalancer
+```
+
+## Headless services with Endpoints/External Names
+
+Sometimes you may to decouple the services from backend pods. Sometimes you may want to use some external services outside the cluster and want to integrate those external services with the cluster. For these kind of use cases we can use **Headless services**. Let us see an example.
+
+Let us consider a scenario where you have your redis cluster hosted outside the cluster. Your backend in cluster need to use this redis cluster. In this case, you will create a service with ExternalName, which is nothing but a CNAME record of your redis cluster. This type of services will neither have any ports defined nor have any selectors. But, how do you make sure the backend pods uses this service? For that, you will create a custom endpoint, in which map your service to specific endpoints.
+
+`Ex: External Name service`
+
+```
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis-aws
+  namespace: mogambo
+spec:
+  type: ExternalName
+  externalName: redis.aws.schoolofdevops.com
+```
+
+`Ex: Endpoints`
+
+```
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: redis-aws
+subsets:
+  - addresses:
+      - ip: 10.40.30.123
+      - ip: 10.40.30.324
+      - ip: 10.40.30.478
+    ports:
+      - port: 9376
+```
+
+These IPs have to be manually managed by the cluster administrator.

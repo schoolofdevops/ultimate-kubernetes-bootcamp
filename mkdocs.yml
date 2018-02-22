@@ -2,15 +2,16 @@ site_name: Ultimate Kubernetes Bootcamp
 pages:
   - Home: "index.md"
   - Setup:
-     - Using minikube to setup single node environment: "minikube.md" 
+     - Using minikube to setup single node environment: "minikube.md"
      - Provisioning VMs with Vagrant: "2_kube_cluster_vagrant.md"
      - Setup Kubernetes Cluster: "3_install_kubernetes.md"
-  - Bootcamp: 
+  - Bootcamp:
      - Configuring Cluster: "4_configs.md"
      - Launching Pods: "5_deploying_pods.md"
      - Creating Deployments: "6_kubernetes_deployment.md"
      - Service Endpoints: "7_exposing_app_with_service.md"
      - Rollouts and Rollbacks: "8_rollouts_and_rollbacks.md"
+     - Deployment Strategies: "9_deployement_strategies.md"
      - Using Configmaps and Secrets: "9_using_configmaps_and_secrets.md"
      - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
      - Kuberentes Visualizer : "kube_visualizer.md"
@@ -21,11 +22,6 @@ pages:
   - Securing Kubernetes:
      - Authentication and Authorization: "configuring_authentication_and_authorization.md"
 #     - Setting up Pod Security Policy: "pod_security.md"
-  - Advanced Stuff:
-     - Advanced Pod Scheduling: "advanced_pod_scheduling.md"
-     - Advanced Deployment: "advanced_deployment.md"
-     - Advanced Services: "advanced_services.md"
-     - Kubespray Setup: "cluster_setup_kubespray.md"
 docs_dir: chapters
 theme: readthedocs
 plugins:
