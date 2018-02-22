@@ -69,7 +69,7 @@ metadata:
 spec:
   containers:
     - name: front-end
-      image: schoolofdevops/front-end:latest
+      image: schoolofdevops/frontend:latest
 ```
 
 [Use this link to refer to pod spec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core)
@@ -159,11 +159,11 @@ Events:
 Commands to operate the pod
 
 ```
-kubectl exec -it vote ps sh
+kubectl exec -it front-end ps sh
 
-kubectl exec -it vote  sh
+kubectl exec -it front-end sh
 
-kubectl logs vote
+kubectl logs front-end
 
 ```
 
@@ -172,13 +172,13 @@ kubectl logs vote
 If you would like to know whats the current status of the pod, and if its in a error state, find out the cause of the error, following command could be very handy.
 
 ```
-kubectl get pod vote -o yaml
+kubectl get pod front-end -o yaml
 ```
 
 Lets learn by example. Update pod spec and change the image to something that does not exist.
 
 ```
-kubectl edit pod vote
+kubectl edit pod front-end
 ```
 
 This will open a editor. Go to the line which defines image  and change it to a tag that does not exist
@@ -188,7 +188,7 @@ e.g.
 ```
 spec:
   containers:
-  - image: schoolofdevops/vote:latst
+  - image: schoolofdevops/frontend:latst
     imagePullPolicy: Always
 ```
 
@@ -199,7 +199,7 @@ Now check the status,
 kubectl get pods  
 
 NAME      READY     STATUS             RESTARTS   AGE
-vote      0/1       ImagePullBackOff   0          27m
+front-end      0/1       ImagePullBackOff   0          27m
 ```
 
 The above output will only show the status, with a vague error. To find the exact error, lets get the stauts of the pod.
@@ -208,7 +208,7 @@ Observe the **status** field.
 
 
 ```
-kubectl get pod vote -o yaml
+kubectl get pod front-end -o yaml
 ```
 
 Now the status field shows a detailed information, including what the exact error. Observe the following snippet...
@@ -221,7 +221,7 @@ containerStatuses:
 state:
   waiting:
     message: 'rpc error: code = Unknown desc = Error response from daemon: manifest
-      for schoolofdevops/vote:latst not found'
+      for schoolofdevops/frontend:latst not found'
     reason: ErrImagePull
 hostIP: 139.59.232.248
 ```
@@ -232,7 +232,7 @@ This will help you to pinpoint to the exact cause and fix it quickly.
 Now that you  are done experimenting with pod, delete it with the following command,
 
 ```
-kubectl delete pod vote
+kubectl delete pod front-end
 
 kubectl get pods
 ```
@@ -244,14 +244,15 @@ Lets create a pod for database and attach a volume to it. To achieve this we wil
   * create a **volumes** definition
   * attach volume to container using **VolumeMounts** property
 
-Local host volumes are of two types:  
+Local host volumes are of two types: 
+ 
   * emptyDir  
   * hostPath  
 
 We will pick hostPath. [Refer to this doc to read more about hostPath.](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
 
 
-File: db-pod.yaml
+File: /k8s-code/pods/db-pod.yml
 
 ```
 apiVersion: v1
@@ -281,7 +282,7 @@ spec:
 To create this pod,
 
 ```
-kubectl apply -f db-pod.yaml
+kubectl apply -f db-pod.yml
 
 kubectl describe pod db
 
@@ -302,22 +303,23 @@ kubectl get nodes --show-labels
 
 Update pod definition with nodeSelector
 
-file: vote-pod.yml
+`file: k8s-code/pods/vote-pod.yml`
+
 ```
 apiVersion: v1
 kind: Pod
 metadata:
-  name: vote
+  name: front-end
   labels:
-    app: vote
+    app: front-end
     role: ui
     tier: front
 spec:
   containers:
-    - name: vote
-      image: schoolofdevops/vote:latest
+    - name: front-end
+      image: schoolofdevops/frontend:latest
       ports:
-        - containerPort: 80
+        - containerPort: 8079
   nodeSelector:
     zone: 'aaa'
 ```
@@ -325,12 +327,12 @@ spec:
 For this change, pod needs to be re created.
 
 ```
-kubectl apply -f vote-pod.yaml
+kubectl apply -f frontend-pod.yml
 ```
 
 ## Creating Multi Container Pods
 
-file: multi_container_pod.yml
+`file: k8s-code/pods/multi_container_pod.yml`
 
 ```
 apiVersion: v1
