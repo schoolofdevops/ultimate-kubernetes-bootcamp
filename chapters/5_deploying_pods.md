@@ -290,7 +290,7 @@ kubectl get events
 ```
 
 
-## Selecting Node to run on
+## Selecting A Node to run on
 
 ```
 kubectl get nodes --show-labels
@@ -403,7 +403,7 @@ Events:
   Warning  Unhealthy              27s (x5 over 1m)  kubelet, node3     Liveness probe failed: Get http://10.233.71.50:8080/: dial tcp 10.233.71.50:8080: getsockopt: connection refused
 ```
 
-### Readiness Probe
+## Readiness Probe
 Readiness probe checks whether your application is ready to serve the requests. When the readiness probe fails, the pod's IP is removed from the end point list of the service. The default state of readinessProbe is *Success*.
 
 Readiness probe is configured just like liveness probe. But this time we will use *httpGet request*.
@@ -635,7 +635,7 @@ Events:
   Warning  FailedScheduling  32s (x8 over 1m)  default-scheduler  0/4 nodes are available: 4 MatchNodeSelector.
 ```
 
-### Node Anti-Affinity
+## Node Anti-Affinity
 
 Node anti-affinity can be achieved by using **NotIn** operator. This will help us to ignore nodes while scheduling.
 
@@ -674,7 +674,7 @@ This will schedule the pod on nodes other than node1.
 
 ## Pod Affinity
 
-## Hard Pod Affinity
+### Hard Pod Affinity
 
 Node affinity allows you to schedule pods on selective nodes. But what if you want to run pods along with other pods selectively. Pod affinity helps us with that.
 
