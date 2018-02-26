@@ -23,18 +23,24 @@
      <changefreq>daily</changefreq>
     </url>
         
+    <url>
+     <loc>/kube_visualizer/</loc>
+     <lastmod>2018-02-26</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     
         
     <url>
-     <loc>/4_configs/</loc>
+     <loc>/5_deploying_pods/</loc>
      <lastmod>2018-02-26</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>/5_deploying_pods/</loc>
+     <loc>/4_configs/</loc>
      <lastmod>2018-02-26</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -71,12 +77,6 @@
         
     <url>
      <loc>/10_kubernetes_autoscaling/</loc>
-     <lastmod>2018-02-26</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>/kube_visualizer/</loc>
      <lastmod>2018-02-26</lastmod>
      <changefreq>daily</changefreq>
     </url>
