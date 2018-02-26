@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Setup Kubernetes Cluster - Ultimate Kubernetes Bootcamp</title>
+  <title>Option 2 - Google Cloud Platform - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Setup Kubernetes Cluster";
+    var mkdocs_page_name = "Option 2 - Google Cloud Platform";
     var mkdocs_page_input_path = "3_install_kubernetes.md";
     var mkdocs_page_url = "/3_install_kubernetes/";
   </script>
@@ -58,62 +58,130 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
-                </li>
-                <li class="">
+    <span class="caption-text">Single Node</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
                     
-    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
+    <a class="" href="../minikube/">Option 1 - Minikube</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../minikube/">Option 2 - Docker for Mac/Windows</a>
+                </li>
+    </ul>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Setup Kubernetes Cluster</a>
+    <span class="caption-text">Multi Node</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning Nodes with Vagrant</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="./">Option 1 - Bring Your Own Nodes (BYON)</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#compatibility">Compatibility</a></li>
+    <li class="toctree-l4"><a href="#compatibility">Compatibility</a></li>
     
 
-    <li class="toctree-l3"><a href="#base-setup">Base Setup</a></li>
+    <li class="toctree-l4"><a href="#base-setup">Base Setup</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#create-kubernetes-repository">Create Kubernetes Repository</a></li>
+            <li><a class="toctree-l5" href="#create-kubernetes-repository">Create Kubernetes Repository</a></li>
         
-            <li><a class="toctree-l4" href="#installation-of-the-packages">Installation of the packages</a></li>
+            <li><a class="toctree-l5" href="#installation-of-the-packages">Installation of the packages</a></li>
         
-            <li><a class="toctree-l4" href="#setup-sysctl-configs">Setup sysctl configs</a></li>
+            <li><a class="toctree-l5" href="#setup-sysctl-configs">Setup sysctl configs</a></li>
         
         </ul>
     
 
-    <li class="toctree-l3"><a href="#initializing-master">Initializing Master</a></li>
+    <li class="toctree-l4"><a href="#initializing-master">Initializing Master</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#initialization-of-the-nodes-previously-minions">Initialization of the Nodes (Previously Minions)</a></li>
+            <li><a class="toctree-l5" href="#initialization-of-the-nodes-previously-minions">Initialization of the Nodes (Previously Minions)</a></li>
         
-            <li><a class="toctree-l4" href="#setup-the-admin-client-kubectl">Setup the admin client - Kubectl</a></li>
+            <li><a class="toctree-l5" href="#setup-the-admin-client-kubectl">Setup the admin client - Kubectl</a></li>
         
         </ul>
     
 
-    <li class="toctree-l3"><a href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
+    <li class="toctree-l4"><a href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
     
 
-    <li class="toctree-l3"><a href="#validating-the-setup">Validating the Setup</a></li>
+    <li class="toctree-l4"><a href="#validating-the-setup">Validating the Setup</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#possible-issues">Possible Issues</a></li>
+            <li><a class="toctree-l5" href="#possible-issues">Possible Issues</a></li>
         
         </ul>
     
 
-    <li class="toctree-l3"><a href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
+    <li class="toctree-l4"><a href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
     
 
-    <li class="toctree-l3"><a href="#check-out-the-supporting-code">Check out the supporting code</a></li>
+    <li class="toctree-l4"><a href="#check-out-the-supporting-code">Check out the supporting code</a></li>
     
 
+    </ul>
+                </li>
+                <li class="toctree-l3 current">
+                    
+    <a class="current" href="./">Option 2 - Google Cloud Platform</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l4"><a href="#compatibility">Compatibility</a></li>
+    
+
+    <li class="toctree-l4"><a href="#base-setup">Base Setup</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l5" href="#create-kubernetes-repository">Create Kubernetes Repository</a></li>
+        
+            <li><a class="toctree-l5" href="#installation-of-the-packages">Installation of the packages</a></li>
+        
+            <li><a class="toctree-l5" href="#setup-sysctl-configs">Setup sysctl configs</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l4"><a href="#initializing-master">Initializing Master</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l5" href="#initialization-of-the-nodes-previously-minions">Initialization of the Nodes (Previously Minions)</a></li>
+        
+            <li><a class="toctree-l5" href="#setup-the-admin-client-kubectl">Setup the admin client - Kubectl</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l4"><a href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
+    
+
+    <li class="toctree-l4"><a href="#validating-the-setup">Validating the Setup</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l5" href="#possible-issues">Possible Issues</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l4"><a href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
+    
+
+    <li class="toctree-l4"><a href="#check-out-the-supporting-code">Check out the supporting code</a></li>
+    
+
+    </ul>
+                </li>
     </ul>
                 </li>
     </ul>
@@ -217,8 +285,12 @@
           <li>Setup &raquo;</li>
         
       
+        
+          <li>Multi Node &raquo;</li>
+        
+      
     
-    <li>Setup Kubernetes Cluster</li>
+    <li>Option 2 - Google Cloud Platform</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -440,7 +512,7 @@ Session Affinity:       None
         <a href="../4_configs/" class="btn btn-neutral float-right" title="Configuring Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../2_kube_cluster_vagrant/" class="btn btn-neutral" title="Provisioning VMs with Vagrant"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="./" class="btn btn-neutral" title="Option 1 - Bring Your Own Nodes (BYON)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -466,7 +538,7 @@ Session Affinity:       None
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../2_kube_cluster_vagrant/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="./" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../4_configs/" style="color: #fcfcfc">Next &raquo;</a></span>

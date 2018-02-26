@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Provisioning VMs with Vagrant - Ultimate Kubernetes Bootcamp</title>
+  <title>Provisioning Nodes with Vagrant - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Provisioning VMs with Vagrant";
+    var mkdocs_page_name = "Provisioning Nodes with Vagrant";
     var mkdocs_page_input_path = "2_kube_cluster_vagrant.md";
     var mkdocs_page_url = "/2_kube_cluster_vagrant/";
   </script>
@@ -58,27 +58,47 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
+    <span class="caption-text">Single Node</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../minikube/">Option 1 - Minikube</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../minikube/">Option 2 - Docker for Mac/Windows</a>
+                </li>
+    </ul>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Provisioning VMs with Vagrant</a>
+    <span class="caption-text">Multi Node</span>
+    <ul class="subnav">
+                <li class="toctree-l3 current">
+                    
+    <a class="current" href="./">Provisioning Nodes with Vagrant</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#install-virtualbox-and-vagrant">Install VirtualBox and Vagrant</a></li>
+    <li class="toctree-l4"><a href="#install-virtualbox-and-vagrant">Install VirtualBox and Vagrant</a></li>
     
 
-    <li class="toctree-l3"><a href="#importing-a-vm-template">Importing a VM Template</a></li>
+    <li class="toctree-l4"><a href="#importing-a-vm-template">Importing a VM Template</a></li>
     
 
-    <li class="toctree-l3"><a href="#provisioning-vagrant-nodes">Provisioning Vagrant Nodes</a></li>
+    <li class="toctree-l4"><a href="#provisioning-vagrant-nodes">Provisioning Vagrant Nodes</a></li>
     
 
     </ul>
                 </li>
-                <li class="">
+                <li class="toctree-l3">
                     
-    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+    <a class="" href="../3_install_kubernetes/">Option 1 - Bring Your Own Nodes (BYON)</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../3_install_kubernetes/">Option 2 - Google Cloud Platform</a>
+                </li>
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -181,8 +201,12 @@
           <li>Setup &raquo;</li>
         
       
+        
+          <li>Multi Node &raquo;</li>
+        
+      
     
-    <li>Provisioning VMs with Vagrant</li>
+    <li>Provisioning Nodes with Vagrant</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -265,10 +289,10 @@ https://github.com/schoolofdevops/kubernetes-fundamentals/blob/master/tutorials/
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../3_install_kubernetes/" class="btn btn-neutral float-right" title="Setup Kubernetes Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../3_install_kubernetes/" class="btn btn-neutral float-right" title="Option 1 - Bring Your Own Nodes (BYON)">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../minikube/" class="btn btn-neutral" title="Using minikube to setup single node environment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../minikube/" class="btn btn-neutral" title="Option 2 - Docker for Mac/Windows"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

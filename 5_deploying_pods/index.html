@@ -58,15 +58,35 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
+    <span class="caption-text">Single Node</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../minikube/">Option 1 - Minikube</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../minikube/">Option 2 - Docker for Mac/Windows</a>
+                </li>
+    </ul>
                 </li>
                 <li class="">
                     
-    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
-                </li>
-                <li class="">
+    <span class="caption-text">Multi Node</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
                     
-    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning Nodes with Vagrant</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../3_install_kubernetes/">Option 1 - Bring Your Own Nodes (BYON)</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../3_install_kubernetes/">Option 2 - Google Cloud Platform</a>
+                </li>
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -103,16 +123,13 @@
     <li class="toctree-l3"><a href="#attach-a-volume-to-the-pod">Attach a Volume to the Pod</a></li>
     
 
-    <li class="toctree-l3"><a href="#selecting-node-to-run-on">Selecting Node to run on</a></li>
+    <li class="toctree-l3"><a href="#selecting-a-node-to-run-on">Selecting A Node to run on</a></li>
     
 
     <li class="toctree-l3"><a href="#liveness-probe">Liveness Probe</a></li>
     
-        <ul>
-        
-            <li><a class="toctree-l4" href="#readiness-probe">Readiness Probe</a></li>
-        
-        </ul>
+
+    <li class="toctree-l3"><a href="#readiness-probe">Readiness Probe</a></li>
     
 
     <li class="toctree-l3"><a href="#resource-requests-and-limits">Resource requests and limits</a></li>
@@ -137,17 +154,17 @@
         
             <li><a class="toctree-l4" href="#hard-node-affinity">Hard Node Affinity</a></li>
         
-            <li><a class="toctree-l4" href="#node-anti-affinity">Node Anti-Affinity</a></li>
-        
         </ul>
+    
+
+    <li class="toctree-l3"><a href="#node-anti-affinity">Node Anti-Affinity</a></li>
     
 
     <li class="toctree-l3"><a href="#pod-affinity">Pod Affinity</a></li>
     
-
-    <li class="toctree-l3"><a href="#hard-pod-affinity">Hard Pod Affinity</a></li>
-    
         <ul>
+        
+            <li><a class="toctree-l4" href="#hard-pod-affinity">Hard Pod Affinity</a></li>
         
             <li><a class="toctree-l4" href="#pod-anti-affinity">Pod Anti-Affinity</a></li>
         
@@ -502,7 +519,7 @@ kubectl describe pod db
 kubectl get events
 </code></pre>
 
-<h2 id="selecting-node-to-run-on">Selecting Node to run on</h2>
+<h2 id="selecting-a-node-to-run-on">Selecting A Node to run on</h2>
 <pre><code>kubectl get nodes --show-labels
 
 kubectl label nodes &lt;node-name&gt; zone=aaa
@@ -598,7 +615,7 @@ Events:
   Warning  Unhealthy              27s (x5 over 1m)  kubelet, node3     Liveness probe failed: Get http://10.233.71.50:8080/: dial tcp 10.233.71.50:8080: getsockopt: connection refused
 </code></pre>
 
-<h3 id="readiness-probe">Readiness Probe</h3>
+<h2 id="readiness-probe">Readiness Probe</h2>
 <p>Readiness probe checks whether your application is ready to serve the requests. When the readiness probe fails, the pod's IP is removed from the end point list of the service. The default state of readinessProbe is <em>Success</em>.</p>
 <p>Readiness probe is configured just like liveness probe. But this time we will use <em>httpGet request</em>.</p>
 <p><code>File:  k8s-code/pods/frontend-pod.yml</code></p>
@@ -793,7 +810,7 @@ Events:
   Warning  FailedScheduling  32s (x8 over 1m)  default-scheduler  0/4 nodes are available: 4 MatchNodeSelector.
 </code></pre>
 
-<h3 id="node-anti-affinity">Node Anti-Affinity</h3>
+<h2 id="node-anti-affinity">Node Anti-Affinity</h2>
 <p>Node anti-affinity can be achieved by using <strong>NotIn</strong> operator. This will help us to ignore nodes while scheduling.</p>
 <p><code>File:  k8s-code/pods/frontend-pod.yml</code></p>
 <pre><code>apiVersion: v1
@@ -826,7 +843,7 @@ spec:
 
 <p>This will schedule the pod on nodes other than node1.</p>
 <h2 id="pod-affinity">Pod Affinity</h2>
-<h2 id="hard-pod-affinity">Hard Pod Affinity</h2>
+<h3 id="hard-pod-affinity">Hard Pod Affinity</h3>
 <p>Node affinity allows you to schedule pods on selective nodes. But what if you want to run pods along with other pods selectively. Pod affinity helps us with that.</p>
 <p><code>File:  k8s-code/pods/frontend-pod.yml</code></p>
 <pre><code>[..]
