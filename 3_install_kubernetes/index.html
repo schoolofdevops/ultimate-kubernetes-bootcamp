@@ -89,7 +89,7 @@
         
             <li><a class="toctree-l5" href="#compatibility">Compatibility</a></li>
         
-            <li><a class="toctree-l5" href="#base-setup">Base Setup</a></li>
+            <li><a class="toctree-l5" href="#base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</a></li>
         
             <li><a class="toctree-l5" href="#initializing-master">Initializing Master</a></li>
         
@@ -117,7 +117,7 @@
         
             <li><a class="toctree-l5" href="#compatibility">Compatibility</a></li>
         
-            <li><a class="toctree-l5" href="#base-setup">Base Setup</a></li>
+            <li><a class="toctree-l5" href="#base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</a></li>
         
             <li><a class="toctree-l5" href="#initializing-master">Initializing Master</a></li>
         
@@ -273,9 +273,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="base-setup">Base Setup</h2>
+<h2 id="base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</h2>
 <p><strong> Skip this step and scroll to Initializing Master if you have setup nodes with vagrant</strong></p>
-<p>On all nodes which would be part of this cluster, you need to do the base setup as described here,</p>
+<p>On all nodes which would be part of this cluster, you need to do the base setup as described in the following steps. To simplify this, you could also   <a href="https://gist.github.com/initcron/40b71211cb693f541ce35fe3fb1adb11">download and run this script</a></p>
 <h3 id="create-kubernetes-repository">Create Kubernetes Repository</h3>
 <p>We need to create a repository to download Kubernetes.</p>
 <pre><code>curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
