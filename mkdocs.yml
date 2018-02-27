@@ -15,6 +15,7 @@ pages:
      - Using Configmaps and Secrets: "9_using_configmaps_and_secrets.md"
      - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
      - Kuberentes Visualizer : "kube_visualizer.md"
+     - Persistent Volume Setup: "persistent-volumes.md"
      - Mini Project: "11_deploying_sample_app.md"
   - Additional Topics:
      - Production grade setup with Kubespray: "cluster_setup_kubespray.md"
