@@ -1,4 +1,4 @@
-# Steps to set up nfs based Persistent Volumes
+# Steps to set up NFS based Persistent Volumes
 
 ## Set up NFS Server
 
@@ -83,7 +83,7 @@ Deploy nfs-client provisioner.
 kubectl apply -f deploy/deployment.yaml
 ```
 
-Create Storage Class.
+Create the Storage Class.
 
 ```
 kubectl apply -f deploy/class.yaml
