@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Option 2 - Google Cloud Platform - Ultimate Kubernetes Bootcamp</title>
+  <title>Setup Kubernetes Cluster - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Option 2 - Google Cloud Platform";
+    var mkdocs_page_name = "Setup Kubernetes Cluster";
     var mkdocs_page_input_path = "3_install_kubernetes.md";
     var mkdocs_page_url = "/3_install_kubernetes/";
   </script>
@@ -58,87 +58,63 @@
     <ul class="subnav">
                 <li class="">
                     
-    <span class="caption-text">Single Node</span>
-    <ul class="subnav">
-                <li class="toctree-l3">
-                    
-    <a class="" href="../minikube/">Option 1 - Minikube</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="../minikube/">Option 2 - Docker for Mac/Windows</a>
-                </li>
-    </ul>
-                </li>
-                <li class=" current">
-                    
-    <span class="caption-text">Multi Node</span>
-    <ul class="subnav">
-                <li class="toctree-l3">
-                    
-    <a class="" href="../2_kube_cluster_vagrant/">Provisioning Nodes with Vagrant</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="./">Option 1 - Kubeadm - Bring Your Own Nodes (BYON)</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l4"><a href="#kubeadm-bring-your-own-nodes-byon">Kubeadm : Bring Your Own Nodes (BYON)</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l5" href="#compatibility">Compatibility</a></li>
-        
-            <li><a class="toctree-l5" href="#base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</a></li>
-        
-            <li><a class="toctree-l5" href="#initializing-master">Initializing Master</a></li>
-        
-            <li><a class="toctree-l5" href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
-        
-            <li><a class="toctree-l5" href="#validating-the-setup">Validating the Setup</a></li>
-        
-            <li><a class="toctree-l5" href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
-        
-            <li><a class="toctree-l5" href="#check-out-the-supporting-code">Check out the supporting code</a></li>
-        
-        </ul>
-    
-
-    </ul>
-                </li>
-                <li class="toctree-l3 current">
-                    
-    <a class="current" href="./">Option 2 - Google Cloud Platform</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l4"><a href="#kubeadm-bring-your-own-nodes-byon">Kubeadm : Bring Your Own Nodes (BYON)</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l5" href="#compatibility">Compatibility</a></li>
-        
-            <li><a class="toctree-l5" href="#base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</a></li>
-        
-            <li><a class="toctree-l5" href="#initializing-master">Initializing Master</a></li>
-        
-            <li><a class="toctree-l5" href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
-        
-            <li><a class="toctree-l5" href="#validating-the-setup">Validating the Setup</a></li>
-        
-            <li><a class="toctree-l5" href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
-        
-            <li><a class="toctree-l5" href="#check-out-the-supporting-code">Check out the supporting code</a></li>
-        
-        </ul>
-    
-
-    </ul>
-                </li>
-    </ul>
+    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../kube_visualizer/">Visualizing Kubernetes</a>
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Setup Kubernetes Cluster</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#compatibility">Compatibility</a></li>
+    
+
+    <li class="toctree-l3"><a href="#base-setup">Base Setup</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#create-kubernetes-repository">Create Kubernetes Repository</a></li>
+        
+            <li><a class="toctree-l4" href="#installation-of-the-packages">Installation of the packages</a></li>
+        
+            <li><a class="toctree-l4" href="#setup-sysctl-configs">Setup sysctl configs</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#initializing-master">Initializing Master</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#initialization-of-the-nodes-previously-minions">Initialization of the Nodes (Previously Minions)</a></li>
+        
+            <li><a class="toctree-l4" href="#setup-the-admin-client-kubectl">Setup the admin client - Kubectl</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
+    
+
+    <li class="toctree-l3"><a href="#validating-the-setup">Validating the Setup</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#possible-issues">Possible Issues</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
+    
+
+    <li class="toctree-l3"><a href="#check-out-the-supporting-code">Check out the supporting code</a></li>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -149,11 +125,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">LaunchPod - Working with Pods</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
@@ -178,6 +154,14 @@
                 <li class="">
                     
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
                 </li>
                 <li class="">
                     
@@ -237,12 +221,8 @@
           <li>Setup &raquo;</li>
         
       
-        
-          <li>Multi Node &raquo;</li>
-        
-      
     
-    <li>Option 2 - Google Cloud Platform</li>
+    <li>Setup Kubernetes Cluster</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -252,9 +232,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="kubeadm-bring-your-own-nodes-byon">Kubeadm : Bring Your Own Nodes (BYON)</h1>
-<p>This documents describes how to setup kubernetes from scratch on your own nodes, without using a managed service. This setup uses <strong>kubeadm</strong> to install and configure kubernetes cluster.</p>
-<h2 id="compatibility">Compatibility</h2>
+                <h2 id="compatibility">Compatibility</h2>
 <p>Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.</p>
 <p>The below steps are applicable for the below mentioned OS</p>
 <table>
@@ -273,9 +251,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</h2>
+<h2 id="base-setup">Base Setup</h2>
 <p><strong> Skip this step and scroll to Initializing Master if you have setup nodes with vagrant</strong></p>
-<p>On all nodes which would be part of this cluster, you need to do the base setup as described in the following steps. To simplify this, you could also   <a href="https://gist.github.com/initcron/40b71211cb693f541ce35fe3fb1adb11">download and run this script</a></p>
+<p>On all nodes which would be part of this cluster, you need to do the base setup as described here,</p>
 <h3 id="create-kubernetes-repository">Create Kubernetes Repository</h3>
 <p>We need to create a repository to download Kubernetes.</p>
 <pre><code>curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -362,7 +340,6 @@ kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$kubever&qu
 <p>You could validate the status of this cluster, health of pods and whether all the components are up or not by using a few or all of the following commands.</p>
 <p>To check if nodes are ready</p>
 <pre><code>kubectl get nodes
-kubectl cs
 
 </code></pre>
 
@@ -464,10 +441,10 @@ Session Affinity:       None
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../kube_visualizer/" class="btn btn-neutral float-right" title="Visualizing Kubernetes">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../4_configs/" class="btn btn-neutral float-right" title="Configuring Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="./" class="btn btn-neutral" title="Option 1 - Kubeadm - Bring Your Own Nodes (BYON)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../2_kube_cluster_vagrant/" class="btn btn-neutral" title="Provisioning VMs with Vagrant"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -493,10 +470,10 @@ Session Affinity:       None
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="./" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../2_kube_cluster_vagrant/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../kube_visualizer/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../4_configs/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

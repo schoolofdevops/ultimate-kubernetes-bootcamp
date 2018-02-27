@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>LaunchPod - Working with Pods - Ultimate Kubernetes Bootcamp</title>
+  <title>Launching Pods - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "LaunchPod - Working with Pods";
+    var mkdocs_page_name = "Launching Pods";
     var mkdocs_page_input_path = "5_deploying_pods.md";
     var mkdocs_page_url = "/5_deploying_pods/";
   </script>
@@ -58,39 +58,15 @@
     <ul class="subnav">
                 <li class="">
                     
-    <span class="caption-text">Single Node</span>
-    <ul class="subnav">
-                <li class="toctree-l3">
-                    
-    <a class="" href="../minikube/">Option 1 - Minikube</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="../minikube/">Option 2 - Docker for Mac/Windows</a>
-                </li>
-    </ul>
+    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
                 </li>
                 <li class="">
                     
-    <span class="caption-text">Multi Node</span>
-    <ul class="subnav">
-                <li class="toctree-l3">
-                    
-    <a class="" href="../2_kube_cluster_vagrant/">Provisioning Nodes with Vagrant</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="../3_install_kubernetes/">Option 1 - Kubeadm - Bring Your Own Nodes (BYON)</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="../3_install_kubernetes/">Option 2 - Google Cloud Platform</a>
-                </li>
-    </ul>
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../kube_visualizer/">Visualizing Kubernetes</a>
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
                 </li>
     </ul>
 	    </li>
@@ -99,9 +75,13 @@
 		
     <span class="caption-text">Bootcamp</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../4_configs/">Configuring Cluster</a>
+                </li>
                 <li class=" current">
                     
-    <a class="current" href="./">LaunchPod - Working with Pods</a>
+    <a class="current" href="./">Launching Pods</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#deploying-pods">Deploying Pods</a></li>
@@ -190,10 +170,6 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
-                </li>
-                <li class="">
-                    
     <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
                 </li>
                 <li class="">
@@ -215,6 +191,14 @@
                 <li class="">
                     
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
                 </li>
                 <li class="">
                     
@@ -275,7 +259,7 @@
         
       
     
-    <li>LaunchPod - Working with Pods</li>
+    <li>Launching Pods</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -1012,10 +996,10 @@ kubectl exec -it web  sh  -c sync
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../4_configs/" class="btn btn-neutral float-right" title="Configuring Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../6_kubernetes_deployment/" class="btn btn-neutral float-right" title="Creating Deployments">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../kube_visualizer/" class="btn btn-neutral" title="Visualizing Kubernetes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../4_configs/" class="btn btn-neutral" title="Configuring Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -1041,10 +1025,10 @@ kubectl exec -it web  sh  -c sync
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../4_configs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../4_configs/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../6_kubernetes_deployment/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

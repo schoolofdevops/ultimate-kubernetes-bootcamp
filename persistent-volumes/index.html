@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Mini Project - Ultimate Kubernetes Bootcamp</title>
+  <title>Persistent Volume Setup - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Mini Project";
-    var mkdocs_page_input_path = "11_deploying_sample_app.md";
-    var mkdocs_page_url = "/11_deploying_sample_app/";
+    var mkdocs_page_name = "Persistent Volume Setup";
+    var mkdocs_page_input_path = "persistent-volumes.md";
+    var mkdocs_page_url = "/persistent-volumes/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -111,25 +111,31 @@
                     
     <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
-                <li class="">
-                    
-    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
-                </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Mini Project</a>
+    <a class="current" href="./">Persistent Volume Setup</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#mini-project-deploying-multi-tier-application-stack">Mini Project: Deploying Multi Tier Application Stack</a></li>
+    <li class="toctree-l3"><a href="#steps-to-set-up-nfs-based-persistent-volumes">Steps to set up nfs based Persistent Volumes</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#tasks">Tasks</a></li>
+            <li><a class="toctree-l4" href="#set-up-nfs-server">Set up NFS Server</a></li>
+        
+            <li><a class="toctree-l4" href="#set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</a></li>
+        
+            <li><a class="toctree-l4" href="#authorization">Authorization</a></li>
+        
+            <li><a class="toctree-l4" href="#test">Test</a></li>
         
         </ul>
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -186,7 +192,7 @@
         
       
     
-    <li>Mini Project</li>
+    <li>Persistent Volume Setup</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -196,107 +202,124 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="mini-project-deploying-multi-tier-application-stack">Mini Project: Deploying Multi Tier Application Stack</h1>
-<p>In this project , you would write definitions for deploying the vote application stack with all components/tiers which include,</p>
-<ul>
-<li>vote ui</li>
-<li>redis</li>
-<li>worker</li>
-<li>db</li>
-<li>results ui</li>
-</ul>
-<h2 id="tasks">Tasks</h2>
-<ul>
-<li>Create deployments for all applications</li>
-<li>Define services for each tier</li>
-<li>Launch/appy the definitions</li>
-</ul>
-<p>Following table depicts the state of readiness of the above services.</p>
-<table>
-<thead>
-<tr>
-<th align="left">App</th>
-<th align="left">Deployment</th>
-<th align="left">Service</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left">vote</td>
-<td align="left">ready</td>
-<td align="left">ready</td>
-</tr>
-<tr>
-<td align="left">redis</td>
-<td align="left">in progress</td>
-<td align="left">ready</td>
-</tr>
-<tr>
-<td align="left">worker</td>
-<td align="left">in progress</td>
-<td align="left">in progress</td>
-</tr>
-<tr>
-<td align="left">db</td>
-<td align="left">in progress</td>
-<td align="left">todo</td>
-</tr>
-<tr>
-<td align="left">results</td>
-<td align="left">todo</td>
-<td align="left">todo</td>
-</tr>
-</tbody>
-</table>
-<h3 id="deploying-the-sample-application">Deploying the sample application</h3>
-<p>To create deploy the sample applications,</p>
-<pre><code>kubectl create -f projects/instavote/dev
+                <h1 id="steps-to-set-up-nfs-based-persistent-volumes">Steps to set up nfs based Persistent Volumes</h1>
+<h2 id="set-up-nfs-server">Set up NFS Server</h2>
+<p>Install NFS Server package</p>
+<pre><code>sudo apt-get update
+sudo apt-get install nfs-kernel-server -y
 </code></pre>
 
-<p>Sample output is like:</p>
-<pre><code>deployment &quot;db&quot; created
-service &quot;db&quot; created
-deployment &quot;redis&quot; created
-service &quot;redis&quot; created
-deployment &quot;vote&quot; created
-service &quot;vote&quot; created
-deployment &quot;worker&quot; created
-deployment &quot;results&quot; created
-service &quot;results&quot; created
+<p>Create and share NFS directory</p>
+<pre><code>sudo mkdir -p /var/nfs/kubernetes
+sudo chown nobody:nogroup /var/nfs/kubernetes
+sudo chmod 666 /etc/exports
+sudo cat &gt; /etc/exports &lt;&lt;EOF
+/var/nfs/kubernetes    192.168.12.0/24(rw,sync,no_subtree_check)
+EOF
+sudo chmod 644 /etc/exports
 </code></pre>
 
-<h4 id="to-validate">To Validate:</h4>
-<pre><code>kubectl get svc -n instavote
+<p>Change <strong>&lt;192.168.12.0/24&gt;</strong> with your IP space.</p>
+<p>Restart NFS server to use the configuration</p>
+<pre><code>sudo systemctl restart nfs-kernel-server
 </code></pre>
 
-<p>Sample Output is:</p>
-<pre><code>kubectl get service vote
-NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-vote   10.97.104.243   &lt;pending&gt;     80:31808/TCP   1h
+<h2 id="set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</h2>
+<p>Clone the <code>External Storage</code> repository from github.</p>
+<pre><code>git clone https://github.com/kubernetes-incubator/external-storage.git
 </code></pre>
 
-<p>Here the port assigned is 31808, go to the browser and enter</p>
-<pre><code>masterip:31808
+<p>We are going to use nfs-client provisioner.</p>
+<pre><code>cd external-storage/nfs-client
 </code></pre>
 
-<p><img alt="alt text" src="../images/Vote.png" title="Front-End" /></p>
-<p>This will load the page where you can vote.</p>
-<p>To check the result:</p>
-<pre><code>kubectl get service result
+<p>Update the deployment with your NFS server's data</p>
+<pre><code>vim deploy/deployment.yaml
+
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: nfs-client-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      containers:
+        - name: nfs-client-provisioner
+          image: quay.io/external_storage/nfs-client-provisioner:latest
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: fuseim.pri/ifs
+            - name: NFS_SERVER
+              value: 192.168.12.10
+            - name: NFS_PATH
+              value: /var/nfs/kubernetes
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 192.168.12.10
+            path: /var/nfs/kubernetes
 </code></pre>
 
-<p>Sample Output is:</p>
-<pre><code>kubectl get service result
-NAME      CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
+<p>Change <code>NFS_SERVER</code> and <code>NFS_PATH</code> values accordingly. </p>
+<p><strong>Tip</strong>: You can also change <code>PROVISIONER_NAME</code> data to something like <code>sod.com/nfs</code>. If you do that be sure to change <code>provisioner</code> value in <code>class.yaml</code> as well.</p>
+<p>Deploy nfs-client provisioner.</p>
+<pre><code>kubectl apply -f deploy/deployment.yaml
 </code></pre>
 
-<p>Here the port assigned is 32511, go to the browser and enter</p>
-<pre><code>masterip:32511
+<p>Create Storage Class.</p>
+<pre><code>kubectl apply -f deploy/class.yaml
 </code></pre>
 
-<p><img alt="alt text" src="../images/Result.png" title="Result Page" /></p>
-<p>This is the page where we can see the results of the vote.</p>
+<h2 id="authorization">Authorization</h2>
+<p>Your cluster might be using RBAC. So you need to create Service Accounts and Cluster Roles to provide appropriate permissions to nfs-provisioner.
+The manifests inside <code>auth</code> directory has not been updated in a while. So please change <code>apiVersion</code> from <code>rbac.authorization.k8s.io/v1alpha1</code> to <code>rbac.authorization.k8s.io/v1</code> in all the files inside that directory.</p>
+<p>Apply RBAC...</p>
+<pre><code>kubectl create -f deploy/auth/serviceaccount.yaml
+kubectl create -f deploy/auth/clusterrole.yaml
+kubectl create -f deploy/auth/clusterrolebinding.yaml
+kubectl patch deployment nfs-client-provisioner -p '{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;serviceAccount&quot;:&quot;nfs-client-provisioner&quot;}}}}'
+</code></pre>
+
+<h2 id="test">Test</h2>
+<p>Let us test the if our NFS provisioner works.</p>
+<p>Create a PVC</p>
+<pre><code>kubectl apply -f deploy/test-claim.yaml
+</code></pre>
+
+<p>Check the PVC Status</p>
+<pre><code>kubectl get pvc
+
+[output]
+NAME         STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+test-claim   Bound     pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7   1Mi        RWX            managed-nfs-storage   52s
+</code></pre>
+
+<p>Let us create a pod to use this PVC</p>
+<pre><code>kubectl apply -f deploy/test-pod.yaml
+</code></pre>
+
+<p>Now check the contents of our shared NFS directory</p>
+<pre><code>ls /var/nfs/kubernetes
+
+[output]
+default-test-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
+
+ls /var/nfs/kubernetes/default-test-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
+
+[output]
+SUCCESS
+</code></pre>
+
+<p>There you go. Thats how you create PV and PVC using NFS in Kubernetes</p>
               
             </div>
           </div>
@@ -304,10 +327,10 @@ result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../cluster_setup_kubespray/" class="btn btn-neutral float-right" title="Production grade setup with Kubespray">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../11_deploying_sample_app/" class="btn btn-neutral float-right" title="Mini Project">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../persistent-volumes/" class="btn btn-neutral" title="Persistent Volume Setup"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kube_visualizer/" class="btn btn-neutral" title="Kuberentes Visualizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -333,10 +356,10 @@ result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../persistent-volumes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../cluster_setup_kubespray/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../11_deploying_sample_app/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

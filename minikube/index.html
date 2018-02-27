@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Option 2 - Docker for Mac/Windows - Ultimate Kubernetes Bootcamp</title>
+  <title>Using minikube to setup single node environment - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Option 2 - Docker for Mac/Windows";
+    var mkdocs_page_name = "Using minikube to setup single node environment";
     var mkdocs_page_input_path = "minikube.md";
     var mkdocs_page_url = "/minikube/";
   </script>
@@ -58,67 +58,29 @@
     <ul class="subnav">
                 <li class=" current">
                     
-    <span class="caption-text">Single Node</span>
-    <ul class="subnav">
-                <li class="toctree-l3">
-                    
-    <a class="" href="./">Option 1 - Minikube</a>
+    <a class="current" href="./">Using minikube to setup single node environment</a>
     <ul class="subnav">
             
-    <li class="toctree-l4"><a href="#single-node-k8s-cluster-with-minikube">Single node k8s cluster with Minikube</a></li>
+    <li class="toctree-l3"><a href="#single-node-k8s-cluster-with-minikube">Single node k8s cluster with Minikube</a></li>
     
         <ul>
         
-            <li><a class="toctree-l5" href="#install-minikube">Install Minikube</a></li>
+            <li><a class="toctree-l4" href="#install-minikube">Install Minikube</a></li>
         
-            <li><a class="toctree-l5" href="#start-all-in-one-single-node-cluster-with-minikube">Start all in one single node cluster with minikube</a></li>
+            <li><a class="toctree-l4" href="#start-all-in-one-single-node-cluster-with-minikube">Start all in one single node cluster with minikube</a></li>
         
         </ul>
     
 
     </ul>
                 </li>
-                <li class="toctree-l3 current">
+                <li class="">
                     
-    <a class="current" href="./">Option 2 - Docker for Mac/Windows</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l4"><a href="#single-node-k8s-cluster-with-minikube">Single node k8s cluster with Minikube</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l5" href="#install-minikube">Install Minikube</a></li>
-        
-            <li><a class="toctree-l5" href="#start-all-in-one-single-node-cluster-with-minikube">Start all in one single node cluster with minikube</a></li>
-        
-        </ul>
-    
-
-    </ul>
-                </li>
-    </ul>
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <span class="caption-text">Multi Node</span>
-    <ul class="subnav">
-                <li class="toctree-l3">
-                    
-    <a class="" href="../2_kube_cluster_vagrant/">Provisioning Nodes with Vagrant</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="../3_install_kubernetes/">Option 1 - Kubeadm - Bring Your Own Nodes (BYON)</a>
-                </li>
-                <li class="toctree-l3">
-                    
-    <a class="" href="../3_install_kubernetes/">Option 2 - Google Cloud Platform</a>
-                </li>
-    </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../kube_visualizer/">Visualizing Kubernetes</a>
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
                 </li>
     </ul>
 	    </li>
@@ -129,11 +91,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">LaunchPod - Working with Pods</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../5_deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
@@ -158,6 +120,14 @@
                 <li class="">
                     
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
                 </li>
                 <li class="">
                     
@@ -217,12 +187,8 @@
           <li>Setup &raquo;</li>
         
       
-        
-          <li>Single Node &raquo;</li>
-        
-      
     
-    <li>Option 2 - Docker for Mac/Windows</li>
+    <li>Using minikube to setup single node environment</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -311,10 +277,10 @@ minikube logs
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../2_kube_cluster_vagrant/" class="btn btn-neutral float-right" title="Provisioning Nodes with Vagrant">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../2_kube_cluster_vagrant/" class="btn btn-neutral float-right" title="Provisioning VMs with Vagrant">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="./" class="btn btn-neutral" title="Option 1 - Minikube"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -340,7 +306,7 @@ minikube logs
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="./" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../2_kube_cluster_vagrant/" style="color: #fcfcfc">Next &raquo;</a></span>
