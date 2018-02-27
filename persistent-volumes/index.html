@@ -116,7 +116,7 @@
     <a class="current" href="./">Persistent Volume Setup</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#steps-to-set-up-nfs-based-persistent-volumes">Steps to set up nfs based Persistent Volumes</a></li>
+    <li class="toctree-l3"><a href="#steps-to-set-up-nfs-based-persistent-volumes">Steps to set up NFS based Persistent Volumes</a></li>
     
         <ul>
         
@@ -202,7 +202,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="steps-to-set-up-nfs-based-persistent-volumes">Steps to set up nfs based Persistent Volumes</h1>
+                <h1 id="steps-to-set-up-nfs-based-persistent-volumes">Steps to set up NFS based Persistent Volumes</h1>
 <h2 id="set-up-nfs-server">Set up NFS Server</h2>
 <p>Install NFS Server package</p>
 <pre><code>sudo apt-get update
@@ -275,7 +275,7 @@ spec:
 <pre><code>kubectl apply -f deploy/deployment.yaml
 </code></pre>
 
-<p>Create Storage Class.</p>
+<p>Create the Storage Class.</p>
 <pre><code>kubectl apply -f deploy/class.yaml
 </code></pre>
 
