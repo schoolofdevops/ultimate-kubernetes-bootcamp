@@ -106,9 +106,33 @@ kubectl patch deployment nfs-client-provisioner -p '{"spec":{"template":{"spec":
 
 Let us test the if our NFS provisioner works.
 
+Clone `k8s-code` repository
+
+```
+git clone https//github.com/schoolofdevops/k8s-code.git
+cd k8s-code/projects/mogambo/dev/
+```
+
+`file: cataloguedb-pvc.yml`
+
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cataloguedb-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+```
+
 Create a PVC
 ```
-kubectl apply -f deploy/test-claim.yaml
+kubectl apply -f cataloguedb-pvc.yml
 ```
 
 Check the PVC Status
@@ -117,22 +141,36 @@ kubectl get pvc
 
 [output]
 NAME         STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS          AGE
-test-claim   Bound     pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7   1Mi        RWX            managed-nfs-storage   52s
+catalougedb-claim   Bound     pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7   1Gi        RWX            managed-nfs-storage   52s
+```
+
+`file: cataloguedb-deploy.yml`
+
+```
+[...]
+          volumeMounts:
+            - name: nfs-pvc
+              mountPath: "/mnt"
+      volumes:
+        - name: nfs-pvc
+          persistentVolumeClaim:
+            claimName: cataloguedb-claim
 ```
 
 Let us create a pod to use this PVC
 ```
-kubectl apply -f deploy/test-pod.yaml
+kubectl apply -f cataloguedb-deploy.yml
 ```
+
 
 Now check the contents of our shared NFS directory
 ```
 ls /var/nfs/kubernetes
 
 [output]
-default-test-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
+default-cataloguedb-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
 
-ls /var/nfs/kubernetes/default-test-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
+ls /var/nfs/kubernetes/default-cataloguedb-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
 
 [output]
 SUCCESS
