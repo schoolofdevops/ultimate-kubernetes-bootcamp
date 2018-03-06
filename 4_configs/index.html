@@ -68,6 +68,10 @@
                     
     <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
+                </li>
     </ul>
 	    </li>
           
@@ -82,17 +86,11 @@
             
     <li class="toctree-l3"><a href="#setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</a></li>
     
-        <ul>
-        
-            <li><a class="toctree-l4" href="#working-with-unix-screen">Working with Unix Screen</a></li>
-        
-        </ul>
-    
 
     <li class="toctree-l3"><a href="#listing-configurations">Listing Configurations</a></li>
     
 
-    <li class="toctree-l3"><a href="#creating-a-namespace-for-instavote-project">Creating a namespace for instavote project</a></li>
+    <li class="toctree-l3"><a href="#creating-a-namespace">Creating a namespace</a></li>
     
 
     </ul>
@@ -111,11 +109,15 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../8_rollouts_and_rollbacks/">Rollouts and Rollbacks</a>
+    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
                 </li>
                 <li class="">
                     
@@ -124,14 +126,6 @@
                 <li class="">
                     
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
                 </li>
                 <li class="">
                     
@@ -210,60 +204,19 @@
 <li>Namespaces</li>
 </ul>
 <h2 id="setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</h2>
-<p>Unix <strong>screen</strong> is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a <strong>screenrc</strong> script as follows on kube-01 node (node where <em>kubectl</em> is configured)</p>
-<p>file: k8s-code/monitoring/deploy.screenrc</p>
-<pre><code>screen watch -n 1 kubectl get pods
-split
-focus down
-screen watch -n 1 kubectl get deploy
-split
-focus down
-screen watch -n 1 kubectl get services
-split
-focus down
-screen watch -n 1 kubectl get replicasets
-focus bottom
-</code></pre>
+<p>Unix <strong>watch</strong> is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a <strong>watch</strong>  along with <strong>kubectl</strong> command.  Run the following on the managment node. It could be your local system configured with kubectl, or a remote shell on a node where <em>kubectl</em> is configured.</p>
+<pre><code>watch -n 1 kubectl get pods,deploy,svc
 
-<p>Open a dedicated terminal to run this utility.  Launch it using</p>
-<pre><code>screen -c monitoring/deploy.screenrc
-
-</code></pre>
-
-<h3 id="working-with-unix-screen">Working with Unix Screen</h3>
-<p>To detach</p>
-<pre><code>^a d  
-</code></pre>
-
-<p>To list existing screen sessions</p>
-<pre><code>screen -ls
-</code></pre>
-
-<p>To re attach</p>
-<pre><code>screen  -x &lt;session_id&gt;
-</code></pre>
-
-<p>To delete a session</p>
-<pre><code>screen -X -S &lt;session_id&gt; quit
-</code></pre>
-
-<p>e.g.</p>
-<pre><code>screen -ls
-There are screens on:
-    26484.pts-2.kube-01 (01/12/2018 06:47:41 AM)    (Detached)
-    18472.pts-2.kube-01 (01/12/2018 06:43:21 AM)    (Detached)
-2 Sockets in /var/run/screen/S-root.
-
-screen -X -S 26 quit
 </code></pre>
 
 <h2 id="listing-configurations">Listing Configurations</h2>
 <p>Check current config</p>
-<pre><code>kubectl config view
+<pre><code>
+kubectl config view
 </code></pre>
 
 <p>You could also examine the current configs in file <strong>cat ~/.kube/config</strong></p>
-<h2 id="creating-a-namespace-for-instavote-project">Creating a namespace for instavote project</h2>
+<h2 id="creating-a-namespace">Creating a namespace</h2>
 <p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
 <p>Lets create a namespace called <strong>mogambo</strong>  </p>
 <p>file: k8s-code/projects/mogambo/mogambo-ns.yml</p>
@@ -294,7 +247,7 @@ kubectl get ns
         <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../3_install_kubernetes/" class="btn btn-neutral" title="Setup Kubernetes Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kube_visualizer/" class="btn btn-neutral" title="Kuberentes Visualizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -320,7 +273,7 @@ kubectl get ns
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../3_install_kubernetes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>

@@ -68,6 +68,10 @@
                     
     <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
+                </li>
     </ul>
 	    </li>
           
@@ -93,23 +97,11 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../8_rollouts_and_rollbacks/">Rollouts and Rollbacks</a>
+    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
                 <li class=" current">
                     
@@ -132,6 +124,14 @@
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
                 </li>
                 <li class="">
                     
@@ -291,8 +291,28 @@ kubectl patch deployment nfs-client-provisioner -p '{&quot;spec&quot;:{&quot;tem
 
 <h2 id="test">Test</h2>
 <p>Let us test the if our NFS provisioner works.</p>
+<p>Clone <code>k8s-code</code> repository</p>
+<pre><code>git clone https//github.com/schoolofdevops/k8s-code.git
+cd k8s-code/projects/mogambo/dev/
+</code></pre>
+
+<p><code>file: cataloguedb-pvc.yml</code></p>
+<pre><code>kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cataloguedb-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: &quot;managed-nfs-storage&quot;
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+</code></pre>
+
 <p>Create a PVC</p>
-<pre><code>kubectl apply -f deploy/test-claim.yaml
+<pre><code>kubectl apply -f cataloguedb-pvc.yml
 </code></pre>
 
 <p>Check the PVC Status</p>
@@ -300,20 +320,31 @@ kubectl patch deployment nfs-client-provisioner -p '{&quot;spec&quot;:{&quot;tem
 
 [output]
 NAME         STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS          AGE
-test-claim   Bound     pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7   1Mi        RWX            managed-nfs-storage   52s
+catalougedb-claim   Bound     pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7   1Gi        RWX            managed-nfs-storage   52s
+</code></pre>
+
+<p><code>file: cataloguedb-deploy.yml</code></p>
+<pre><code>[...]
+          volumeMounts:
+            - name: nfs-pvc
+              mountPath: &quot;/mnt&quot;
+      volumes:
+        - name: nfs-pvc
+          persistentVolumeClaim:
+            claimName: cataloguedb-claim
 </code></pre>
 
 <p>Let us create a pod to use this PVC</p>
-<pre><code>kubectl apply -f deploy/test-pod.yaml
+<pre><code>kubectl apply -f cataloguedb-deploy.yml
 </code></pre>
 
 <p>Now check the contents of our shared NFS directory</p>
 <pre><code>ls /var/nfs/kubernetes
 
 [output]
-default-test-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
+default-cataloguedb-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
 
-ls /var/nfs/kubernetes/default-test-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
+ls /var/nfs/kubernetes/default-cataloguedb-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
 
 [output]
 SUCCESS
@@ -327,10 +358,10 @@ SUCCESS
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../11_deploying_sample_app/" class="btn btn-neutral float-right" title="Mini Project">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../9_using_configmaps_and_secrets/" class="btn btn-neutral float-right" title="Using Configmaps and Secrets">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../kube_visualizer/" class="btn btn-neutral" title="Kuberentes Visualizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../9_deployement_strategies/" class="btn btn-neutral" title="Deployment Strategies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -356,10 +387,10 @@ SUCCESS
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../9_deployement_strategies/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../11_deploying_sample_app/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../9_using_configmaps_and_secrets/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
