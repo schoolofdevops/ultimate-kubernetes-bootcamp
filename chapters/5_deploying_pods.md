@@ -827,7 +827,7 @@ spec:
       - name: data
         mountPath: /var/www/html-sample-app
     - name: sync
-      image: schoolofdevops/synch
+      image: schoolofdevops/sync
       volumeMounts:
       - name: data
         mountPath: /var/www/html-sample-app
