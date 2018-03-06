@@ -152,7 +152,7 @@
         }, 
         {
             "location": "/kube_visualizer/", 
-            "text": "Kubernetes Visualizer\n\n\nIn this chapter we will see how to set up kubernetes visualizer that will show us the changes in our cluster in real time.\n\n\nSet up\n\n\nFork the repository\n\n\nyum install -y git #only if you use play-with-k8s\n\ngit clone  https://github.com/schoolofdevops/kube-ops-view\n\ncd  kube-ops-view\n\n\n\n\nDeploy the visualizer on kubernetes\n\n\nkubectl apply -f deploy/\n\n[ouput]\nserviceaccount \nkube-ops-view\n created\nclusterrole \nkube-ops-view\n created\nclusterrolebinding \nkube-ops-view\n created\ndeployment \nkube-ops-view\n created\ningress \nkube-ops-view\n created\ndeployment \nkube-ops-view-redis\n created\nservice \nkube-ops-view-redis\n created\nservice \nkube-ops-view\n created\n\n\n\n\nGet the nodeport for the service.\n\n\nkubectl get svc\n\n[output]\nNAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE\nkube-ops-view         NodePort    10.107.204.74   \nnone\n        80:**30073**/TCP   1m\nkube-ops-view-redis   ClusterIP   10.104.50.176   \nnone\n        6379/TCP       1m\nkubernetes            ClusterIP   10.96.0.1       \nnone\n        443/TCP        8m\n\n\n\n\nIn my case, port \n30073\n is the nodeport.\n\n\nVisit the port from the browser.\n\n\nhttp://\nNODE_IP:NODE_PORT\n\n\n\n\n\n\n\nTest\n\n\nLet us test how kubernetes cluster works.\n\n\nClone kubernetes code repository from School of Devops.\n\n\ngit clone https://github.com/schoolofdevops/k8s-code\n\ncd k8s-code\n\n\n\n\nCreate the namespace.\n\n\ncd projects/instavote/\n\nkubectl apply -f instavote-ns.yaml\n\n[output]\nnamespace \ninstavote\n created\n\n\n\n\nDeploy vote application on kubernetes\n\n\ncd dev\n\nkubectl apply  -f vote-deploy.yaml\n\n[output]\ndeployment \nvote\n created", 
+            "text": "Kubernetes Visualizer\n\n\nIn this chapter we will see how to set up kubernetes visualizer that will show us the changes in our cluster in real time.\n\n\nSet up\n\n\nFork the repository\n\n\nyum install -y git #only if you use play-with-k8s\n\ngit clone  https://github.com/schoolofdevops/kube-ops-view\n\ncd  kube-ops-view\n\n\n\n\nDeploy the visualizer on kubernetes\n\n\nkubectl apply -f deploy/\n\n[ouput]\nserviceaccount \nkube-ops-view\n created\nclusterrole \nkube-ops-view\n created\nclusterrolebinding \nkube-ops-view\n created\ndeployment \nkube-ops-view\n created\ningress \nkube-ops-view\n created\ndeployment \nkube-ops-view-redis\n created\nservice \nkube-ops-view-redis\n created\nservice \nkube-ops-view\n created\n\n\n\n\nGet the nodeport for the service.\n\n\nkubectl get svc\n\n[output]\nNAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE\nkube-ops-view         NodePort    10.107.204.74   \nnone\n        80:**30073**/TCP   1m\nkube-ops-view-redis   ClusterIP   10.104.50.176   \nnone\n        6379/TCP       1m\nkubernetes            ClusterIP   10.96.0.1       \nnone\n        443/TCP        8m\n\n\n\n\nIn my case, port \n30073\n is the nodeport.\n\n\nVisit the port from the browser.\n\n\nhttp://\nNODE_IP:NODE_PORT", 
             "title": "Kuberentes Visualizer"
         }, 
         {
@@ -166,29 +166,14 @@
             "title": "Set up"
         }, 
         {
-            "location": "/kube_visualizer/#test", 
-            "text": "Let us test how kubernetes cluster works.  Clone kubernetes code repository from School of Devops.  git clone https://github.com/schoolofdevops/k8s-code\n\ncd k8s-code  Create the namespace.  cd projects/instavote/\n\nkubectl apply -f instavote-ns.yaml\n\n[output]\nnamespace  instavote  created  Deploy vote application on kubernetes  cd dev\n\nkubectl apply  -f vote-deploy.yaml\n\n[output]\ndeployment  vote  created", 
-            "title": "Test"
+            "location": "/run_and_publish_image/", 
+            "text": "Quck Deploy a Docker Image with Kubernetes\n\n\nkubectl run vote --image=schoolofdevops/vote --port 80\n\nkubectl scale --replicas=10 deploy/vote\n\nkubectl expose deploy vote --port 80 --target-port 80 --type NodePort", 
+            "title": "Quickstart"
         }, 
         {
-            "location": "/4_configs/", 
-            "text": "In this lesson we are going to cover the following topics\n\n\n\n\nSetting up monitors\n\n\nConfigs\n\n\nContext\n\n\nNamespaces\n\n\n\n\nSetup monitoring console for Kubernetes\n\n\nUnix \nwatch\n is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a \nwatch\n  along with \nkubectl\n command.  Run the following on the managment node. It could be your local system configured with kubectl, or a remote shell on a node where \nkubectl\n is configured.\n\n\nwatch -n 1 kubectl get pods,deploy,svc\n\n\n\n\n\nListing Configurations\n\n\nCheck current config\n\n\n\nkubectl config view\n\n\n\n\nYou could also examine the current configs in file \ncat ~/.kube/config\n\n\nCreating a namespace\n\n\nNamespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   \n\n\nLets create a namespace called \nmogambo\n  \n\n\nfile: k8s-code/projects/mogambo/mogambo-ns.yml\n\n\nkind: Namespace\napiVersion: v1\nmetadata:\n  name: mogambo\n\n\n\n\nTo create namespace\n\n\ncd k8s-code/projects/mogamgo\nkubectl get ns\nkubectl apply -f mogamgo-ns.yml\nkubectl get ns\n\n\n\n\nAnd switch to it\n\n\nkubectl config set-context $(kubectl config current-context) --namespace=mogambo", 
-            "title": "Configuring Cluster"
-        }, 
-        {
-            "location": "/4_configs/#setup-monitoring-console-for-kubernetes", 
-            "text": "Unix  watch  is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a  watch   along with  kubectl  command.  Run the following on the managment node. It could be your local system configured with kubectl, or a remote shell on a node where  kubectl  is configured.  watch -n 1 kubectl get pods,deploy,svc", 
-            "title": "Setup monitoring console for Kubernetes"
-        }, 
-        {
-            "location": "/4_configs/#listing-configurations", 
-            "text": "Check current config  \nkubectl config view  You could also examine the current configs in file  cat ~/.kube/config", 
-            "title": "Listing Configurations"
-        }, 
-        {
-            "location": "/4_configs/#creating-a-namespace", 
-            "text": "Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.     Lets create a namespace called  mogambo     file: k8s-code/projects/mogambo/mogambo-ns.yml  kind: Namespace\napiVersion: v1\nmetadata:\n  name: mogambo  To create namespace  cd k8s-code/projects/mogamgo\nkubectl get ns\nkubectl apply -f mogamgo-ns.yml\nkubectl get ns  And switch to it  kubectl config set-context $(kubectl config current-context) --namespace=mogambo", 
-            "title": "Creating a namespace"
+            "location": "/run_and_publish_image/#quck-deploy-a-docker-image-with-kubernetes", 
+            "text": "kubectl run vote --image=schoolofdevops/vote --port 80\n\nkubectl scale --replicas=10 deploy/vote\n\nkubectl expose deploy vote --port 80 --target-port 80 --type NodePort", 
+            "title": "Quck Deploy a Docker Image with Kubernetes"
         }, 
         {
             "location": "/5_deploying_pods/", 
@@ -319,6 +304,26 @@
             "location": "/5_deploying_pods/#reading-list", 
             "text": "PodSpec: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core  Managing Volumes with Kubernetes: https://kubernetes.io/docs/concepts/storage/volumes/  Node Selectors, Affinity: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/", 
             "title": "Reading List"
+        }, 
+        {
+            "location": "/4_configs/", 
+            "text": "In this lesson we are going to cover the following topics\n\n\n\n\nSetting up monitors\n\n\nConfigs\n\n\nContext\n\n\nNamespaces\n\n\n\n\nSetup monitoring console for Kubernetes\n\n\nUnix \nwatch\n is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a \nwatch\n  along with \nkubectl\n command.  Run the following on the managment node. It could be your local system configured with kubectl, or a remote shell on a node where \nkubectl\n is configured.\n\n\nwatch -n 1 kubectl get pods,deploy,svc\n\n\n\n\n\nListing Configurations\n\n\nCheck current config\n\n\n\nkubectl config view\n\n\n\n\nYou could also examine the current configs in file \ncat ~/.kube/config\n\n\nCreating a namespace\n\n\nNamespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   \n\n\nLets create a namespace called \nmogambo\n  \n\n\nfile: k8s-code/projects/mogambo/mogambo-ns.yml\n\n\nkind: Namespace\napiVersion: v1\nmetadata:\n  name: mogambo\n\n\n\n\nTo create namespace\n\n\ncd k8s-code/projects/mogamgo\nkubectl get ns\nkubectl apply -f mogamgo-ns.yml\nkubectl get ns\n\n\n\n\nAnd switch to it\n\n\nkubectl config set-context $(kubectl config current-context) --namespace=mogambo", 
+            "title": "Configuring Cluster"
+        }, 
+        {
+            "location": "/4_configs/#setup-monitoring-console-for-kubernetes", 
+            "text": "Unix  watch  is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a  watch   along with  kubectl  command.  Run the following on the managment node. It could be your local system configured with kubectl, or a remote shell on a node where  kubectl  is configured.  watch -n 1 kubectl get pods,deploy,svc", 
+            "title": "Setup monitoring console for Kubernetes"
+        }, 
+        {
+            "location": "/4_configs/#listing-configurations", 
+            "text": "Check current config  \nkubectl config view  You could also examine the current configs in file  cat ~/.kube/config", 
+            "title": "Listing Configurations"
+        }, 
+        {
+            "location": "/4_configs/#creating-a-namespace", 
+            "text": "Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.     Lets create a namespace called  mogambo     file: k8s-code/projects/mogambo/mogambo-ns.yml  kind: Namespace\napiVersion: v1\nmetadata:\n  name: mogambo  To create namespace  cd k8s-code/projects/mogamgo\nkubectl get ns\nkubectl apply -f mogamgo-ns.yml\nkubectl get ns  And switch to it  kubectl config set-context $(kubectl config current-context) --namespace=mogambo", 
+            "title": "Creating a namespace"
         }, 
         {
             "location": "/6_kubernetes_deployment/", 
