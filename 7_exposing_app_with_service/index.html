@@ -81,15 +81,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../run_and_publish_image/">Quickstart</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
@@ -108,7 +104,7 @@
         
             <li><a class="toctree-l4" href="#exposing-the-app-with-externalip">Exposing the app with ExternalIP</a></li>
         
-            <li><a class="toctree-l4" href="#exposing-the-app-with-loadbalancer">Exposing the app with LoadBalancer</a></li>
+            <li><a class="toctree-l4" href="#exposing-the-app-with-loadbalancer-only-on-cloud">Exposing the app with LoadBalancer (Only on Cloud)</a></li>
         
             <li><a class="toctree-l4" href="#headless-services-with-endpointsexternal-names">Headless services with Endpoints/External Names</a></li>
         
@@ -116,10 +112,6 @@
     
 
     </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
                 </li>
                 <li class="">
                     
@@ -221,30 +213,28 @@ kubectl get svc
 
 <p>Sample Output:</p>
 <pre><code>NAME                         READY     STATUS    RESTARTS   AGE
-front-end-64597c55f8-dk6g7   1/1       Running   0          4m
-front-end-64597c55f8-mkp2h   1/1       Running   0          4m
-front-end-64597c55f8-r2c54   1/1       Running   0          4m
+frontend-64597c55f8-dk6g7   1/1       Running   0          4m
+frontend-64597c55f8-mkp2h   1/1       Running   0          4m
+frontend-64597c55f8-r2c54   1/1       Running   0          4m
 </code></pre>
 
 <h2 id="publishing-a-service-with-nodeport">Publishing a service with NodePort</h2>
-<p>Filename: vote-svc.yaml</p>
-<pre><code>---
-apiVersion: v1
+<p>Filename: frontend-svc.yaml</p>
+<pre><code>apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    role: svc
-    tier: front
-  name: front-end
+  name: frontend
   namespace: mogambo
 spec:
   selector:
-    app: front-end
+    app: frontend
+    env: dev
   ports:
-  - port: 8079
-    protocol: TCP
-    targetPort: 8079
+    - port: 8079
+      protocol: TCP
+      targetPort: 8079
   type: NodePort
+
 </code></pre>
 
 <p>Save the file.</p>
@@ -254,17 +244,17 @@ kubectl get svc
 </code></pre>
 
 <p>Now to check which port the pod is connected</p>
-<pre><code>kubectl describe service front-end
+<pre><code>kubectl describe service frontend
 </code></pre>
 
 <p>Check for the Nodeport here</p>
 <p>Sample Output</p>
-<pre><code>Name:                     front-end
+<pre><code>Name:                     frontend
 Namespace:                mogambo
 Labels:                   role=svc
                           tier=front
-Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;front-end&quot;,&quot;namespace&quot;:&quot;mogambo&quot;},&quot;spec...
-Selector:                 app=front-end
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;frontend&quot;,&quot;namespace&quot;:&quot;mogambo&quot;},&quot;spec...
+Selector:                 app=frontend
 Type:                     NodePort
 IP:                       10.11.248.77
 Port:                     &lt;unset&gt;  8079/TCP
@@ -279,12 +269,12 @@ Events:                   &lt;none&gt;
 <p>Go to browser and check hostip:NodePort</p>
 <p>Here the node port is 30197.</p>
 <p>Sample output will be:</p>
-<p><img alt="Vote" src="../images/vote.png" /></p>
+<p><img alt="frontend" src="../images/frontend.png" /></p>
 <h2 id="exposing-the-app-with-externalip">Exposing the app with ExternalIP</h2>
 <p><code>file: /k8s-code/projects/mogambo/dev/frontend-svc.yml</code></p>
 <pre><code>spec:
   selector:
-    app: front-end
+    app: frontend
   ports:
   - port: 80
     protocol: TCP
@@ -295,25 +285,26 @@ Events:                   &lt;none&gt;
     - 192.168.12.12
 </code></pre>
 
+<p>Where 192.168.12.11 and 192.168.12.12 are the actual IPs of kubernetes hosts. Replace it as you see fit.</p>
 <p>apply</p>
 <pre><code>kubectl apply -f frontend-svc.yml
 kubectl  get svc
-kubectl describe svc front-end
+kubectl describe svc frontend
 </code></pre>
 
-<h2 id="exposing-the-app-with-loadbalancer">Exposing the app with LoadBalancer</h2>
+<h2 id="exposing-the-app-with-loadbalancer-only-on-cloud">Exposing the app with LoadBalancer (Only on Cloud)</h2>
 <p>Service type LoadBalancer is only supported on AWS,GCE,Azure and Openstack. If you have you cluster running on any of these clouds, give it a try. It will create a load balancer for us with a ephemeral IP. We can also specify a loadBalancerIP. Mostly not recommended to use. Using service type LoadBalancer will rise your cloud provider spendings. Think about launching 10 load balancers for 10 different services. Thats where <strong>ingress</strong> come into picture (explained in the later part).</p>
 <pre><code>apiVersion: v1
 kind: Service
 metadata:
-  name: front-end
+  name: frontend
   namespace: mogambo
   labels:
-    app: front-end
+    app: frontend
     env: dev
 spec:
   selector:
-    app: front-end
+    app: frontend
   ports:
     - protocol: TCP
       port: 8079
@@ -349,6 +340,10 @@ subsets:
 </code></pre>
 
 <p>These IPs have to be manually managed by the cluster administrator.</p>
+<h4 id="exercises">Exercises</h4>
+<ul>
+<li>Create service definitions for catalogue and catalogue-db</li>
+</ul>
               
             </div>
           </div>
@@ -356,7 +351,7 @@ subsets:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../8_rollouts_and_rollbacks/" class="btn btn-neutral float-right" title="Rolling Updates and Rollbacks">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../9_deployement_strategies/" class="btn btn-neutral float-right" title="Deployment Strategies">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../6_kubernetes_deployment/" class="btn btn-neutral" title="Creating Deployments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -388,7 +383,7 @@ subsets:
         <span><a href="../6_kubernetes_deployment/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../8_rollouts_and_rollbacks/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../9_deployement_strategies/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

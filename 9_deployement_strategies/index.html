@@ -81,15 +81,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../run_and_publish_image/">Quickstart</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
@@ -99,25 +95,21 @@
                     
     <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
                 </li>
-                <li class="">
-                    
-    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
-                </li>
                 <li class=" current">
                     
     <a class="current" href="./">Deployment Strategies</a>
     <ul class="subnav">
             
+    <li class="toctree-l3"><a href="#canary-releases">Canary  Releases</a></li>
+    
+
+    <li class="toctree-l3"><a href="#bluegreen-releases">Blue/Green  Releases</a></li>
+    
+
     <li class="toctree-l3"><a href="#recreate">Recreate</a></li>
     
 
     <li class="toctree-l3"><a href="#pauseunpause">Pause/Unpause</a></li>
-    
-
-    <li class="toctree-l3"><a href="#additional-release-strategies">Additional Release Strategies</a></li>
-    
-
-    <li class="toctree-l3"><a href="#bluegreen-deployments">Blue/Green Deployments</a></li>
     
 
     </ul>
@@ -203,13 +195,170 @@
           <div role="main">
             <div class="section">
               
-                <h3 id="recreate">Recreate</h3>
+                <h3 id="canary-releases">Canary  Releases</h3>
+<pre><code>cd step4
+cd projets/mogambo/dev
+mkdir canary
+</code></pre>
+
+<p>File: canary/frontend-canary-deploy.yml</p>
+<pre><code>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-canary
+  namespace: mogambo
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: &quot;1&quot;
+        app: frontend
+        env: dev
+        release: canary
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v2.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+</code></pre>
+
+<p>deploy the canary version</p>
+<pre><code>
+kubectl apply -f canary/frontend-canary-deploy.yml
+
+</code></pre>
+
+<h3 id="bluegreen-releases">Blue/Green  Releases</h3>
+<pre><code>cd step4
+cd projets/mogambo/dev
+mkdir blue-green
+
+</code></pre>
+
+<p>file: frontend-blue-deploy.yml</p>
+<pre><code>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-blue
+  namespace: mogambo
+spec:
+  replicas: 5
+  strategy:
+    type: Recreate
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: &quot;1&quot;
+        app: frontend
+        env: dev
+        release: bluegreen
+        code: blue
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v3.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+</code></pre>
+
+<p>file: step5/projects/mogambo/dev/blue-green/frontend-green-deploy.yml</p>
+<pre><code>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-green
+  namespace: mogambo
+spec:
+  replicas: 5
+  strategy:
+    type: Recreate
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: &quot;1&quot;
+        app: frontend
+        env: dev
+        release: bluegreen
+        code: green
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v1.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+</code></pre>
+
+<p>file: blue-green/frontend-test-svc.yml</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-test
+  namespace: mogambo
+spec:
+  selector:
+    app: frontend
+    env: dev
+    release: bluegreen
+    code: blue
+  ports:
+    - port: 8079
+      protocol: TCP
+      targetPort: 8079
+  type: NodePort
+
+</code></pre>
+
+<p>file: frontend-svc.yml</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: mogambo
+spec:
+  selector:
+    app: frontend
+    env: dev
+    release: bluegreen
+    code: blue
+  ports:
+    - port: 8079
+      protocol: TCP
+      targetPort: 8079
+  type: NodePort
+
+</code></pre>
+
+<h3 id="recreate">Recreate</h3>
 <p>When the <strong>Recreate</strong> deployment strategy is used,
   * The old pods will be deleted
   * Then the new pods will be created.</p>
 <p>This will create some downtime in our stack. Hence, this strategy is only recommended for development use cases.</p>
 <p>Let us change the deployment strategy to <strong>recreate</strong> and image tag to <em>latest</em>.</p>
-<p><code>File: k8s-code/projects/mogambo/dev/catalogue-deploy.yml</code></p>
+<p>file: catalogue-deploy.yml</p>
 <pre><code>apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -296,19 +445,6 @@ catalogue-6875c8df8f-k4hls   1/1       Running   0          1m
 </code></pre>
 
 <p>When we do this, we skip the need of creating a new rolling update altogether.</p>
-<h3 id="additional-release-strategies">Additional Release Strategies</h3>
-<p>Along with rolling update and recreate strategies, we can also do,</p>
-<ul>
-<li>Canary releases</li>
-<li>Blue/Green deployments.</li>
-</ul>
-<h3 id="bluegreen-deployments">Blue/Green Deployments</h3>
-<hr />
-<ol>
-<li>Recreate type gives an error. Need to be fixed.</li>
-<li>Add Use-cases for recreate strategy type.</li>
-<li>Add additional details of why we skip creating a replica set / rolling update in pause/unpause section.</li>
-</ol>
               
             </div>
           </div>
@@ -319,7 +455,7 @@ catalogue-6875c8df8f-k4hls   1/1       Running   0          1m
         <a href="../persistent-volumes/" class="btn btn-neutral float-right" title="Persistent Volume Setup">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../8_rollouts_and_rollbacks/" class="btn btn-neutral" title="Rolling Updates and Rollbacks"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../7_exposing_app_with_service/" class="btn btn-neutral" title="Service Endpoints"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -345,7 +481,7 @@ catalogue-6875c8df8f-k4hls   1/1       Running   0          1m
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../8_rollouts_and_rollbacks/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../7_exposing_app_with_service/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../persistent-volumes/" style="color: #fcfcfc">Next &raquo;</a></span>

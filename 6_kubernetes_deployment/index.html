@@ -81,15 +81,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../run_and_publish_image/">Quickstart</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class=" current">
                     
@@ -102,15 +98,20 @@
     <li class="toctree-l3"><a href="#scaling-a-deployment">Scaling a deployment</a></li>
     
 
+    <li class="toctree-l3"><a href="#adding-a-deployment-strategy">Adding a Deployment Strategy</a></li>
+    
+
+    <li class="toctree-l3"><a href="#rolling-back-a-failed-update">Rolling Back a Failed Update</a></li>
+    
+
+    <li class="toctree-l3"><a href="#rolling-back-a-failed-update_1">Rolling Back a Failed Update</a></li>
+    
+
     </ul>
                 </li>
                 <li class="">
                     
     <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
                 </li>
                 <li class="">
                     
@@ -204,83 +205,225 @@
 <li>Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.</li>
 <li>Update Strategy: Define a release strategy and update the pods accordingly.</li>
 </ul>
-<p><code>File: k8s-code/projects/mogambo/dev/frontend-deploy.yml</code></p>
-<pre><code>apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: mogambo
-spec:
-  replicas: 3
-  revisionHistoryLimit: 4
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 2
-  minReadySeconds: 20
-  paused: false
-  template:
-    metadata:
-      labels:
-        app: front-end
-        role: ui
-        tier: front
-    spec:
-      containers:
-      - image: schoolofdevops/frontend
-        imagePullPolicy: Always
-        name: front-end
-        ports:
-        - containerPort: 80
-          protocol: TCP
+<p>Deployment spec (deployment.spec) contains the following,</p>
+<pre><code>* replicaset specs
+  * selectors  
+  * replicas  
+* deployment spec
+  * strategy
+  * rollingUpdate
+  * minReadySeconds
+* pod template
+  * metadata, labels
+  * container specs
+</code></pre>
+<p>Create project directory with dev env</p>
+<pre><code>cd step2
+mkdir -p projects/mogambo/dev
+cd projects/mogambo/
 </code></pre>
 
-<p>Deployment spec (deployment.spec) contains the following,</p>
+<p>Create a namespace</p>
+<p>file: mogambo-ns.yml</p>
+<pre><code>kind: Namespace
+apiVersion: v1
+metadata:
+  name: mogambo
+
+</code></pre>
+
+<p>Create a deployment with following specs,</p>
 <ul>
-<li>replicaset specs<ul>
-<li>selectors  </li>
-<li>replicas  </li>
-</ul>
-</li>
-<li>deployment spec<ul>
-<li>strategy</li>
-<li>rollingUpdate</li>
-<li>minReadySeconds</li>
-</ul>
-</li>
-<li>pod template<ul>
-<li>metadata, labels</li>
-<li>container specs</li>
+<li>replicas: 2</li>
+<li>pod template : frontend<ul>
+<li>labels:</li>
+<li>tier: "1"</li>
+<li>app: frontend</li>
+<li>env: dev</li>
+<li>version: v1.0</li>
+<li>container: frontend</li>
+<li>image: schoolofdevops/frontend:v1.0</li>
+<li>port:  8079/TCP</li>
 </ul>
 </li>
 </ul>
+<p>File: frontend-deploy.yml</p>
+<pre><code>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: mogambo
+spec:
+  replicas: 2
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: &quot;1&quot;
+        app: frontend
+        env: dev
+        version: v1.0
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v1.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+</code></pre>
+
 <p>Lets  create the Deployment</p>
-<pre><code>kubectl apply -f frontend-deploy.yml --record
+<pre><code>kubectl apply -f frontend-deploy.yml
 </code></pre>
 
 <p>Now that the deployment is created. To validate,</p>
 <pre><code>kubectl get deployment
 kubectl get rs
-kubectl get deploy,pods,rs
-kubectl rollout status deployment/front-end
 kubectl get pods --show-labels
 </code></pre>
 
 <p>Sample Output</p>
 <pre><code>kubectl get deployments
-
-[output]
-NAME        DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-front-end   3         3         3            3           59s
+NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+frontend   2         2         2            1           3m
 </code></pre>
 
 <h2 id="scaling-a-deployment">Scaling a deployment</h2>
 <p>To scale a deployment in Kubernetes:</p>
-<pre><code>kubectl scale deployment/front-end --replicas=5
+<pre><code>kubectl scale deployment/frontend --replicas=5
+</code></pre>
 
-[output]
-deployment &quot;front-end&quot; scaled
+<p>Sample output:</p>
+<pre><code>kubectl scale deployment/frontend --replicas=5
+deployment &quot;frontend&quot; scaled
+</code></pre>
+
+<h2 id="adding-a-deployment-strategy">Adding a Deployment Strategy</h2>
+<p>deployment.spec</p>
+<ul>
+<li>replicas: 8</li>
+<li>strategy:
+      type: RollingUpdate</li>
+<li>rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1</li>
+<li>minReadySeconds: 40</li>
+<li>revisionHistoryLimit: 4</li>
+<li>paused: false</li>
+</ul>
+<p>File: frontend-deploy.yml</p>
+<pre><code>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: mogambo
+spec:
+  replicas: 8
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: &quot;1&quot;
+        app: frontend
+        env: dev
+        version: v1.0
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v1.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+</code></pre>
+
+<p>Apply Changes and monitor the rollout</p>
+<pre><code>kubectl apply -f frontend-deploy.yml
+kubectl rollout status deployment/frontend
+</code></pre>
+
+<h2 id="rolling-back-a-failed-update">Rolling Back a Failed Update</h2>
+<p>Lets update the image to a tag which is non existent. We intentionally introduce this intentional error to fail fail the deployment.</p>
+<pre><code>...
+containers:
+  - name: frontend
+    image: schoolofdevops/frontend:v2.0
+
+</code></pre>
+
+<p>Do a new rollout and monitor</p>
+<pre><code>kubectl apply -f frontend-deploy.yml
+kubectl rollout status deployment/frontend
+</code></pre>
+
+<h2 id="rolling-back-a-failed-update_1">Rolling Back a Failed Update</h2>
+<p>Lets update the image to a tag which is non existent. We intentionally introduce this intentional error to fail fail the deployment.</p>
+<pre><code>...
+containers:
+  - name: frontend
+    image: schoolofdevops/frontend:xyz
+
+</code></pre>
+
+<p>Do a new rollout and monitor</p>
+<pre><code>kubectl apply -f frontend-deploy.yml
+kubectl rollout status deployment/frontend
+</code></pre>
+
+<p>Also watch the pod status which might look like</p>
+<pre><code>frontend-645bb6fcd5-xsndp   1/1       Running            0          3m
+frontend-b9bc5495f-8nbz5    0/1       ImagePullBackOff   0          54s
+frontend-b9bc5495f-9x5gr    0/1       ImagePullBackOff   0          54s
+frontend-b9bc5495f-pdx2l    0/1       ImagePullBackOff   0          55s
+</code></pre>
+
+<p>To get the revision history and details  </p>
+<pre><code>kubectl rollout history deployment/frontend
+kubectl rollout history deployment/frontend --revision=x
+[replace x with the latest revision]
+</code></pre>
+
+<p>[Sample Output]</p>
+<pre><code>kubectl rollout history deployment/frontend
+deployments &quot;frontend&quot;
+REVISION    CHANGE-CAUSE
+1       kubectl scale deployment/frontend --replicas=5
+3       &lt;none&gt;
+6       &lt;none&gt;
+7       &lt;none&gt;
+
+root@kube-01:~# kubectl rollout history deployment/frontend --revision=7
+deployments &quot;frontend&quot; with revision #7
+Pod Template:
+  Labels:   app=frontend
+    pod-template-hash=656710519
+    role=ui
+    tier=front
+  Containers:
+   frontend:
+    Image:  schoolofdevops/frontend:movi
+    Port:   8079/TCP
+    Environment:    &lt;none&gt;
+    Mounts: &lt;none&gt;
+  Volumes:  &lt;none&gt;
+</code></pre>
+
+<p>To undo rollout,</p>
+<pre><code>kubectl rollout undo deployment/frontend
+</code></pre>
+
+<p>or</p>
+<pre><code>kubectl rollout undo deployment/frontend --to-revision=1
+kubectl get rs
+kubectl describe deployment frontend
 </code></pre>
               
             </div>
@@ -292,7 +435,7 @@ deployment &quot;front-end&quot; scaled
         <a href="../7_exposing_app_with_service/" class="btn btn-neutral float-right" title="Service Endpoints">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../4_configs/" class="btn btn-neutral" title="Configuring Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../5_deploying_pods/" class="btn btn-neutral" title="Launching Pods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -318,7 +461,7 @@ deployment &quot;front-end&quot; scaled
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../4_configs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../5_deploying_pods/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../7_exposing_app_with_service/" style="color: #fcfcfc">Next &raquo;</a></span>

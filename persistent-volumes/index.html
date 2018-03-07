@@ -81,15 +81,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../run_and_publish_image/">Quickstart</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
@@ -98,10 +94,6 @@
                 <li class="">
                     
     <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
                 </li>
                 <li class="">
                     
@@ -116,11 +108,9 @@
     
         <ul>
         
-            <li><a class="toctree-l4" href="#set-up-nfs-server">Set up NFS Server</a></li>
+            <li><a class="toctree-l4" href="#set-up-nfs-common">Set up NFS Common</a></li>
         
             <li><a class="toctree-l4" href="#set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</a></li>
-        
-            <li><a class="toctree-l4" href="#authorization">Authorization</a></li>
         
             <li><a class="toctree-l4" href="#test">Test</a></li>
         
@@ -207,154 +197,85 @@
             <div class="section">
               
                 <h1 id="steps-to-set-up-nfs-based-persistent-volumes">Steps to set up NFS based Persistent Volumes</h1>
-<h2 id="set-up-nfs-server">Set up NFS Server</h2>
-<p>Install NFS Server package</p>
+<h2 id="set-up-nfs-common">Set up NFS Common</h2>
+<p>On all kubernetes nodes,</p>
 <pre><code>sudo apt-get update
-sudo apt-get install nfs-kernel-server -y
-</code></pre>
-
-<p>Create and share NFS directory</p>
-<pre><code>sudo mkdir -p /var/nfs/kubernetes
-sudo chown nobody:nogroup /var/nfs/kubernetes
-sudo chmod 666 /etc/exports
-sudo cat &gt; /etc/exports &lt;&lt;EOF
-/var/nfs/kubernetes    192.168.12.0/24(rw,sync,no_subtree_check)
-EOF
-sudo chmod 644 /etc/exports
-</code></pre>
-
-<p>Change <strong>&lt;192.168.12.0/24&gt;</strong> with your IP space.</p>
-<p>Restart NFS server to use the configuration</p>
-<pre><code>sudo systemctl restart nfs-kernel-server
+sudo apt-get install nfs-common
 </code></pre>
 
 <h2 id="set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</h2>
-<p>Clone the <code>External Storage</code> repository from github.</p>
-<pre><code>git clone https://github.com/kubernetes-incubator/external-storage.git
+<p>Change into nfs provisioner installation dir</p>
+<pre><code>cd step5
+cd storage/nfs
 </code></pre>
 
-<p>We are going to use nfs-client provisioner.</p>
-<pre><code>cd external-storage/nfs-client
-</code></pre>
-
-<p>Update the deployment with your NFS server's data</p>
-<pre><code>vim deploy/deployment.yaml
-
-kind: Deployment
-apiVersion: extensions/v1beta1
-metadata:
-  name: nfs-client-provisioner
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: nfs-client-provisioner
-    spec:
-      containers:
-        - name: nfs-client-provisioner
-          image: quay.io/external_storage/nfs-client-provisioner:latest
-          volumeMounts:
-            - name: nfs-client-root
-              mountPath: /persistentvolumes
-          env:
-            - name: PROVISIONER_NAME
-              value: fuseim.pri/ifs
-            - name: NFS_SERVER
-              value: 192.168.12.10
-            - name: NFS_PATH
-              value: /var/nfs/kubernetes
-      volumes:
-        - name: nfs-client-root
-          nfs:
-            server: 192.168.12.10
-            path: /var/nfs/kubernetes
-</code></pre>
-
-<p>Change <code>NFS_SERVER</code> and <code>NFS_PATH</code> values accordingly. </p>
-<p><strong>Tip</strong>: You can also change <code>PROVISIONER_NAME</code> data to something like <code>sod.com/nfs</code>. If you do that be sure to change <code>provisioner</code> value in <code>class.yaml</code> as well.</p>
 <p>Deploy nfs-client provisioner.</p>
-<pre><code>kubectl apply -f deploy/deployment.yaml
+<pre><code>kubectl apply -f clusterrole.yml
+
 </code></pre>
 
 <p>Create the Storage Class.</p>
-<pre><code>kubectl apply -f deploy/class.yaml
-</code></pre>
+<pre><code>kubectl apply -f serviceaccount.yaml
+kubectl apply -f clusterrole.yaml
+kubectl apply -f clusterrolebinding.yaml
 
-<h2 id="authorization">Authorization</h2>
-<p>Your cluster might be using RBAC. So you need to create Service Accounts and Cluster Roles to provide appropriate permissions to nfs-provisioner.
-The manifests inside <code>auth</code> directory has not been updated in a while. So please change <code>apiVersion</code> from <code>rbac.authorization.k8s.io/v1alpha1</code> to <code>rbac.authorization.k8s.io/v1</code> in all the files inside that directory.</p>
-<p>Apply RBAC...</p>
-<pre><code>kubectl create -f deploy/auth/serviceaccount.yaml
-kubectl create -f deploy/auth/clusterrole.yaml
-kubectl create -f deploy/auth/clusterrolebinding.yaml
-kubectl patch deployment nfs-client-provisioner -p '{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;serviceAccount&quot;:&quot;nfs-client-provisioner&quot;}}}}'
+kubectl apply -f statefulset-sa.yaml
+
 </code></pre>
 
 <h2 id="test">Test</h2>
-<p>Let us test the if our NFS provisioner works.</p>
-<p>Clone <code>k8s-code</code> repository</p>
-<pre><code>git clone https//github.com/schoolofdevops/k8s-code.git
-cd k8s-code/projects/mogambo/dev/
-</code></pre>
-
-<p><code>file: cataloguedb-pvc.yml</code></p>
+<p>file: catalogue-db-pvc.yml</p>
 <pre><code>kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: cataloguedb-claim
-  annotations:
-    volume.beta.kubernetes.io/storage-class: &quot;managed-nfs-storage&quot;
+  name: catalogue-db-pvc
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeMode: Filesystem
   resources:
     requests:
       storage: 1Gi
+  storageClassName: nfs
+
 </code></pre>
 
-<p>Create a PVC</p>
-<pre><code>kubectl apply -f cataloguedb-pvc.yml
+<p>file: catalogue-db-pod.yml</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: catalogue-db
+  labels:
+    app: catalogue-db
+    env: dev
+    version: latest
+    tier: &quot;3&quot;
+spec:
+  containers:
+    - name: catalogue-db
+      image: schoolofdevops/catalogue-db:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 3306
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: dfgk8923Jsk89JJSsdlf
+        - name: MYSQL_DATABASE
+          value: socksdb
+        - name: MYSQL_USER
+          value: catalogue_user
+        - name: MYSQL_PASSWORD
+          value: default_password
+      volumeMounts:
+        - name: catalogue-db-vol
+          mountPath: /var/lib/mysql
+
+  volumes:
+    - name: catalogue-db-vol
+      persistentVolumeClaim:
+        claimName: catalogue-db-pvc
+
 </code></pre>
-
-<p>Check the PVC Status</p>
-<pre><code>kubectl get pvc
-
-[output]
-NAME         STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS          AGE
-catalougedb-claim   Bound     pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7   1Gi        RWX            managed-nfs-storage   52s
-</code></pre>
-
-<p><code>file: cataloguedb-deploy.yml</code></p>
-<pre><code>[...]
-          volumeMounts:
-            - name: nfs-pvc
-              mountPath: &quot;/mnt&quot;
-      volumes:
-        - name: nfs-pvc
-          persistentVolumeClaim:
-            claimName: cataloguedb-claim
-</code></pre>
-
-<p>Let us create a pod to use this PVC</p>
-<pre><code>kubectl apply -f cataloguedb-deploy.yml
-</code></pre>
-
-<p>Now check the contents of our shared NFS directory</p>
-<pre><code>ls /var/nfs/kubernetes
-
-[output]
-default-cataloguedb-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
-
-ls /var/nfs/kubernetes/default-cataloguedb-claim-pvc-17e37502-1b9f-11e8-ab45-02ab3bf0d4f7
-
-[output]
-SUCCESS
-</code></pre>
-
-<p>There you go. Thats how you create PV and PVC using NFS in Kubernetes</p>
               
             </div>
           </div>

@@ -79,6 +79,8 @@
         
             <li><a class="toctree-l4" href="#set-up">Set up</a></li>
         
+            <li><a class="toctree-l4" href="#test">Test</a></li>
+        
         </ul>
     
 
@@ -93,15 +95,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../run_and_publish_image/">Quickstart</a>
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
@@ -110,10 +108,6 @@
                 <li class="">
                     
     <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../8_rollouts_and_rollbacks/">Rolling Updates and Rollbacks</a>
                 </li>
                 <li class="">
                     
@@ -241,6 +235,33 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
 </code></pre>
 
 <p><img alt="kube-visualizer" src="../images/kube-visualizer.png" /></p>
+<h3 id="test">Test</h3>
+<p>Let us test how kubernetes cluster works.</p>
+<p>Clone kubernetes code repository from School of Devops.</p>
+<pre><code>git clone https://github.com/schoolofdevops/k8s-code
+
+cd k8s-code
+</code></pre>
+
+<p>Create the namespace.</p>
+<pre><code>cd projects/instavote/
+
+kubectl apply -f instavote-ns.yaml
+
+[output]
+namespace &quot;instavote&quot; created
+</code></pre>
+
+<p>Deploy vote application on kubernetes</p>
+<pre><code>cd dev
+
+kubectl apply  -f vote-deploy.yaml
+
+[output]
+deployment &quot;vote&quot; created
+</code></pre>
+
+<p><img alt="kube-visualizer-deployment" src="../images/kube-visualizer-deployment.png" /></p>
               
             </div>
           </div>
@@ -248,7 +269,7 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../run_and_publish_image/" class="btn btn-neutral float-right" title="Quickstart">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../4_configs/" class="btn btn-neutral float-right" title="Configuring Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../3_install_kubernetes/" class="btn btn-neutral" title="Setup Kubernetes Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -280,7 +301,7 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
         <span><a href="../3_install_kubernetes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../run_and_publish_image/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../4_configs/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
