@@ -2,6 +2,48 @@
 
 In the Kubernetes bootcamp training, we have seen how to create a pod and and some basic pod configurations to go with it. But this chapter explains some advanced topics related to pod scheduling.
 
+
+## Selecting A Node to run on
+
+```
+kubectl get nodes --show-labels
+
+kubectl label nodes <node-name> zone=aaa
+
+kubectl get nodes --show-labels
+
+```
+
+Update pod definition with nodeSelector
+
+`file: k8s-code/pods/frontend-pod.yml`
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: front-end
+  labels:
+    app: front-end
+    role: ui
+    tier: front
+spec:
+  containers:
+    - name: front-end
+      image: schoolofdevops/frontend:latest
+      ports:
+        - containerPort: 8079
+  nodeSelector:
+    zone: 'aaa'
+```
+
+For this change, pod needs to be re created.
+
+```
+kubectl apply -f frontend-pod.yml
+```
+
+
 ## Adding health checks
 
 Health checks in Kubernetes work the same way as traditional health checks of applications. They make sure that our application is ready to receive and process user requests. In Kubernetes we have two types of health checks,

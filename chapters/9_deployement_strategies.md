@@ -1,3 +1,178 @@
+### Canary  Releases
+
+```
+cd step4
+cd projets/mogambo/dev
+mkdir canary
+```
+
+
+File: canary/frontend-canary-deploy.yml
+
+
+```
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-canary
+  namespace: mogambo
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: "1"
+        app: frontend
+        env: dev
+        release: canary
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v2.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+```
+
+deploy the canary version
+
+```
+
+kubectl apply -f canary/frontend-canary-deploy.yml
+
+```
+
+### Blue/Green  Releases
+
+
+```
+cd step4
+cd projets/mogambo/dev
+mkdir blue-green
+
+```
+
+file: frontend-blue-deploy.yml
+
+```
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-blue
+  namespace: mogambo
+spec:
+  replicas: 5
+  strategy:
+    type: Recreate
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: "1"
+        app: frontend
+        env: dev
+        release: bluegreen
+        code: blue
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v3.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+```
+
+file: step5/projects/mogambo/dev/blue-green/frontend-green-deploy.yml
+```
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-green
+  namespace: mogambo
+spec:
+  replicas: 5
+  strategy:
+    type: Recreate
+  minReadySeconds: 40
+  revisionHistoryLimit: 4
+  paused: false
+  template:
+    metadata:
+      name: frontend
+      labels:
+        tier: "1"
+        app: frontend
+        env: dev
+        release: bluegreen
+        code: green
+    spec:
+      containers:
+        - name: frontend
+          image: schoolofdevops/frontend:v1.0
+          ports:
+            - containerPort: 8079
+              protocol: TCP
+
+```
+
+file: blue-green/frontend-test-svc.yml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-test
+  namespace: mogambo
+spec:
+  selector:
+    app: frontend
+    env: dev
+    release: bluegreen
+    code: blue
+  ports:
+    - port: 8079
+      protocol: TCP
+      targetPort: 8079
+  type: NodePort
+
+```
+
+
+file: frontend-svc.yml
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: mogambo
+spec:
+  selector:
+    app: frontend
+    env: dev
+    release: bluegreen
+    code: blue
+  ports:
+    - port: 8079
+      protocol: TCP
+      targetPort: 8079
+  type: NodePort
+
+```
+
 ### Recreate
 
 When the **Recreate** deployment strategy is used,
@@ -8,7 +183,7 @@ This will create some downtime in our stack. Hence, this strategy is only recomm
 
 Let us change the deployment strategy to **recreate** and image tag to *latest*.
 
-`File: k8s-code/projects/mogambo/dev/catalogue-deploy.yml`
+file: catalogue-deploy.yml
 
 ```
 apiVersion: apps/v1beta1
@@ -112,18 +287,3 @@ catalogue-6875c8df8f-k4hls   1/1       Running   0          1m
 ```
 
 When we do this, we skip the need of creating a new rolling update altogether.
-
-### Additional Release Strategies
-
-Along with rolling update and recreate strategies, we can also do,
-
-  * Canary releases
-  * Blue/Green deployments.
-
-### Blue/Green Deployments
-
-
----
-2. Recreate type gives an error. Need to be fixed.
-3. Add Use-cases for recreate strategy type.
-4. Add additional details of why we skip creating a replica set / rolling update in pause/unpause section.

@@ -19,33 +19,31 @@ kubectl get svc
 Sample Output:
 ```
 NAME                         READY     STATUS    RESTARTS   AGE
-front-end-64597c55f8-dk6g7   1/1       Running   0          4m
-front-end-64597c55f8-mkp2h   1/1       Running   0          4m
-front-end-64597c55f8-r2c54   1/1       Running   0          4m
+frontend-64597c55f8-dk6g7   1/1       Running   0          4m
+frontend-64597c55f8-mkp2h   1/1       Running   0          4m
+frontend-64597c55f8-r2c54   1/1       Running   0          4m
 ```
 
 ## Publishing a service with NodePort
 
-Filename: vote-svc.yaml
+Filename: frontend-svc.yaml
 
 ```
----
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    role: svc
-    tier: front
-  name: front-end
+  name: frontend
   namespace: mogambo
 spec:
   selector:
-    app: front-end
+    app: frontend
+    env: dev
   ports:
-  - port: 8079
-    protocol: TCP
-    targetPort: 8079
+    - port: 8079
+      protocol: TCP
+      targetPort: 8079
   type: NodePort
+
 ```
 
 Save the file.
@@ -59,18 +57,18 @@ kubectl get svc
 
 Now to check which port the pod is connected
 ```
-kubectl describe service front-end
+kubectl describe service frontend
 ```
 Check for the Nodeport here
 
 Sample Output
 ```
-Name:                     front-end
+Name:                     frontend
 Namespace:                mogambo
 Labels:                   role=svc
                           tier=front
-Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"role":"svc","tier":"front"},"name":"front-end","namespace":"mogambo"},"spec...
-Selector:                 app=front-end
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"role":"svc","tier":"front"},"name":"frontend","namespace":"mogambo"},"spec...
+Selector:                 app=frontend
 Type:                     NodePort
 IP:                       10.11.248.77
 Port:                     <unset>  8079/TCP
@@ -88,7 +86,7 @@ Here the node port is 30197.
 
 Sample output will be:
 
-![Vote](images/vote.png)
+![frontend](images/frontend.png)
 
 ## Exposing the app with ExternalIP
 
@@ -97,7 +95,7 @@ Sample output will be:
 ```
 spec:
   selector:
-    app: front-end
+    app: frontend
   ports:
   - port: 80
     protocol: TCP
@@ -108,14 +106,16 @@ spec:
     - 192.168.12.12
 ```
 
+Where 192.168.12.11 and 192.168.12.12 are the actual IPs of kubernetes hosts. Replace it as you see fit.
+
 apply
 ```
 kubectl apply -f frontend-svc.yml
 kubectl  get svc
-kubectl describe svc front-end
+kubectl describe svc frontend
 ```
 
-## Exposing the app with LoadBalancer
+## Exposing the app with LoadBalancer (Only on Cloud)
 
 Service type LoadBalancer is only supported on AWS,GCE,Azure and Openstack. If you have you cluster running on any of these clouds, give it a try. It will create a load balancer for us with a ephemeral IP. We can also specify a loadBalancerIP. Mostly not recommended to use. Using service type LoadBalancer will rise your cloud provider spendings. Think about launching 10 load balancers for 10 different services. Thats where **ingress** come into picture (explained in the later part).
 
@@ -123,14 +123,14 @@ Service type LoadBalancer is only supported on AWS,GCE,Azure and Openstack. If y
 apiVersion: v1
 kind: Service
 metadata:
-  name: front-end
+  name: frontend
   namespace: mogambo
   labels:
-    app: front-end
+    app: frontend
     env: dev
 spec:
   selector:
-    app: front-end
+    app: frontend
   ports:
     - protocol: TCP
       port: 8079
@@ -173,3 +173,8 @@ subsets:
 ```
 
 These IPs have to be manually managed by the cluster administrator.
+
+
+#### Exercises
+
+  * Create service definitions for catalogue and catalogue-db
