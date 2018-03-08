@@ -69,49 +69,25 @@
     <a class="current" href="./">Setup Kubernetes Cluster</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#compatibility">Compatibility</a></li>
-    
-
-    <li class="toctree-l3"><a href="#base-setup">Base Setup</a></li>
+    <li class="toctree-l3"><a href="#kubeadm-bring-your-own-nodes-byon">Kubeadm : Bring Your Own Nodes (BYON)</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#create-kubernetes-repository">Create Kubernetes Repository</a></li>
+            <li><a class="toctree-l4" href="#compatibility">Compatibility</a></li>
         
-            <li><a class="toctree-l4" href="#installation-of-the-packages">Installation of the packages</a></li>
+            <li><a class="toctree-l4" href="#base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</a></li>
         
-            <li><a class="toctree-l4" href="#setup-sysctl-configs">Setup sysctl configs</a></li>
+            <li><a class="toctree-l4" href="#initializing-master">Initializing Master</a></li>
         
-        </ul>
-    
-
-    <li class="toctree-l3"><a href="#initializing-master">Initializing Master</a></li>
-    
-        <ul>
+            <li><a class="toctree-l4" href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
         
-            <li><a class="toctree-l4" href="#initialization-of-the-nodes-previously-minions">Initialization of the Nodes (Previously Minions)</a></li>
+            <li><a class="toctree-l4" href="#validating-the-setup">Validating the Setup</a></li>
         
-            <li><a class="toctree-l4" href="#setup-the-admin-client-kubectl">Setup the admin client - Kubectl</a></li>
+            <li><a class="toctree-l4" href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
+        
+            <li><a class="toctree-l4" href="#check-out-the-supporting-code">Check out the supporting code</a></li>
         
         </ul>
-    
-
-    <li class="toctree-l3"><a href="#installing-cni-with-weave">Installing CNI with Weave</a></li>
-    
-
-    <li class="toctree-l3"><a href="#validating-the-setup">Validating the Setup</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#possible-issues">Possible Issues</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l3"><a href="#enable-kubernetes-dashboard">Enable Kubernetes Dashboard</a></li>
-    
-
-    <li class="toctree-l3"><a href="#check-out-the-supporting-code">Check out the supporting code</a></li>
     
 
     </ul>
@@ -129,11 +105,15 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../run_and_publish_image/">Quickstart</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class="">
                     
@@ -228,7 +208,9 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="compatibility">Compatibility</h2>
+                <h1 id="kubeadm-bring-your-own-nodes-byon">Kubeadm : Bring Your Own Nodes (BYON)</h1>
+<p>This documents describes how to setup kubernetes from scratch on your own nodes, without using a managed service. This setup uses <strong>kubeadm</strong> to install and configure kubernetes cluster.</p>
+<h2 id="compatibility">Compatibility</h2>
 <p>Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.</p>
 <p>The below steps are applicable for the below mentioned OS</p>
 <table>
@@ -247,9 +229,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="base-setup">Base Setup</h2>
+<h2 id="base-setup-skip-if-using-vagrant">Base Setup (Skip if using vagrant)</h2>
 <p><strong> Skip this step and scroll to Initializing Master if you have setup nodes with vagrant</strong></p>
-<p>On all nodes which would be part of this cluster, you need to do the base setup as described here,</p>
+<p>On all nodes which would be part of this cluster, you need to do the base setup as described in the following steps. To simplify this, you could also   <a href="https://gist.github.com/initcron/40b71211cb693f541ce35fe3fb1adb11">download and run this script</a></p>
 <h3 id="create-kubernetes-repository">Create Kubernetes Repository</h3>
 <p>We need to create a repository to download Kubernetes.</p>
 <pre><code>curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -336,6 +318,7 @@ kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$kubever&qu
 <p>You could validate the status of this cluster, health of pods and whether all the components are up or not by using a few or all of the following commands.</p>
 <p>To check if nodes are ready</p>
 <pre><code>kubectl get nodes
+kubectl cs
 
 </code></pre>
 

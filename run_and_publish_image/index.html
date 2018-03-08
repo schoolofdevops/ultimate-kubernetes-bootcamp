@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Mini Project - Ultimate Kubernetes Bootcamp</title>
+  <title>Quickstart - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Mini Project";
-    var mkdocs_page_input_path = "11_deploying_sample_app.md";
-    var mkdocs_page_url = "/11_deploying_sample_app/";
+    var mkdocs_page_name = "Quickstart";
+    var mkdocs_page_input_path = "run_and_publish_image.md";
+    var mkdocs_page_url = "/run_and_publish_image/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -79,9 +79,15 @@
 		
     <span class="caption-text">Bootcamp</span>
     <ul class="subnav">
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../run_and_publish_image/">Quickstart</a>
+    <a class="current" href="./">Quickstart</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#quck-deploy-a-docker-image-with-kubernetes">Quck Deploy a Docker Image with Kubernetes</a></li>
+    
+
+    </ul>
                 </li>
                 <li class="">
                     
@@ -115,21 +121,9 @@
                     
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
                 </li>
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">Mini Project</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#mini-project-deploying-multi-tier-application-stack">Mini Project: Deploying Multi Tier Application Stack</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#tasks">Tasks</a></li>
-        
-        </ul>
-    
-
-    </ul>
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -186,7 +180,7 @@
         
       
     
-    <li>Mini Project</li>
+    <li>Quickstart</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -196,107 +190,15 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="mini-project-deploying-multi-tier-application-stack">Mini Project: Deploying Multi Tier Application Stack</h1>
-<p>In this project , you would write definitions for deploying the vote application stack with all components/tiers which include,</p>
-<ul>
-<li>vote ui</li>
-<li>redis</li>
-<li>worker</li>
-<li>db</li>
-<li>results ui</li>
-</ul>
-<h2 id="tasks">Tasks</h2>
-<ul>
-<li>Create deployments for all applications</li>
-<li>Define services for each tier</li>
-<li>Launch/appy the definitions</li>
-</ul>
-<p>Following table depicts the state of readiness of the above services.</p>
-<table>
-<thead>
-<tr>
-<th align="left">App</th>
-<th align="left">Deployment</th>
-<th align="left">Service</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left">vote</td>
-<td align="left">ready</td>
-<td align="left">ready</td>
-</tr>
-<tr>
-<td align="left">redis</td>
-<td align="left">in progress</td>
-<td align="left">ready</td>
-</tr>
-<tr>
-<td align="left">worker</td>
-<td align="left">in progress</td>
-<td align="left">in progress</td>
-</tr>
-<tr>
-<td align="left">db</td>
-<td align="left">in progress</td>
-<td align="left">todo</td>
-</tr>
-<tr>
-<td align="left">results</td>
-<td align="left">todo</td>
-<td align="left">todo</td>
-</tr>
-</tbody>
-</table>
-<h3 id="deploying-the-sample-application">Deploying the sample application</h3>
-<p>To create deploy the sample applications,</p>
-<pre><code>kubectl create -f projects/instavote/dev
-</code></pre>
+                <h1 id="quck-deploy-a-docker-image-with-kubernetes">Quck Deploy a Docker Image with Kubernetes</h1>
+<pre><code>kubectl run vote --image=schoolofdevops/vote --port 80
 
-<p>Sample output is like:</p>
-<pre><code>deployment &quot;db&quot; created
-service &quot;db&quot; created
-deployment &quot;redis&quot; created
-service &quot;redis&quot; created
-deployment &quot;vote&quot; created
-service &quot;vote&quot; created
-deployment &quot;worker&quot; created
-deployment &quot;results&quot; created
-service &quot;results&quot; created
-</code></pre>
+kubectl scale --replicas=10 deploy/vote
 
-<h4 id="to-validate">To Validate:</h4>
-<pre><code>kubectl get svc -n instavote
-</code></pre>
+kubectl expose deploy vote --port 80 --target-port 80 --type NodePort
 
-<p>Sample Output is:</p>
-<pre><code>kubectl get service vote
-NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-vote   10.97.104.243   &lt;pending&gt;     80:31808/TCP   1h
-</code></pre>
 
-<p>Here the port assigned is 31808, go to the browser and enter</p>
-<pre><code>masterip:31808
 </code></pre>
-
-<p><img alt="alt text" src="../images/Vote.png" title="Front-End" /></p>
-<p>This will load the page where you can vote.</p>
-<p>To check the result:</p>
-<pre><code>kubectl get service result
-</code></pre>
-
-<p>Sample Output is:</p>
-<pre><code>kubectl get service result
-NAME      CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
-</code></pre>
-
-<p>Here the port assigned is 32511, go to the browser and enter</p>
-<pre><code>masterip:32511
-</code></pre>
-
-<p><img alt="alt text" src="../images/Result.png" title="Result Page" /></p>
-<p>This is the page where we can see the results of the vote.</p>
               
             </div>
           </div>
@@ -304,10 +206,10 @@ result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../cluster_setup_kubespray/" class="btn btn-neutral float-right" title="Production grade setup with Kubespray">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../10_kubernetes_autoscaling/" class="btn btn-neutral" title="Auto Scaling Capacity with HPA"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kube_visualizer/" class="btn btn-neutral" title="Kuberentes Visualizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -333,10 +235,10 @@ result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../10_kubernetes_autoscaling/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../cluster_setup_kubespray/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

@@ -81,11 +81,15 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../run_and_publish_image/">Quickstart</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../5_deploying_pods/">Launching Pods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../4_configs/">Configuring Cluster</a>
                 </li>
                 <li class=" current">
                     
@@ -229,6 +233,13 @@ cd projects/mogambo/
 apiVersion: v1
 metadata:
   name: mogambo
+
+</code></pre>
+
+<pre><code>kubectl apply -f mogambo-ns.yml
+kubectl get ns
+
+kubectl config set-context $(kubectl config current-context) --namespace=mogambo
 
 </code></pre>
 
@@ -435,7 +446,7 @@ kubectl describe deployment frontend
         <a href="../7_exposing_app_with_service/" class="btn btn-neutral float-right" title="Service Endpoints">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../5_deploying_pods/" class="btn btn-neutral" title="Launching Pods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../4_configs/" class="btn btn-neutral" title="Configuring Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -461,7 +472,7 @@ kubectl describe deployment frontend
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../5_deploying_pods/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../4_configs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../7_exposing_app_with_service/" style="color: #fcfcfc">Next &raquo;</a></span>
