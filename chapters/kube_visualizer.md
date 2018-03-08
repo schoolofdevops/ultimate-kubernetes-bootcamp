@@ -51,39 +51,3 @@ http://<NODE_IP:NODE_PORT>
 ```
 
 ![kube-visualizer](images/kube-visualizer.png)
-
-### Test
-
-Let us test how kubernetes cluster works.
-
-Clone kubernetes code repository from School of Devops.
-
-```
-git clone https://github.com/schoolofdevops/k8s-code
-
-cd k8s-code
-```
-
-Create the namespace.
-
-```
-cd projects/instavote/
-
-kubectl apply -f instavote-ns.yaml
-
-[output]
-namespace "instavote" created
-```
-
-Deploy vote application on kubernetes
-
-```
-cd dev
-
-kubectl apply  -f vote-deploy.yaml
-
-[output]
-deployment "vote" created
-```
-
-![kube-visualizer-deployment](images/kube-visualizer-deployment.png)

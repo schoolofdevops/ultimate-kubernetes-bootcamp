@@ -1,3 +1,7 @@
+# Kubeadm : Bring Your Own Nodes (BYON)
+
+This documents describes how to setup kubernetes from scratch on your own nodes, without using a managed service. This setup uses **kubeadm** to install and configure kubernetes cluster.
+
 ## Compatibility
 
 Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
@@ -9,12 +13,12 @@ The below steps are applicable for the below mentioned OS
 | --- | --- | -- |  
 | **Ubuntu** | **16.04** | **Xenial** |  
 
-## Base Setup
+## Base Setup (Skip if using vagrant)
 
 ** Skip this step and scroll to Initializing Master if you have setup nodes with vagrant**
 
 
-On all nodes which would be part of this cluster, you need to do the base setup as described here,
+On all nodes which would be part of this cluster, you need to do the base setup as described in the following steps. To simplify this, you could also   [download and run this script](https://gist.github.com/initcron/40b71211cb693f541ce35fe3fb1adb11)
 
 ### Create Kubernetes Repository
 
@@ -138,6 +142,7 @@ To check if nodes are ready
 
 ```
 kubectl get nodes
+kubectl cs
 
 ```
 

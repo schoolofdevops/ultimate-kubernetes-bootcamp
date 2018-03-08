@@ -42,6 +42,14 @@ metadata:
 
 ```
 
+```
+kubectl apply -f mogambo-ns.yml
+kubectl get ns
+
+kubectl config set-context $(kubectl config current-context) --namespace=mogambo
+
+```
+
 
 Create a deployment with following specs,
 
