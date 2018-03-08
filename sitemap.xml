@@ -40,12 +40,6 @@
     
         
     <url>
-     <loc>/run_and_publish_image/</loc>
-     <lastmod>2018-03-08</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
      <loc>/5_deploying_pods/</loc>
      <lastmod>2018-03-08</lastmod>
      <changefreq>daily</changefreq>

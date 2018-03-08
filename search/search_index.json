@@ -152,7 +152,7 @@
         }, 
         {
             "location": "/kube_visualizer/", 
-            "text": "Kubernetes Visualizer\n\n\nIn this chapter we will see how to set up kubernetes visualizer that will show us the changes in our cluster in real time.\n\n\nSet up\n\n\nFork the repository\n\n\nyum install -y git #only if you use play-with-k8s\n\ngit clone  https://github.com/schoolofdevops/kube-ops-view\n\ncd  kube-ops-view\n\n\n\n\nDeploy the visualizer on kubernetes\n\n\nkubectl apply -f deploy/\n\n[ouput]\nserviceaccount \nkube-ops-view\n created\nclusterrole \nkube-ops-view\n created\nclusterrolebinding \nkube-ops-view\n created\ndeployment \nkube-ops-view\n created\ningress \nkube-ops-view\n created\ndeployment \nkube-ops-view-redis\n created\nservice \nkube-ops-view-redis\n created\nservice \nkube-ops-view\n created\n\n\n\n\nGet the nodeport for the service.\n\n\nkubectl get svc\n\n[output]\nNAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE\nkube-ops-view         NodePort    10.107.204.74   \nnone\n        80:**30073**/TCP   1m\nkube-ops-view-redis   ClusterIP   10.104.50.176   \nnone\n        6379/TCP       1m\nkubernetes            ClusterIP   10.96.0.1       \nnone\n        443/TCP        8m\n\n\n\n\nIn my case, port \n30073\n is the nodeport.\n\n\nVisit the port from the browser.\n\n\nhttp://\nNODE_IP:NODE_PORT", 
+            "text": "Kubernetes Visualizer\n\n\nIn this chapter we will see how to set up kubernetes visualizer that will show us the changes in our cluster in real time.\n\n\nSet up\n\n\nFork the repository\n\n\nyum install -y git #only if you use play-with-k8s\n\ngit clone  https://github.com/schoolofdevops/kube-ops-view\n\ncd  kube-ops-view\n\n\n\n\nDeploy the visualizer on kubernetes\n\n\nkubectl apply -f deploy/\n\n[ouput]\nserviceaccount \nkube-ops-view\n created\nclusterrole \nkube-ops-view\n created\nclusterrolebinding \nkube-ops-view\n created\ndeployment \nkube-ops-view\n created\ningress \nkube-ops-view\n created\ndeployment \nkube-ops-view-redis\n created\nservice \nkube-ops-view-redis\n created\nservice \nkube-ops-view\n created\n\n\n\n\nGet the nodeport for the service.\n\n\nkubectl get svc\n\n[output]\nNAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE\nkube-ops-view         NodePort    10.107.204.74   \nnone\n        80:**30073**/TCP   1m\nkube-ops-view-redis   ClusterIP   10.104.50.176   \nnone\n        6379/TCP       1m\nkubernetes            ClusterIP   10.96.0.1       \nnone\n        443/TCP        8m\n\n\n\n\nIn my case, port \n30073\n is the nodeport.\n\n\nVisit the port from the browser.\n\n\nhttp://\nNODE_IP:NODE_PORT\n\n\n\n\n\n\n\nQuick Deploy a Docker Image with Kubernetes\n\n\nkubectl run vote --image=schoolofdevops/vote --port 80\n\nkubectl scale --replicas=10 deploy/vote\n\nkubectl expose deploy vote --port 80 --target-port 80 --type NodePort", 
             "title": "Kuberentes Visualizer"
         }, 
         {
@@ -166,14 +166,9 @@
             "title": "Set up"
         }, 
         {
-            "location": "/run_and_publish_image/", 
-            "text": "Quck Deploy a Docker Image with Kubernetes\n\n\nkubectl run vote --image=schoolofdevops/vote --port 80\n\nkubectl scale --replicas=10 deploy/vote\n\nkubectl expose deploy vote --port 80 --target-port 80 --type NodePort", 
-            "title": "Quickstart"
-        }, 
-        {
-            "location": "/run_and_publish_image/#quck-deploy-a-docker-image-with-kubernetes", 
+            "location": "/kube_visualizer/#quick-deploy-a-docker-image-with-kubernetes", 
             "text": "kubectl run vote --image=schoolofdevops/vote --port 80\n\nkubectl scale --replicas=10 deploy/vote\n\nkubectl expose deploy vote --port 80 --target-port 80 --type NodePort", 
-            "title": "Quck Deploy a Docker Image with Kubernetes"
+            "title": "Quick Deploy a Docker Image with Kubernetes"
         }, 
         {
             "location": "/5_deploying_pods/", 
