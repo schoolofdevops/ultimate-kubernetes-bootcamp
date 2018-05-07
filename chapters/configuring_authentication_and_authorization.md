@@ -1,19 +1,42 @@
 # Configuring Authentication and Authorization
+Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.
 
 ## Create namespace for a user(Optional)
 
-## Create the user credentials
+Create the **dev** namespace if it has not been created already.
+
+`dev-namespace.yml`
+
 ```
-openssl genrsa -out vibe.key 2048
-openssl req -new -key vibe.key -out vibe.csr -subj "/CN=vibe/O=initcron"
-#copy over all key files from /etc/kubernetes directory of master when you run this command
-openssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500
-# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)
-# Execute the following commands on the users system
-kubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key
-kubectl config set-context vibe-context --cluster=<YOUR-CLUSTER-NAME> --namespace=<NAMESPACE-FOR-USER>  --user=vibe
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    name: dev
+```
+```
+kubectl apply -f dev-namespace.yml
+```
+
+## Create the user credentials
+Generate the user's private key
+```
+openssl genrsa -out john.key 2048
+openssl req -new -key john.key -out john.csr -subj "/CN=john/O=initcron"
+```
+Sign the key using kubernetes CA
+`Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.`
+```
+openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500
+```
+Save these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)
+Execute the following commands on the users system
+```
+kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key
+kubectl config set-context john-context --cluster=<YOUR-CLUSTER-NAME> --namespace=<NAMESPACE-FOR-USER>  --user=john
 # This step will throw an error
-kubectl --context=vibe-context get pods
+kubectl --context=john-context get pods
 ```
 
 ## Create role for the developers
@@ -44,7 +67,7 @@ metadata:
   namespace: developer
 subjects:
 - kind: User
-  name: vibe
+  name: john
   apiGroup: ""
 roleRef:
   kind: Role
@@ -167,41 +190,3 @@ Kubernetes API typically runs on two ports.
 
 ### ClusrerRoleBindings
   * ClusterRoleBindings works same as RoleBindings, but cluster-wide.
-
-## Example
-
-Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.
-
-### Step 1: Create the Namespace
-
-Create the **dev** namespace if it has not been created already.
-
-`dev-namespace.yml`
-
-```
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dev
-  labels:
-    name: dev
-```
-```
-kubectl apply -f dev-namespace.yml
-```
-### Step 2: Create the user credentials
-
-Next step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.
-
-```
-openssl genrsa -out john.key 2048
-openssl req -new -key vibe.key -out john.csr -subj "/CN=john/O=my-org"
-#copy over all key files from /etc/kubernetes directory of master when you run this command
-openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500
-# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)
-# Execute the following commands on the users system
-kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key
-kubectl config set-context developer --cluster=<YOUR-CLUSTER-NAME> --namespace=dev  --user=dev
-# This step will throw an error
-kubectl --context=developer get pods
-```
