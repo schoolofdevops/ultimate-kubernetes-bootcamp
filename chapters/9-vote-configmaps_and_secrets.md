@@ -14,8 +14,8 @@ metadata:
   name: vote
   namespace: instavote
 data:
-  OPTION_A: EMACS
-  OPTION_B: VI
+  OPTION_A: Visa
+  OPTION_B: Mastercard
 ```
 
 In the above given configmap, we define two environment variables,
@@ -23,6 +23,17 @@ In the above given configmap, we define two environment variables,
   1. OPTION_A=EMACS
   2. OPTION_B=VI
 
+
+Lets create the configmap object
+
+```
+kubectl get cm
+kubectl apply -f vote-cm.yaml
+kubectl get cm
+kubectl describe cm vote
+
+
+```
 In order to use this configmap in the deployment, we need to reference it from the deployment file.
 
 Check the deployment file for vote add for the following block.
@@ -45,9 +56,94 @@ file: `vote-deploy.yaml`
         restartPolicy: Always
 ```
 
-So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (EMACS and VI) will override the default values(CATS and DOGS) present in your source code.
+So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (Visa and Mastercard) will override the default values(CATS and DOGS) present in your source code.
+
+```
+kubectl apply -f vote-deploy.yaml
+```
+
+Watch the monitoring screen for deployment in progress.
+
+```
+kubectl get deploy --show-labels
+kubectl get rs --show-labels
+
+```
 
 ![configmap](images/Configmap.png "ConfigMap")
+
+
+
+## Environment Specific Configs
+
+Copy the dev env to staging
+
+
+```
+cd k8s-code/projects/instavote
+cp -r dev staging
+```
+
+Edit the configurationsd  for staging
+
+```
+cd staging
+
+```
+Edit *vote-cm.yaml*
+
+```
+piVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote
+data:
+  OPTION_A: Apple
+  OPTION_B: Samsung
+```
+
+Edit  *vote-svc.yaml*
+
+  * remove namespace if set
+  * remove extIP
+  * remove hard coded nodePort config if any
+
+Edit *vote-deploy.yaml*
+
+  * remove namespace if set
+  * change replicas to 2   
+
+Lets launch it all in another namespace. We could use **default** namespace for this purpose.
+
+```
+kubectl config set-context $(kubectl config  current-context) --namespace=default
+```
+
+
+Verify the namespace has been switched by observing the monitoring screen.
+
+Deploy new objects in this nmespace
+
+```
+kubectl apply -f vote-svc.yaml
+kubectl apply -f vote-cm.yaml
+kubectl apply -f vote-deploy.yaml
+
+```
+
+Now connect to the vote service by finding out the nodePort configs
+
+```
+kubectl get svc vote
+
+```
+
+Verify the environment specific options are in effect. Once verified, you could switch the namespace back to instavote.
+
+```
+kubectl config set-context $(kubectl config  current-context) --namespace=instavote
+
+```
 
 ### Configmap as a configuration file
 
@@ -62,11 +158,24 @@ Syntax for consuming file as a configmap is as follows
 We have redis configuration as a file named `projects/instavote/config/redis.conf`. We are going to convert this file into a configmap
 
 ```
-kubectl create configmap --from-file projects/instavote/config/redis.conf redis
+cd k8s-code/projects/instavote/config/
+
+kubectl create configmap --from-file  redis.conf redis
+```
+
+Now validate the configs  
+
+```
+
+kubectl get cm
+
+kubectl describe cm redis
 ```
 
 
-Update your redis-deploy.yaml file to use this confimap.
+To use this confif file, update your redis-deploy.yaml file to use it by mounting it as a volume.
+
+
 File: `redis-deploy.yaml`
 
 ```
@@ -89,13 +198,21 @@ File: `redis-deploy.yaml`
       restartPolicy: Always
 ```
 
+And apply it
+
+```
+kubectl apply -f redis-deploy.yaml
+
+kubectl get rs,deploy --show-labels
+```
+
 ## Secrets
 
 Secrets are for storing sensitive data like *passwords and keychains*. We will see how db deployment uses username and password in form of a secret.
 
 You would define two fields for db,
 
-  * username 
+  * username
   * password
 
 To create secrets for db you need to generate  *base64* format as follows,
@@ -126,15 +243,31 @@ metadata:
 type: Opaque
 data:
   POSTGRES_USER: YWRtaW4=
-  # base64 of admin
   POSTGRES_PASSWD: cGFzc3dvcmQ=
-  # base64 of password
 ```
 
+```
+kubectl apply -f db-secrets.yaml
 
-To consume these secrets, update the deployment as
+kubectl get secrets
 
-file: db-deploy.yaml.
+kubectl describe secret db
+```
+
+Secrets can be referred to inside a container spec with following syntax
+
+```
+env:
+  - name: VAR
+    valueFrom:
+      secretKeyRef:
+        name: db
+        key: SECRET_VAR
+```   
+
+To consume these secrets, update the deployment for db
+
+file: db-deploy.yaml
 
 ```
 apiVersion: extensions/v1beta1
@@ -178,6 +311,15 @@ spec:
       restartPolicy: Always
 ```
 
+To apply this,
+
+```
+kubectl apply -f db-deploy.yaml
+
+kubectl get rs,deploy --show-labels
+```
+
+
 ### Note: Automatic Updation of deployments on ConfigMap  Updates
 
 Currently, updating configMap does not ensure a new rollout of a deployment. What this means is even after updading configMaps, pods will not immediately reflect the changes.  
@@ -186,6 +328,6 @@ There is a feature request for this https://github.com/kubernetes/kubernetes/iss
 
 Currently, this can be done by using immutable configMaps.  
 
-  * Create a configMaps and apply it with deployment. 
-  * To update, create a new configMaps and do not update the previous one. Treat it as immutable. 
-  * Update deployment spec to use the new version of the configMaps. This will ensure immediate update. 
+  * Create a configMaps and apply it with deployment.
+  * To update, create a new configMaps and do not update the previous one. Treat it as immutable.
+  * Update deployment spec to use the new version of the configMaps. This will ensure immediate update.

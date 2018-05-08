@@ -24,7 +24,19 @@ voting-appp-pr2xz   1/1       Running   0          9m
 voting-appp-qpxbm   1/1       Running   0          15m
 ```
 
-## Publishing a service with NodePort
+
+### Setting up monitoring
+
+If you are not running a monitoring screen, start it in a new terminal with the following command.
+
+```
+watch -n 1 kubectl get  pod,deploy,rs,svc
+```
+
+## Writing Service Spec
+
+
+Lets start writing the  meta information for service.  
 
 Filename: vote-svc.yaml
 
@@ -33,19 +45,32 @@ Filename: vote-svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
+  name: vote
   labels:
-    role: svc
-    tier: front
-  name: vote-svc
-  namespace: instavote
+    role: vote
+spec:
+```
+
+And then add the spec to it. Refer to Service (v1 core) api at this page https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/
+
+```
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+  labels:
+    role: vote
 spec:
   selector:
-    app: vote
+    role: vote
+    version: v1
   ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
+    - port: 80
+      targetPort: 80
+      nodePort: 30000
   type: NodePort
+
 ```
 
 Save the file.
@@ -53,6 +78,7 @@ Save the file.
 Now to create a service:
 
 ```
+kubectl apply -f vote-svc.yaml --dry-run
 kubectl apply -f vote-svc.yaml
 kubectl get svc
 ```
@@ -102,9 +128,14 @@ spec:
     targetPort: 80
   type: NodePort
   externalIPs:
-    - 192.168.12.11
-    - 192.168.12.12
+    - xx.xx.xx.xx
+    - yy.yy.yy.yy
 ```
+
+Where
+
+replace xx.xx.xx.xx and yy.yy.yy.yy with IP addresses of the nodes on two of the kubernetes hosts.
+
 
 apply
 ```
@@ -112,3 +143,36 @@ kubectl apply -f vote-svc.yaml
 kubectl  get svc
 kubectl describe svc vote
 ```
+
+## Internal Service Discovery
+
+
+Visit the vote app from browser, vote and observe what happens.
+
+```
+kubectl exec vote-xxxx ping redis
+
+```
+[replace xxxx with the actual pod id of one of the vote pods ]
+
+keep the above command on a watch.
+
+
+```
+kubectl apply -f redis-svc.yaml
+
+kubectl get svc
+
+kubectl describe svc redis
+```
+
+Watch the ping and observe if its able to resolve **redis** by hostname.
+
+
+Create the endpoints now,
+
+```
+kubectl apply -f redis-deploy.yaml
+```
+
+Again, visit the vote app from browser, vote and observe what happens now. 

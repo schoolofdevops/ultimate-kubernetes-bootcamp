@@ -34,27 +34,19 @@ To list supported version of apis
 kubectl api-versions
 ```
 
-#### Common Configurations
+#### Writing Pod Spec
 
-Throughout this tutorial, we would be deploying different components of  example voting application. Lets assume we are deploying it in a **dev** environment. Lets create the common specs for this app with the AKMS schema discussed above.
+Lets now create the  Pod config by adding the kind and specs to schme given in the file vote-pod.yaml as follows.
 
-file: common.yml
-
+Filename: k8s-code/pods/vote-pod.yaml
 ```
-apiVersion: v1
-kind:
+apiVersion:
+kind: Pod
 metadata:
-  name: vote
-  labels:
-    app: vote
-    role: ui
-    tier: front
 spec:
 ```
 
-
-
-Lets now create the  Pod config by adding the kind and specs to above schema.
+Lets edit this and add the pod specs
 
 Filename: k8s-code/pods/vote-pod.yaml
 ```
@@ -63,13 +55,16 @@ kind: Pod
 metadata:
   name: vote
   labels:
-    app: vote
-    role: ui
-    tier: front
+    app: python
+    role: vote
+    version: v1
 spec:
   containers:
-    - name: vote
-      image: schoolofdevops/vote:latest
+    - name: app
+      image: schoolofdevops/vote:v1
+      ports:
+        - containerPort: 80
+          protocol: TCP
 ```
 
 [Use this link to refer to pod spec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core)
@@ -77,10 +72,21 @@ spec:
 
 ### Launching and operating a Pod
 
-Syntax:
+
+To launch a monitoring screen to see whats being launched, use the following command in a new terminal window where kubectl is configured.
+
 
 ```
- kubectl apply -f FILE
+watch -n 1  kuebctl get pods,deploy,rs,svc
+
+```
+
+kubectl Syntax:
+
+```
+kubectl
+kubectl apply --help
+kubectl apply -f FILE
 ```
 
 To Launch pod using configs above,
@@ -153,12 +159,32 @@ Events:
 Commands to operate the pod
 
 ```
-kubectl exec -it vote ps sh
-
-kubectl exec -it vote  sh
 
 kubectl logs vote
 
+kubectl exec -it vote  sh
+
+
+```
+
+Inside the container in a pod
+
+```
+ifconfig
+cat /etc/issue
+hostname
+cat /proc/cpuinfo
+ps aux
+```
+
+
+### Lab: Examine pods from the dashboard
+
+### Port Forwarding
+
+```
+kubectl port-forward --help
+kubectl port-forward vote 8000:80
 ```
 
 ## Troubleshooting Tip
@@ -282,45 +308,9 @@ kubectl describe pod db
 kubectl get events
 ```
 
+**Exercise** : Examine **/var/lib/pgdata** on the systems to check if the directory is been created and if the data is present.
 
-## Selecting Node to run on
 
-```
-kubectl get nodes --show-labels
-
-kubectl label nodes <node-name> zone=aaa
-
-kubectl get nodes --show-labels
-
-```
-
-Update pod definition with nodeSelector
-
-file: vote-pod.yml
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: vote
-  labels:
-    app: vote
-    role: ui
-    tier: front
-spec:
-  containers:
-    - name: vote
-      image: schoolofdevops/vote:latest
-      ports:
-        - containerPort: 80
-  nodeSelector:
-    zone: 'aaa'
-```
-
-For this change, pod needs to be re created.
-
-```
-kubectl apply -f vote-pod.yaml
-```
 
 ## Creating Multi Container Pods
 
@@ -378,6 +368,23 @@ kubectl exec -it web  sh  -c nginx
 kubectl exec -it web  sh  -c sync
 
 ```
+
+Observe whats common and whats isolated in two containers running inside  the same pod using the following commands,
+
+shared
+```
+hostname
+ifconfig
+```
+
+isolated
+```
+cat /etc/issue
+ps aux
+df -h
+
+```
+
 
 ## Exercise
 
