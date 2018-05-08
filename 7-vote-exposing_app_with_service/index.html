@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Service Endpoints - Ultimate Kubernetes Bootcamp</title>
+  <title>Service Discovery and Publishing App - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Service Endpoints";
-    var mkdocs_page_input_path = "7_exposing_app_with_service.md";
-    var mkdocs_page_url = "/7_exposing_app_with_service/";
+    var mkdocs_page_name = "Service Discovery and Publishing App";
+    var mkdocs_page_input_path = "7-vote-exposing_app_with_service.md";
+    var mkdocs_page_url = "/7-vote-exposing_app_with_service/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -81,32 +81,28 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+    <a class="" href="../5-vote-deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../replication/">High Availability with Replica Sets</a>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Service Endpoints</a>
+    <a class="current" href="./">Service Discovery and Publishing App</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#exposing-application-with-a-service">Exposing Application with  a Service</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#publishing-a-service-with-nodeport">Publishing a service with NodePort</a></li>
+            <li><a class="toctree-l4" href="#setting-up-monitoring">Setting up monitoring</a></li>
+        
+            <li><a class="toctree-l4" href="#writing-service-spec">Writing Service Spec</a></li>
         
             <li><a class="toctree-l4" href="#exposing-the-app-with-externalip">Exposing the app with ExternalIP</a></li>
         
-            <li><a class="toctree-l4" href="#exposing-the-app-with-loadbalancer-only-on-cloud">Exposing the app with LoadBalancer (Only on Cloud)</a></li>
-        
-            <li><a class="toctree-l4" href="#headless-services-with-endpointsexternal-names">Headless services with Endpoints/External Names</a></li>
+            <li><a class="toctree-l4" href="#internal-service-discovery">Internal Service Discovery</a></li>
         
         </ul>
     
@@ -115,15 +111,26 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
+                <li class="">
+                    
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
                 </li>
                 <li class="">
                     
     <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
                 </li>
                 <li class="">
                     
@@ -188,7 +195,7 @@
         
       
     
-    <li>Service Endpoints</li>
+    <li>Service Discovery and Publishing App</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -212,138 +219,127 @@ kubectl get svc
 </code></pre>
 
 <p>Sample Output:</p>
-<pre><code>NAME                         READY     STATUS    RESTARTS   AGE
-frontend-64597c55f8-dk6g7   1/1       Running   0          4m
-frontend-64597c55f8-mkp2h   1/1       Running   0          4m
-frontend-64597c55f8-r2c54   1/1       Running   0          4m
+<pre><code>NAME                READY     STATUS    RESTARTS   AGE
+voting-appp-1j52x   1/1       Running   0          12m
+voting-appp-pr2xz   1/1       Running   0          9m
+voting-appp-qpxbm   1/1       Running   0          15m
 </code></pre>
 
-<h2 id="publishing-a-service-with-nodeport">Publishing a service with NodePort</h2>
-<p>Filename: frontend-svc.yaml</p>
-<pre><code>apiVersion: v1
+<h3 id="setting-up-monitoring">Setting up monitoring</h3>
+<p>If you are not running a monitoring screen, start it in a new terminal with the following command.</p>
+<pre><code>watch -n 1 kubectl get  pod,deploy,rs,svc
+</code></pre>
+
+<h2 id="writing-service-spec">Writing Service Spec</h2>
+<p>Lets start writing the  meta information for service.  </p>
+<p>Filename: vote-svc.yaml</p>
+<pre><code>---
+apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
-  namespace: mogambo
+  name: vote
+  labels:
+    role: vote
+spec:
+</code></pre>
+
+<p>And then add the spec to it. Refer to Service (v1 core) api at this page https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/</p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+  labels:
+    role: vote
 spec:
   selector:
-    app: frontend
-    env: dev
+    role: vote
+    version: v1
   ports:
-    - port: 8079
-      protocol: TCP
-      targetPort: 8079
+    - port: 80
+      targetPort: 80
+      nodePort: 30000
   type: NodePort
 
 </code></pre>
 
 <p>Save the file.</p>
 <p>Now to create a service:</p>
-<pre><code>kubectl apply -f frontend-svc.yaml
+<pre><code>kubectl apply -f vote-svc.yaml --dry-run
+kubectl apply -f vote-svc.yaml
 kubectl get svc
 </code></pre>
 
 <p>Now to check which port the pod is connected</p>
-<pre><code>kubectl describe service frontend
+<pre><code>kubectl describe service vote
 </code></pre>
 
 <p>Check for the Nodeport here</p>
 <p>Sample Output</p>
-<pre><code>Name:                     frontend
-Namespace:                mogambo
+<pre><code>Name:                     vote
+Namespace:                instavote
 Labels:                   role=svc
                           tier=front
-Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;frontend&quot;,&quot;namespace&quot;:&quot;mogambo&quot;},&quot;spec...
-Selector:                 app=frontend
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;vote&quot;,&quot;namespace&quot;:&quot;instavote&quot;},&quot;spec&quot;:{...
+Selector:                 app=vote
 Type:                     NodePort
-IP:                       10.11.248.77
-Port:                     &lt;unset&gt;  8079/TCP
-TargetPort:               8079/TCP
-NodePort:                 &lt;unset&gt;  30197/TCP
-Endpoints:                10.8.1.13:8079,10.8.1.14:8079,10.8.1.15:8079 + 3 more...
+IP:                       10.108.108.157
+Port:                     &lt;unset&gt;  80/TCP
+TargetPort:               80/TCP
+NodePort:                 &lt;unset&gt;  31429/TCP
+Endpoints:                10.38.0.4:80,10.38.0.5:80,10.38.0.6:80 + 2 more...
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   &lt;none&gt;
 </code></pre>
 
 <p>Go to browser and check hostip:NodePort</p>
-<p>Here the node port is 30197.</p>
+<p>Here the node port is 31429.</p>
 <p>Sample output will be:</p>
-<p><img alt="frontend" src="../images/frontend.png" /></p>
+<p><img alt="Vote" src="../images/vote.png" /></p>
 <h2 id="exposing-the-app-with-externalip">Exposing the app with ExternalIP</h2>
-<p><code>file: /k8s-code/projects/mogambo/dev/frontend-svc.yml</code></p>
 <pre><code>spec:
   selector:
-    app: frontend
+    app: vote
   ports:
   - port: 80
     protocol: TCP
     targetPort: 80
   type: NodePort
   externalIPs:
-    - 192.168.12.11
-    - 192.168.12.12
+    - xx.xx.xx.xx
+    - yy.yy.yy.yy
 </code></pre>
 
-<p>Where 192.168.12.11 and 192.168.12.12 are the actual IPs of kubernetes hosts. Replace it as you see fit.</p>
+<p>Where</p>
+<p>replace xx.xx.xx.xx and yy.yy.yy.yy with IP addresses of the nodes on two of the kubernetes hosts.</p>
 <p>apply</p>
-<pre><code>kubectl apply -f frontend-svc.yml
+<pre><code>kubectl apply -f vote-svc.yaml
 kubectl  get svc
-kubectl describe svc frontend
+kubectl describe svc vote
 </code></pre>
 
-<h2 id="exposing-the-app-with-loadbalancer-only-on-cloud">Exposing the app with LoadBalancer (Only on Cloud)</h2>
-<p>Service type LoadBalancer is only supported on AWS,GCE,Azure and Openstack. If you have you cluster running on any of these clouds, give it a try. It will create a load balancer for us with a ephemeral IP. We can also specify a loadBalancerIP. Mostly not recommended to use. Using service type LoadBalancer will rise your cloud provider spendings. Think about launching 10 load balancers for 10 different services. Thats where <strong>ingress</strong> come into picture (explained in the later part).</p>
-<pre><code>apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  namespace: mogambo
-  labels:
-    app: frontend
-    env: dev
-spec:
-  selector:
-    app: frontend
-  ports:
-    - protocol: TCP
-      port: 8079
-  type: LoadBalancer
+<h2 id="internal-service-discovery">Internal Service Discovery</h2>
+<p>Visit the vote app from browser, vote and observe what happens.</p>
+<pre><code>kubectl exec vote-xxxx ping redis
+
 </code></pre>
 
-<h2 id="headless-services-with-endpointsexternal-names">Headless services with Endpoints/External Names</h2>
-<p>Sometimes you may to decouple the services from backend pods. Sometimes you may want to use some external services outside the cluster and want to integrate those external services with the cluster. For these kind of use cases we can use <strong>Headless services</strong>. Let us see an example.</p>
-<p>Let us consider a scenario where you have your redis cluster hosted outside the cluster. Your backend in cluster need to use this redis cluster. In this case, you will create a service with ExternalName, which is nothing but a CNAME record of your redis cluster. This type of services will neither have any ports defined nor have any selectors. But, how do you make sure the backend pods uses this service? For that, you will create a custom endpoint, in which map your service to specific endpoints.</p>
-<p><code>Ex: External Name service</code></p>
-<pre><code>kind: Service
-apiVersion: v1
-metadata:
-  name: redis-aws
-  namespace: mogambo
-spec:
-  type: ExternalName
-  externalName: redis.aws.schoolofdevops.com
+<p>[replace xxxx with the actual pod id of one of the vote pods ]</p>
+<p>keep the above command on a watch.</p>
+<pre><code>kubectl apply -f redis-svc.yaml
+
+kubectl get svc
+
+kubectl describe svc redis
 </code></pre>
 
-<p><code>Ex: Endpoints</code></p>
-<pre><code>kind: Endpoints
-apiVersion: v1
-metadata:
-  name: redis-aws
-subsets:
-  - addresses:
-      - ip: 10.40.30.123
-      - ip: 10.40.30.324
-      - ip: 10.40.30.478
-    ports:
-      - port: 9376
+<p>Watch the ping and observe if its able to resolve <strong>redis</strong> by hostname.</p>
+<p>Create the endpoints now,</p>
+<pre><code>kubectl apply -f redis-deploy.yaml
 </code></pre>
 
-<p>These IPs have to be manually managed by the cluster administrator.</p>
-<h4 id="exercises">Exercises</h4>
-<ul>
-<li>Create service definitions for catalogue and catalogue-db</li>
-</ul>
+<p>Again, visit the vote app from browser, vote and observe what happens now. </p>
               
             </div>
           </div>
@@ -351,10 +347,10 @@ subsets:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../9_deployement_strategies/" class="btn btn-neutral float-right" title="Deployment Strategies">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral float-right" title="Creating Deployments">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../6_kubernetes_deployment/" class="btn btn-neutral" title="Creating Deployments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../replication/" class="btn btn-neutral" title="High Availability with Replica Sets"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -380,10 +376,10 @@ subsets:
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../6_kubernetes_deployment/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../replication/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../9_deployement_strategies/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../6-vote-kubernetes_deployment/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

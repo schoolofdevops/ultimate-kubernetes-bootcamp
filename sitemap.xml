@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,25 +13,25 @@
         
     <url>
      <loc>/minikube/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/2_kube_cluster_vagrant/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/3_install_kubernetes/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/kube_visualizer/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -40,56 +40,60 @@
     
         
     <url>
-     <loc>/5_deploying_pods/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <loc>/5-vote-deploying_pods/</loc>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>/4_configs/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <loc>/replication/</loc>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>/6_kubernetes_deployment/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <loc>/7-vote-exposing_app_with_service/</loc>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>/7_exposing_app_with_service/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <loc>/6-vote-kubernetes_deployment/</loc>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
+        
+    <url>
+     <loc>/9-vote-configmaps_and_secrets/</loc>
+     <lastmod>2018-05-08</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
         
     <url>
      <loc>/9_deployement_strategies/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/persistent-volumes/</loc>
-     <lastmod>2018-03-08</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>/9_using_configmaps_and_secrets/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/10_kubernetes_autoscaling/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/11_deploying_sample_app/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -99,13 +103,13 @@
         
     <url>
      <loc>/cluster_setup_kubespray/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/12_troubleshooting/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -115,7 +119,7 @@
         
     <url>
      <loc>/configuring_authentication_and_authorization/</loc>
-     <lastmod>2018-03-08</lastmod>
+     <lastmod>2018-05-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

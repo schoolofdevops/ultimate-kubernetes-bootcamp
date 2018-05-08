@@ -18,8 +18,8 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Launching Pods";
-    var mkdocs_page_input_path = "5_deploying_pods.md";
-    var mkdocs_page_url = "/5_deploying_pods/";
+    var mkdocs_page_input_path = "5-vote-deploying_pods.md";
+    var mkdocs_page_url = "/5-vote-deploying_pods/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -94,16 +94,23 @@
         
             <li><a class="toctree-l4" href="#launching-and-operating-a-pod">Launching and operating a Pod</a></li>
         
+            <li><a class="toctree-l4" href="#lab-examine-pods-from-the-dashboard">Lab: Examine pods from the dashboard</a></li>
+        
+            <li><a class="toctree-l4" href="#port-forwarding">Port Forwarding</a></li>
+        
         </ul>
     
 
     <li class="toctree-l3"><a href="#troubleshooting-tip">Troubleshooting Tip</a></li>
     
 
-    <li class="toctree-l3"><a href="#creating-a-pod-for-db-with-environment-and-data-persistence">Creating a pod for db with environment and data persistence</a></li>
+    <li class="toctree-l3"><a href="#attach-a-volume-to-the-pod">Attach a Volume to the Pod</a></li>
     
 
     <li class="toctree-l3"><a href="#creating-multi-container-pods">Creating Multi Container Pods</a></li>
+    
+
+    <li class="toctree-l3"><a href="#exercise">Exercise</a></li>
     
         <ul>
         
@@ -116,16 +123,27 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../replication/">High Availability with Replica Sets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
@@ -133,10 +151,6 @@
                 <li class="">
                     
     <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
                 </li>
                 <li class="">
                     
@@ -235,151 +249,162 @@ spec:
 </code></pre>
 
 <p>Spec Schema: https://kubernetes.io/docs/user-guide/pods/multi-container/</p>
-<p><a href="https://coggle.it/diagram/Wpku-3KSrtl2yvwT/t/podspec-v1core/8f49bdb249c0333012045cd73c5658f5c8f8bf9179844b8cf650ad989139e948"><img alt="pod-specs" src="../images/PodSpec__v1core.png" /></a></p>
-<p>Lets now create the  Pod config by adding the kind and specs to above schema.</p>
-<p>Filename: ghost-pod.yml</p>
+<p>To list supported version of apis</p>
+<pre><code>kubectl api-versions
+</code></pre>
+
+<h4 id="writing-pod-spec">Writing Pod Spec</h4>
+<p>Lets now create the  Pod config by adding the kind and specs to schme given in the file vote-pod.yaml as follows.</p>
+<p>Filename: k8s-code/pods/vote-pod.yaml</p>
+<pre><code>apiVersion:
+kind: Pod
+metadata:
+spec:
+</code></pre>
+
+<p>Lets edit this and add the pod specs</p>
+<p>Filename: k8s-code/pods/vote-pod.yaml</p>
 <pre><code>apiVersion: v1
 kind: Pod
 metadata:
-  name: ghost
+  name: vote
   labels:
-    app: ghost
-    tier: front
-    version: latest
+    app: python
+    role: vote
+    version: v1
 spec:
   containers:
     - name: app
-      image: ghost:0-alpine
+      image: schoolofdevops/vote:v1
       ports:
-        - containerPort: 2368
+        - containerPort: 80
           protocol: TCP
+</code></pre>
+
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core">Use this link to refer to pod spec</a></p>
+<h3 id="launching-and-operating-a-pod">Launching and operating a Pod</h3>
+<p>To launch a monitoring screen to see whats being launched, use the following command in a new terminal window where kubectl is configured.</p>
+<pre><code>watch -n 1  kuebctl get pods,deploy,rs,svc
 
 </code></pre>
 
-<h3 id="launching-and-operating-a-pod">Launching and operating a Pod</h3>
-<p>We could perform the following operations on a pod</p>
-<ul>
-<li>get</li>
-<li>describe</li>
-<li>edit</li>
-<li>logs</li>
-<li>exec</li>
-<li>port-forward</li>
-<li>attach</li>
-<li>cp</li>
-</ul>
-<p>Syntax:</p>
-<pre><code> kubectl apply -f FILE
+<p>kubectl Syntax:</p>
+<pre><code>kubectl
+kubectl apply --help
+kubectl apply -f FILE
 </code></pre>
 
 <p>To Launch pod using configs above,</p>
-<pre><code>kubectl apply -f ghost-pod.yaml
+<pre><code>kubectl apply -f vote-pod.yaml
 
 </code></pre>
 
 <p>To view pods</p>
-<pre><code>kubectl get po -o wide
+<pre><code>kubectl get pods
 
-kubectl get pod ghost
+kubectl get po -o wide
 
+kubectl get pods vote
 </code></pre>
 
 <p>To get detailed info</p>
-<pre><code>kubectl describe pods ghost
+<pre><code>kubectl describe pods vote
 </code></pre>
 
 <p>[Output:]</p>
-<pre><code>Name:         ghost
-Namespace:    mogambo
-Node:         kube-03/128.199.139.254
-Start Time:   Wed, 07 Mar 2018 20:32:32 +0530
-Labels:       app=ghost
-              tier=front
-              version=latest
-Annotations:  kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Pod&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;app&quot;:&quot;ghost&quot;,&quot;tier&quot;:&quot;front&quot;,&quot;version&quot;:&quot;latest&quot;},&quot;name&quot;:&quot;ghost&quot;,&quot;namespace&quot;:&quot;mog...
-Status:       Running
-IP:           10.36.0.13
+<pre><code>Name:           vote
+Namespace:      default
+Node:           kube-3/192.168.0.80
+Start Time:     Tue, 07 Feb 2017 16:16:40 +0000
+Labels:         app=voting
+Status:         Running
+IP:             10.40.0.2
+Controllers:    &lt;none&gt;
 Containers:
-  app:
-    Container ID:   docker://a4d4cf23c7eff824751ef7bc4a9c14696e7fb5cca6f7e383dfc1afd8a9b27144
-    Image:          ghost:0-alpine
-    Image ID:       docker-pullable://ghost@sha256:04c99c1f5ed25a873c490dcd8f7028246b2c91eb004f0c94349b737fdcefd253
-    Port:           2368/TCP
-    State:          Running
-      Started:      Wed, 07 Mar 2018 20:32:34 +0530
-    Ready:          True
-    Restart Count:  0
-    Environment:    &lt;none&gt;
-    Mounts:
-      /var/run/secrets/kubernetes.io/serviceaccount from default-token-grqbf (ro)
+  vote:
+    Container ID:       docker://48304b35b9457d627b341e424228a725d05c2ed97cc9970bbff32a1b365d9a5d
+    Image:              schoolofdevops/vote:latest
+    Image ID:           docker-pullable://schoolofdevops/vote@sha256:3d89bfc1993d4630a58b831a6d44ef73d2be76a7862153e02e7a7c0cf2936731
+    Port:               80/TCP
+    State:              Running
+      Started:          Tue, 07 Feb 2017 16:16:52 +0000
+    Ready:              True
+    Restart Count:      0
+    Volume Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-2n6j1 (ro)
+    Environment Variables:      &lt;none&gt;
 Conditions:
-  Type           Status
-  Initialized    True
-  Ready          True
-  PodScheduled   True
+  Type          Status
+  Initialized   True
+  Ready         True
+  PodScheduled  True
 Volumes:
-  default-token-grqbf:
-    Type:        Secret (a volume populated by a Secret)
-    SecretName:  default-token-grqbf
-    Optional:    false
-QoS Class:       BestEffort
-Node-Selectors:  &lt;none&gt;
-Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
-                 node.kubernetes.io/unreachable:NoExecute for 300s
+  default-token-2n6j1:
+    Type:       Secret (a volume populated by a Secret)
+    SecretName: default-token-2n6j1
+QoS Class:      BestEffort
+Tolerations:    &lt;none&gt;
 Events:
-  Type    Reason                 Age   From               Message
-  ----    ------                 ----  ----               -------
-  Normal  Scheduled              11s   default-scheduler  Successfully assigned ghost to kube-03
-  Normal  SuccessfulMountVolume  11s   kubelet, kube-03   MountVolume.SetUp succeeded for volume &quot;default-token-grqbf&quot;
-  Normal  Pulled                 10s   kubelet, kube-03   Container image &quot;ghost:0-alpine&quot; already present on machine
-  Normal  Created                10s   kubelet, kube-03   Created container
-  Normal  Started                9s    kubelet, kube-03   Started container
+  FirstSeen     LastSeen        Count   From                    SubObjectPath           Type            Reason          Message
+  ---------     --------        -----   ----                    -------------           --------        ------          -------
+  21s           21s             1       {default-scheduler }                            Normal          Scheduled       Successfully assigned vote to kube-3
+  20s           20s             1       {kubelet kube-3}        spec.containers{vote}   Normal          Pulling         pulling image &quot;schoolofdevops/vote:latest&quot;
+  10s           10s             1       {kubelet kube-3}        spec.containers{vote}   Normal          Pulled          Successfully pulled image &quot;schoolofdevops/vote:latest&quot;
+  9s            9s              1       {kubelet kube-3}        spec.containers{vote}   Normal          Created         Created container with docker id 48304b35b945; Security:[seccomp=unconfined]
+  9s            9s              1       {kubelet kube-3}        spec.containers{vote}   Normal          Started         Started container with docker id 48304b35b945
 </code></pre>
 
 <p>Commands to operate the pod</p>
-<pre><code>kubectl logs ghost
+<pre><code>
+kubectl logs vote
 
-kubectl exec -it ghost ps sh
-
-kubectl exec -it ghost bash
+kubectl exec -it vote  sh
 
 
 </code></pre>
 
-<p>delete</p>
-<pre><code>kubectl delete pod ghost
+<p>Inside the container in a pod</p>
+<pre><code>ifconfig
+cat /etc/issue
+hostname
+cat /proc/cpuinfo
+ps aux
+</code></pre>
 
-kubectl get pods
+<h3 id="lab-examine-pods-from-the-dashboard">Lab: Examine pods from the dashboard</h3>
+<h3 id="port-forwarding">Port Forwarding</h3>
+<pre><code>kubectl port-forward --help
+kubectl port-forward vote 8000:80
 </code></pre>
 
 <h2 id="troubleshooting-tip">Troubleshooting Tip</h2>
 <p>If you would like to know whats the current status of the pod, and if its in a error state, find out the cause of the error, following command could be very handy.</p>
-<pre><code>kubectl get pod ghost -o yaml
+<pre><code>kubectl get pod vote -o yaml
 </code></pre>
 
 <p>Lets learn by example. Update pod spec and change the image to something that does not exist.</p>
-<pre><code>kubectl edit pod ghost
+<pre><code>kubectl edit pod vote
 </code></pre>
 
 <p>This will open a editor. Go to the line which defines image  and change it to a tag that does not exist</p>
 <p>e.g.</p>
 <pre><code>spec:
   containers:
-  - image: ghost:wrong
+  - image: schoolofdevops/vote:latst
     imagePullPolicy: Always
 </code></pre>
 
-<p>where tag <strong>wrong</strong> does not exist. As soon as you save this file, kubernetes will apply the change.</p>
+<p>where tag <strong>latst</strong> does not exist. As soon as you save this file, kubernetes will apply the change.</p>
 <p>Now check the status,</p>
 <pre><code>kubectl get pods  
 
 NAME      READY     STATUS             RESTARTS   AGE
-ghost      0/1       ImagePullBackOff   0          27m
+vote      0/1       ImagePullBackOff   0          27m
 </code></pre>
 
 <p>The above output will only show the status, with a vague error. To find the exact error, lets get the stauts of the pod.</p>
 <p>Observe the <strong>status</strong> field.  </p>
-<pre><code>kubectl get pod ghost -o yaml
+<pre><code>kubectl get pod vote -o yaml
 </code></pre>
 
 <p>Now the status field shows a detailed information, including what the exact error. Observe the following snippet...</p>
@@ -390,123 +415,51 @@ containerStatuses:
 state:
   waiting:
     message: 'rpc error: code = Unknown desc = Error response from daemon: manifest
-      for ghost:wrong not found'
+      for schoolofdevops/vote:latst not found'
     reason: ErrImagePull
 hostIP: 139.59.232.248
 </code></pre>
 
 <p>This will help you to pinpoint to the exact cause and fix it quickly.</p>
 <p>Now that you  are done experimenting with pod, delete it with the following command,</p>
-<pre><code>kubectl delete pod ghost
+<pre><code>kubectl delete pod vote
 
 kubectl get pods
 </code></pre>
 
-<h2 id="creating-a-pod-for-db-with-environment-and-data-persistence">Creating a pod for db with environment and data persistence</h2>
-<p>Lets start writing spec for a database pod with the following configs,</p>
+<h2 id="attach-a-volume-to-the-pod">Attach a Volume to the Pod</h2>
+<p>Lets create a pod for database and attach a volume to it. To achieve this we will need to</p>
 <ul>
-<li>image: 'mysql:8'</li>
-<li>port:  3306 / tcp</li>
-<li>labels:<ul>
-<li>tier: back</li>
-<li>app: db</li>
-<li>version: 8</li>
+<li>create a <strong>volumes</strong> definition</li>
+<li>attach volume to container using <strong>VolumeMounts</strong> property</li>
 </ul>
-</li>
-</ul>
+<p>Local host volumes are of two types:<br />
+  * emptyDir<br />
+  * hostPath  </p>
+<p>We will pick hostPath. <a href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">Refer to this doc to read more about hostPath.</a></p>
 <p>File: db-pod.yaml</p>
 <pre><code>apiVersion: v1
 kind: Pod
 metadata:
   name: db
   labels:
+    app: postgres
+    role: database
     tier: back
-    app: db
-    version: 8
 spec:
   containers:
-    - name: mysql
-      image: mysql:8
+    - name: db
+      image: postgres:9.4
       ports:
-        - containerPort: 3306
-          protocol: TCP
-
-</code></pre>
-
-<p>Lets add the environment variables to the database to setup following vars</p>
-<ul>
-<li>MYSQL_ROOT_PASSWORD</li>
-<li>MYSQL_DATABASE</li>
-<li>MYSQL_USER</li>
-<li>MYSQL_PASSWORD</li>
-</ul>
-<pre><code>apiVersion: v1
-kind: Pod
-metadata:
-  name: db
-  labels:
-    tier: back
-    app: db
-    version: 8
-spec:
-  containers:
-    - name: mysql
-      image: mysql:8
-      ports:
-        - containerPort: 3306
-          protocol: TCP
-      env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: dfgk8923Jsk89JJSsdlf
-        - name: MYSQL_DATABASE
-          value: ghost
-        - name: MYSQL_USER
-          value: ghostapp
-        - name: MYSQL_PASSWORD
-          value: skljlj230kHshk02Ksc
-</code></pre>
-
-<p>Lets add configurations for data persistence.</p>
-<ul>
-<li>create a <strong>volumes</strong> definition</li>
-<li>attach volume to container using <strong>VolumeMounts</strong> property</li>
-</ul>
-<p>Local volumes are of two types:
-  * emptyDir
-  * hostPath</p>
-<pre><code>apiVersion: v1
-kind: Pod
-metadata:
-  name: db
-  labels:
-    tier: back
-    app: db
-    version: 8
-spec:
-  containers:
-    - name: mysql
-      image: mysql:8
-      ports:
-        - containerPort: 3306
-          protocol: TCP
-      env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: dfgk8923Jsk89JJSsdlf
-        - name: MYSQL_DATABASE
-          value: ghost
-        - name: MYSQL_USER
-          value: ghostapp
-        - name: MYSQL_PASSWORD
-          value: skljlj230kHshk02Ksc
+        - containerPort: 5432
       volumeMounts:
-        - name: db-data
-          mountPath: /var/lib/mysql
+      - name: db-data
+        mountPath: /var/lib/postgresql/data
   volumes:
-    - name: db-data
-      hostPath:
-        path: /var/lib/mysql
-        type: DirectoryOrCreate
-
+  - name: db-data
+    hostPath:
+      path: /var/lib/pgdata
+      type: DirectoryOrCreate
 </code></pre>
 
 <p>To create this pod,</p>
@@ -517,6 +470,7 @@ kubectl describe pod db
 kubectl get events
 </code></pre>
 
+<p><strong>Exercise</strong> : Examine <strong>/var/lib/pgdata</strong> on the systems to check if the directory is been created and if the data is present.</p>
 <h2 id="creating-multi-container-pods">Creating Multi Container Pods</h2>
 <p>file: multi_container_pod.yml</p>
 <pre><code>apiVersion: v1
@@ -524,29 +478,26 @@ kind: Pod
 metadata:
   name: web
   labels:
-    tier: front
     app: nginx
     role: ui
+    tier: front
 spec:
   containers:
     - name: nginx
       image: nginx:stable-alpine
       ports:
         - containerPort: 80
-          protocol: TCP
       volumeMounts:
-        - name: data
-          mountPath: /var/www/html-sample-app
-
+      - name: data
+        mountPath: /var/www/html-sample-app
     - name: sync
-      image: schoolofdevops/sync:v2
+      image: schoolofdevops/synch
       volumeMounts:
-        - name: data
-          mountPath: /var/www/app
-
+      - name: data
+        mountPath: /var/www/html-sample-app
   volumes:
-    - name: data
-      emptyDir: {}
+  - name: data
+    emptyDir: {}
 </code></pre>
 
 <p>To create this pod</p>
@@ -557,18 +508,33 @@ spec:
 <pre><code>root@kube-01:~# kubectl get pods
 NAME      READY     STATUS              RESTARTS   AGE
 nginx     0/2       ContainerCreating   0          7s
-ghost      1/1       Running             0          3m
+vote      1/1       Running             0          3m
 </code></pre>
 
 <p>Checking logs, logging in</p>
-<pre><code>kubectl logs  web  -c loop
+<pre><code>kubectl logs  web  -c sync
 kubectl logs  web  -c nginx
 
 kubectl exec -it web  sh  -c nginx
-kubectl exec -it web  sh  -c loop
+kubectl exec -it web  sh  -c sync
 
 </code></pre>
 
+<p>Observe whats common and whats isolated in two containers running inside  the same pod using the following commands,</p>
+<p>shared</p>
+<pre><code>hostname
+ifconfig
+</code></pre>
+
+<p>isolated</p>
+<pre><code>cat /etc/issue
+ps aux
+df -h
+
+</code></pre>
+
+<h2 id="exercise">Exercise</h2>
+<p>Create a pod definition for redis and deploy.</p>
 <h4 id="reading-list">Reading List</h4>
 <ul>
 <li>PodSpec: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core</li>
@@ -582,7 +548,7 @@ kubectl exec -it web  sh  -c loop
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../4_configs/" class="btn btn-neutral float-right" title="Configuring Cluster">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../replication/" class="btn btn-neutral float-right" title="High Availability with Replica Sets">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../kube_visualizer/" class="btn btn-neutral" title="Kuberentes Visualizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -614,7 +580,7 @@ kubectl exec -it web  sh  -c loop
         <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../4_configs/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../replication/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

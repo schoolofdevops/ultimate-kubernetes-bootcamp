@@ -81,20 +81,31 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+    <a class="" href="../5-vote-deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../replication/">High Availability with Replica Sets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
@@ -102,10 +113,6 @@
                 <li class="">
                     
     <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
                 </li>
                 <li class="">
                     
@@ -164,8 +171,6 @@
         
             <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
         
-            <li><a class="toctree-l4" href="#example">Example</a></li>
-        
         </ul>
     
 
@@ -211,18 +216,38 @@
             <div class="section">
               
                 <h1 id="configuring-authentication-and-authorization">Configuring Authentication and Authorization</h1>
+<p>Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.</p>
 <h2 id="create-namespace-for-a-useroptional">Create namespace for a user(Optional)</h2>
+<p>Create the <strong>dev</strong> namespace if it has not been created already.</p>
+<p><code>dev-namespace.yml</code></p>
+<pre><code>apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    name: dev
+</code></pre>
+
+<pre><code>kubectl apply -f dev-namespace.yml
+</code></pre>
+
 <h2 id="create-the-user-credentials">Create the user credentials</h2>
-<pre><code>openssl genrsa -out vibe.key 2048
-openssl req -new -key vibe.key -out vibe.csr -subj &quot;/CN=vibe/O=initcron&quot;
-#copy over all key files from /etc/kubernetes directory of master when you run this command
-openssl x509 -req -in vibe.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out vibe.crt -days 500
-# save these newly generated keys in a secure directory of the user's system (/home/vibe/.kube-certs)
-# Execute the following commands on the users system
-kubectl config set-credentials vibe --client-certificate=/home/vibe/.kube-certs/vibe.crt --client-key=/home/vibe/.kube-certs/vibe.key
-kubectl config set-context vibe-context --cluster=&lt;YOUR-CLUSTER-NAME&gt; --namespace=&lt;NAMESPACE-FOR-USER&gt;  --user=vibe
+<p>Generate the user's private key</p>
+<pre><code>openssl genrsa -out john.key 2048
+openssl req -new -key john.key -out john.csr -subj &quot;/CN=john/O=initcron&quot;
+</code></pre>
+
+<p>Sign the key using kubernetes CA
+<code>Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.</code></p>
+<pre><code>openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500
+</code></pre>
+
+<p>Save these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)
+Execute the following commands on the users system</p>
+<pre><code>kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key
+kubectl config set-context john-context --cluster=&lt;YOUR-CLUSTER-NAME&gt; --namespace=&lt;NAMESPACE-FOR-USER&gt;  --user=john
 # This step will throw an error
-kubectl --context=vibe-context get pods
+kubectl --context=john-context get pods
 </code></pre>
 
 <h2 id="create-role-for-the-developers">Create role for the developers</h2>
@@ -251,7 +276,7 @@ metadata:
   namespace: developer
 subjects:
 - kind: User
-  name: vibe
+  name: john
   apiGroup: &quot;&quot;
 roleRef:
   kind: Role
@@ -394,35 +419,6 @@ Each of these topics will be discussed in detail in the later part of this chapt
 <ul>
 <li>ClusterRoleBindings works same as RoleBindings, but cluster-wide.</li>
 </ul>
-<h2 id="example">Example</h2>
-<p>Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.</p>
-<h3 id="step-1-create-the-namespace">Step 1: Create the Namespace</h3>
-<p>Create the <strong>dev</strong> namespace if it has not been created already.</p>
-<p><code>dev-namespace.yml</code></p>
-<pre><code>apiVersion: v1
-kind: Namespace
-metadata:
-  name: dev
-  labels:
-    name: dev
-</code></pre>
-
-<pre><code>kubectl apply -f dev-namespace.yml
-</code></pre>
-
-<h3 id="step-2-create-the-user-credentials">Step 2: Create the user credentials</h3>
-<p>Next step is to create the credentials for John. Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.</p>
-<pre><code>openssl genrsa -out john.key 2048
-openssl req -new -key vibe.key -out john.csr -subj &quot;/CN=john/O=my-org&quot;
-#copy over all key files from /etc/kubernetes directory of master when you run this command
-openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500
-# save these newly generated keys in a secure directory of the user's system (/home/john/.kube-certs)
-# Execute the following commands on the users system
-kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key
-kubectl config set-context developer --cluster=&lt;YOUR-CLUSTER-NAME&gt; --namespace=dev  --user=dev
-# This step will throw an error
-kubectl --context=developer get pods
-</code></pre>
               
             </div>
           </div>

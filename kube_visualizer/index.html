@@ -79,8 +79,6 @@
         
             <li><a class="toctree-l4" href="#set-up">Set up</a></li>
         
-            <li><a class="toctree-l4" href="#quick-deploy-a-docker-image-with-kubernetes">Quick Deploy a Docker Image with Kubernetes</a></li>
-        
         </ul>
     
 
@@ -95,20 +93,31 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+    <a class="" href="../5-vote-deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../replication/">High Availability with Replica Sets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
@@ -116,10 +125,6 @@
                 <li class="">
                     
     <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
                 </li>
                 <li class="">
                     
@@ -235,15 +240,6 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
 </code></pre>
 
 <p><img alt="kube-visualizer" src="../images/kube-visualizer.png" /></p>
-<h3 id="quick-deploy-a-docker-image-with-kubernetes">Quick Deploy a Docker Image with Kubernetes</h3>
-<pre><code>kubectl run vote --image=schoolofdevops/vote --port 80
-
-kubectl scale --replicas=10 deploy/vote
-
-kubectl expose deploy vote --port 80 --target-port 80 --type NodePort
-
-
-</code></pre>
               
             </div>
           </div>
@@ -251,7 +247,7 @@ kubectl expose deploy vote --port 80 --target-port 80 --type NodePort
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../5_deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../5-vote-deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../3_install_kubernetes/" class="btn btn-neutral" title="Setup Kubernetes Cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -283,7 +279,7 @@ kubectl expose deploy vote --port 80 --target-port 80 --type NodePort
         <span><a href="../3_install_kubernetes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../5_deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../5-vote-deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

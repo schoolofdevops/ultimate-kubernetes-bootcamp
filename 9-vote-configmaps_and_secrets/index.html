@@ -18,8 +18,8 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Using Configmaps and Secrets";
-    var mkdocs_page_input_path = "9_using_configmaps_and_secrets.md";
-    var mkdocs_page_url = "/9_using_configmaps_and_secrets/";
+    var mkdocs_page_input_path = "9-vote-configmaps_and_secrets.md";
+    var mkdocs_page_url = "/9-vote-configmaps_and_secrets/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -81,27 +81,19 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+    <a class="" href="../5-vote-deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../4_configs/">Configuring Cluster</a>
+    <a class="" href="../replication/">High Availability with Replica Sets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
                 </li>
                 <li class=" current">
                     
@@ -113,6 +105,13 @@
         <ul>
         
             <li><a class="toctree-l4" href="#injecting-env-variables-with-configmaps">Injecting env variables with configmaps</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#environment-specific-configs">Environment Specific Configs</a></li>
+    
+        <ul>
         
             <li><a class="toctree-l4" href="#configmap-as-a-configuration-file">Configmap as a configuration file</a></li>
         
@@ -129,6 +128,21 @@
     
 
     </ul>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
                 </li>
                 <li class="">
                     
@@ -214,8 +228,8 @@ metadata:
   name: vote
   namespace: instavote
 data:
-  OPTION_A: EMACS
-  OPTION_B: VI
+  OPTION_A: Visa
+  OPTION_B: Mastercard
 </code></pre>
 
 <p>In the above given configmap, we define two environment variables,</p>
@@ -223,6 +237,15 @@ data:
 <li>OPTION_A=EMACS</li>
 <li>OPTION_B=VI</li>
 </ol>
+<p>Lets create the configmap object</p>
+<pre><code>kubectl get cm
+kubectl apply -f vote-cm.yaml
+kubectl get cm
+kubectl describe cm vote
+
+
+</code></pre>
+
 <p>In order to use this configmap in the deployment, we need to reference it from the deployment file.</p>
 <p>Check the deployment file for vote add for the following block.</p>
 <p>file: <code>vote-deploy.yaml</code></p>
@@ -241,8 +264,71 @@ data:
         restartPolicy: Always
 </code></pre>
 
-<p>So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (EMACS and VI) will override the default values(CATS and DOGS) present in your source code.</p>
+<p>So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (Visa and Mastercard) will override the default values(CATS and DOGS) present in your source code.</p>
+<pre><code>kubectl apply -f vote-deploy.yaml
+</code></pre>
+
+<p>Watch the monitoring screen for deployment in progress.</p>
+<pre><code>kubectl get deploy --show-labels
+kubectl get rs --show-labels
+
+</code></pre>
+
 <p><img alt="configmap" src="../images/Configmap.png" title="ConfigMap" /></p>
+<h2 id="environment-specific-configs">Environment Specific Configs</h2>
+<p>Copy the dev env to staging</p>
+<pre><code>cd k8s-code/projects/instavote
+cp -r dev staging
+</code></pre>
+
+<p>Edit the configurationsd  for staging</p>
+<pre><code>cd staging
+
+</code></pre>
+
+<p>Edit <em>vote-cm.yaml</em></p>
+<pre><code>piVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote
+data:
+  OPTION_A: Apple
+  OPTION_B: Samsung
+</code></pre>
+
+<p>Edit  <em>vote-svc.yaml</em></p>
+<ul>
+<li>remove namespace if set</li>
+<li>remove extIP</li>
+<li>remove hard coded nodePort config if any</li>
+</ul>
+<p>Edit <em>vote-deploy.yaml</em></p>
+<ul>
+<li>remove namespace if set</li>
+<li>change replicas to 2   </li>
+</ul>
+<p>Lets launch it all in another namespace. We could use <strong>default</strong> namespace for this purpose.</p>
+<pre><code>kubectl config set-context $(kubectl config  current-context) --namespace=default
+</code></pre>
+
+<p>Verify the namespace has been switched by observing the monitoring screen.</p>
+<p>Deploy new objects in this nmespace</p>
+<pre><code>kubectl apply -f vote-svc.yaml
+kubectl apply -f vote-cm.yaml
+kubectl apply -f vote-deploy.yaml
+
+</code></pre>
+
+<p>Now connect to the vote service by finding out the nodePort configs</p>
+<pre><code>kubectl get svc vote
+
+</code></pre>
+
+<p>Verify the environment specific options are in effect. Once verified, you could switch the namespace back to instavote.</p>
+<pre><code>kubectl config set-context $(kubectl config  current-context) --namespace=instavote
+
+</code></pre>
+
 <h3 id="configmap-as-a-configuration-file">Configmap as a configuration file</h3>
 <p>In the  topic above we have seen how to use configmap as environment variables. Now let us see how to use configmap as redis configuration file.</p>
 <p>Syntax for consuming file as a configmap is as follows</p>
@@ -250,11 +336,20 @@ data:
 </code></pre>
 
 <p>We have redis configuration as a file named <code>projects/instavote/config/redis.conf</code>. We are going to convert this file into a configmap</p>
-<pre><code>kubectl create configmap --from-file projects/instavote/config/redis.conf redis
+<pre><code>cd k8s-code/projects/instavote/config/
+
+kubectl create configmap --from-file  redis.conf redis
 </code></pre>
 
-<p>Update your redis-deploy.yaml file to use this confimap.
-File: <code>redis-deploy.yaml</code></p>
+<p>Now validate the configs  </p>
+<pre><code>
+kubectl get cm
+
+kubectl describe cm redis
+</code></pre>
+
+<p>To use this confif file, update your redis-deploy.yaml file to use it by mounting it as a volume.</p>
+<p>File: <code>redis-deploy.yaml</code></p>
 <pre><code>    spec:
       containers:
       - image: schoolofdevops/redis:latest
@@ -274,11 +369,17 @@ File: <code>redis-deploy.yaml</code></p>
       restartPolicy: Always
 </code></pre>
 
+<p>And apply it</p>
+<pre><code>kubectl apply -f redis-deploy.yaml
+
+kubectl get rs,deploy --show-labels
+</code></pre>
+
 <h2 id="secrets">Secrets</h2>
 <p>Secrets are for storing sensitive data like <em>passwords and keychains</em>. We will see how db deployment uses username and password in form of a secret.</p>
 <p>You would define two fields for db,</p>
 <ul>
-<li>username </li>
+<li>username</li>
 <li>password</li>
 </ul>
 <p>To create secrets for db you need to generate  <em>base64</em> format as follows,</p>
@@ -301,13 +402,27 @@ metadata:
 type: Opaque
 data:
   POSTGRES_USER: YWRtaW4=
-  # base64 of admin
   POSTGRES_PASSWD: cGFzc3dvcmQ=
-  # base64 of password
 </code></pre>
 
-<p>To consume these secrets, update the deployment as</p>
-<p>file: db-deploy.yaml.</p>
+<pre><code>kubectl apply -f db-secrets.yaml
+
+kubectl get secrets
+
+kubectl describe secret db
+</code></pre>
+
+<p>Secrets can be referred to inside a container spec with following syntax</p>
+<pre><code>env:
+  - name: VAR
+    valueFrom:
+      secretKeyRef:
+        name: db
+        key: SECRET_VAR
+</code></pre>
+
+<p>To consume these secrets, update the deployment for db</p>
+<p>file: db-deploy.yaml</p>
 <pre><code>apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -349,14 +464,20 @@ spec:
       restartPolicy: Always
 </code></pre>
 
+<p>To apply this,</p>
+<pre><code>kubectl apply -f db-deploy.yaml
+
+kubectl get rs,deploy --show-labels
+</code></pre>
+
 <h3 id="note-automatic-updation-of-deployments-on-configmap-updates">Note: Automatic Updation of deployments on ConfigMap  Updates</h3>
 <p>Currently, updating configMap does not ensure a new rollout of a deployment. What this means is even after updading configMaps, pods will not immediately reflect the changes.  </p>
 <p>There is a feature request for this https://github.com/kubernetes/kubernetes/issues/22368</p>
 <p>Currently, this can be done by using immutable configMaps.  </p>
 <ul>
-<li>Create a configMaps and apply it with deployment. </li>
-<li>To update, create a new configMaps and do not update the previous one. Treat it as immutable. </li>
-<li>Update deployment spec to use the new version of the configMaps. This will ensure immediate update. </li>
+<li>Create a configMaps and apply it with deployment.</li>
+<li>To update, create a new configMaps and do not update the previous one. Treat it as immutable.</li>
+<li>Update deployment spec to use the new version of the configMaps. This will ensure immediate update.</li>
 </ul>
               
             </div>
@@ -365,10 +486,10 @@ spec:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../10_kubernetes_autoscaling/" class="btn btn-neutral float-right" title="Auto Scaling Capacity with HPA">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../9_deployement_strategies/" class="btn btn-neutral float-right" title="Deployment Strategies">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../persistent-volumes/" class="btn btn-neutral" title="Persistent Volume Setup"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral" title="Creating Deployments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -394,10 +515,10 @@ spec:
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../persistent-volumes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../6-vote-kubernetes_deployment/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../10_kubernetes_autoscaling/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../9_deployement_strategies/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

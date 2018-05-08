@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Configuring Cluster - Ultimate Kubernetes Bootcamp</title>
+  <title>High Availability with Replica Sets - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Configuring Cluster";
-    var mkdocs_page_input_path = "4_configs.md";
-    var mkdocs_page_url = "/4_configs/";
+    var mkdocs_page_name = "High Availability with Replica Sets";
+    var mkdocs_page_input_path = "replication.md";
+    var mkdocs_page_url = "/replication/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -81,32 +81,48 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../5_deploying_pods/">Launching Pods</a>
+    <a class="" href="../5-vote-deploying_pods/">Launching Pods</a>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Configuring Cluster</a>
+    <a class="current" href="./">High Availability with Replica Sets</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</a></li>
-    
-
-    <li class="toctree-l3"><a href="#listing-configurations">Listing Configurations</a></li>
+    <li class="toctree-l3"><a href="#setting-up-a-namespace">Setting up a Namespace</a></li>
     
 
     <li class="toctree-l3"><a href="#creating-a-namespace">Creating a namespace</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#replica-sets-in-action">Replica Sets in Action</a></li>
+        
+            <li><a class="toctree-l4" href="#deploying-the-new-version">Deploying  the new version</a></li>
+        
+        </ul>
     
 
     </ul>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6_kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7_exposing_app_with_service/">Service Endpoints</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
@@ -114,10 +130,6 @@
                 <li class="">
                     
     <a class="" href="../persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../9_using_configmaps_and_secrets/">Using Configmaps and Secrets</a>
                 </li>
                 <li class="">
                     
@@ -182,7 +194,7 @@
         
       
     
-    <li>Configuring Cluster</li>
+    <li>High Availability with Replica Sets</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -192,20 +204,14 @@
           <div role="main">
             <div class="section">
               
-                <p>In this lesson we are going to cover the following topics</p>
-<ul>
-<li>Setting up monitors</li>
-<li>Configs</li>
-<li>Context</li>
-<li>Namespaces</li>
-</ul>
-<h2 id="setup-monitoring-console-for-kubernetes">Setup monitoring console for Kubernetes</h2>
-<p>Unix <strong>watch</strong> is a great utility for a devops professional. You could setup a simple monitoring for kubernetes cluster using a <strong>watch</strong>  along with <strong>kubectl</strong> command.  Run the following on the managment node. It could be your local system configured with kubectl, or a remote shell on a node where <em>kubectl</em> is configured.</p>
-<pre><code>watch -n 1 kubectl get pods,deploy,svc
-
+                <p>If you are not running a monitoring screen, start it in a new terminal with the following command.</p>
+<pre><code>watch -n 1 kubectl get  pod,deploy,rs,svc
 </code></pre>
 
-<h2 id="listing-configurations">Listing Configurations</h2>
+<pre><code>kubectl delete pod vote
+</code></pre>
+
+<h3 id="setting-up-a-namespace">Setting up a Namespace</h3>
 <p>Check current config</p>
 <pre><code>
 kubectl config view
@@ -214,25 +220,147 @@ kubectl config view
 <p>You could also examine the current configs in file <strong>cat ~/.kube/config</strong></p>
 <h2 id="creating-a-namespace">Creating a namespace</h2>
 <p>Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   </p>
-<p>Lets create a namespace called <strong>mogambo</strong>  </p>
-<p>file: k8s-code/projects/mogambo/mogambo-ns.yml</p>
+<p>Lets create a namespace called <strong>instavote</strong>  </p>
+<pre><code>cd projects/instavote
+cat instavote-ns.yaml
+</code></pre>
+
+<p>[output]</p>
 <pre><code>kind: Namespace
 apiVersion: v1
 metadata:
-  name: mogambo
+  name: instavote
 </code></pre>
 
-<p>To create namespace</p>
-<pre><code>cd k8s-code/projects/mogamgo
-kubectl get ns
-kubectl apply -f mogamgo-ns.yml
+<p>Lets create a namespace</p>
+<pre><code>kubectl get ns
+kubectl apply -f instavote-ns.yaml
+
 kubectl get ns
 </code></pre>
 
 <p>And switch to it</p>
-<pre><code>kubectl config set-context $(kubectl config current-context) --namespace=mogambo
+<pre><code>kubectl config --help
+
+kubectl config current-context
+
+kubectl config set-context $(kubectl config current-context) --namespace=instavote
+
+kubectl config view
 
 </code></pre>
+
+<p><strong>Exercise</strong>: Go back to the monitoring screen and observe what happens after switching the namespace.</p>
+<p>To understand how ReplicaSets works with the selectors  lets launch a pod in the new namespace with existing specs.</p>
+<pre><code>cd k8s-code/projects/pods
+kubectl apply -f vote-pod.yaml
+
+kubectl get pods
+cd ../projects/instavote/dev/
+</code></pre>
+
+<p>Lets now write the spec for the Rplica Set. This is going to mainly contain,</p>
+<ul>
+<li>replicas</li>
+<li>selector</li>
+<li>template (pod spec )</li>
+<li>minReadySeconds</li>
+</ul>
+<p>file: vote-rs.yaml</p>
+<pre><code>apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: vote
+  namespace: instavote
+spec:
+  replicas: 5
+  minReadySeconds: 20
+  selector:
+    matchLabels:
+      role: vote
+    matchExpressions:
+      - {key: version, operator: In, values: [v1, v2, v3]}
+  template:
+</code></pre>
+
+<p>Lets now add the metadata and spec from pod spec defined in vote-pod.yaml. And with that, the Replica Set Spec changes to</p>
+<p>file: vote-rs.yaml</p>
+<pre><code>apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: vote
+  namespace: instavote
+spec:
+  replicas: 5
+  minReadySeconds: 20
+  selector:
+    matchLabels:
+      role: vote
+    matchExpressions:
+      - {key: version, operator: In, values: [v1, v2, v3]}
+  template:
+    metadata:
+      name: vote
+      labels:
+        app: python
+        role: vote
+        version: v1
+    spec:
+      containers:
+        - name: app
+          image: schoolofdevops/vote:ergerg
+          ports:
+            - containerPort: 80
+              protocol: TCP
+
+</code></pre>
+
+<h3 id="replica-sets-in-action">Replica Sets in Action</h3>
+<pre><code>kubectl apply -f vote-rs.yaml --dry-run
+
+kubectl apply -f vote-rs.yaml
+
+kubectl get rs
+
+kubectl describe rs vote
+
+kubectl get pods
+
+
+</code></pre>
+
+<p><strong>Exercise</strong> :  </p>
+<ul>
+<li>Switch to monitoring screen, observe how many replicas were created  and why</li>
+<li>Compare selectors and labels of the pods created with and without replica sets</li>
+</ul>
+<pre><code>kubectl get pods
+
+kubectl get pods --show-labels
+</code></pre>
+
+<h3 id="deploying-the-new-version">Deploying  the new version</h3>
+<pre><code>kubectl edit rs/vote
+</code></pre>
+
+<p>Update the version of the image from <strong>schoolofdevops/vote:v1</strong> to <strong>schoolofdevops/vote:v2</strong></p>
+<p>Save the file. Observe if application got updated. Note what do you observe.</p>
+<pre><code>kubectl get pods
+kubectl delete pods  vote-xxxx  vote-yyyy
+</code></pre>
+
+<p>where replace xxxx and yyyy with actual pod ids.</p>
+<p>Questions:</p>
+<ul>
+<li>Did replica set replaced the pods ?</li>
+<li>Which version of the application is running now ?</li>
+</ul>
+<p>Lets now delete the pod created independent of replica set.</p>
+<pre><code>kubectl get pods
+kubectl delete pods  vote
+</code></pre>
+
+<p>Observe what happens. Does replica set take any action after deleting the pod created outside of its spec ?</p>
               
             </div>
           </div>
@@ -240,10 +368,10 @@ kubectl get ns
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../6_kubernetes_deployment/" class="btn btn-neutral float-right" title="Creating Deployments">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral float-right" title="Service Discovery and Publishing App">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../5_deploying_pods/" class="btn btn-neutral" title="Launching Pods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../5-vote-deploying_pods/" class="btn btn-neutral" title="Launching Pods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -269,10 +397,10 @@ kubectl get ns
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../5_deploying_pods/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../5-vote-deploying_pods/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../6_kubernetes_deployment/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../7-vote-exposing_app_with_service/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
