@@ -18,8 +18,8 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Persistent Volume Setup";
-    var mkdocs_page_input_path = "persistent-volumes.md";
-    var mkdocs_page_url = "/persistent-volumes/";
+    var mkdocs_page_input_path = "vote-persistent-volumes.md";
+    var mkdocs_page_url = "/vote-persistent-volumes/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -111,8 +111,6 @@
             <li><a class="toctree-l4" href="#set-up-nfs-common">Set up NFS Common</a></li>
         
             <li><a class="toctree-l4" href="#set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</a></li>
-        
-            <li><a class="toctree-l4" href="#test">Test</a></li>
         
         </ul>
     
@@ -210,78 +208,84 @@
 sudo apt-get install nfs-common
 </code></pre>
 
+<p>[Skip this step if you are using a vagrant setup recommended as part of this course. ]</p>
 <h2 id="set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</h2>
 <p>Change into nfs provisioner installation dir</p>
-<pre><code>cd step5
-cd storage/nfs
+<pre><code>cd k8s-code/storage
 </code></pre>
 
 <p>Deploy nfs-client provisioner.</p>
-<pre><code>kubectl apply -f clusterrole.yml
+<pre><code>kubectl apply -f nfs
 
 </code></pre>
 
-<p>Create the Storage Class.</p>
-<pre><code>kubectl apply -f serviceaccount.yaml
-kubectl apply -f clusterrole.yaml
-kubectl apply -f clusterrolebinding.yaml
-
-kubectl apply -f statefulset-sa.yaml
-
-</code></pre>
-
-<h2 id="test">Test</h2>
-<p>file: catalogue-db-pvc.yml</p>
+<p>This will create all the objects required to setup a nfs provisioner.</p>
+<h3 id="creating-a-persistent-volume-claim">Creating a Persistent Volume Claim</h3>
+<p>file: db-pvc.yml</p>
 <pre><code>kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: catalogue-db-pvc
+  name: db-pvc
 spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi
   storageClassName: nfs
 
 </code></pre>
 
-<p>file: catalogue-db-pod.yml</p>
-<pre><code>apiVersion: v1
-kind: Pod
+<p>And lets create the Persistent Volume Claim</p>
+<pre><code>kubectl apply -f db-pvc.yml
+
+kubectl get pvc,storageclass
+
+kubectl describe pvc db-pvc
+</code></pre>
+
+<p>file: db-deploy.yaml</p>
+<pre><code>apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
-  name: catalogue-db
-  labels:
-    app: catalogue-db
-    env: dev
-    version: latest
-    tier: &quot;3&quot;
+  name: db
+  namespace: instavote
 spec:
-  containers:
-    - name: catalogue-db
-      image: schoolofdevops/catalogue-db:latest
-      imagePullPolicy: Always
-      ports:
-        - containerPort: 3306
-      env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: dfgk8923Jsk89JJSsdlf
-        - name: MYSQL_DATABASE
-          value: socksdb
-        - name: MYSQL_USER
-          value: catalogue_user
-        - name: MYSQL_PASSWORD
-          value: default_password
-      volumeMounts:
-        - name: catalogue-db-vol
-          mountPath: /var/lib/mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: back
+      app: postgres
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: postgres
+        role: db
+        tier: back
+        version: &quot;9.4&quot;
+    spec:
+      containers:
+      - image: postgres:9.4
+        imagePullPolicy: Always
+        name: db
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - name: db-vol
+          mountPath: /var/lib/postgresql/data
 
   volumes:
-    - name: catalogue-db-vol
+    - name: db-vol
       persistentVolumeClaim:
-        claimName: catalogue-db-pvc
+        claimName: db-pvc
 
+</code></pre>
+
+<p>And apply this code as</p>
+<pre><code>kubectl apply -f db-deploy.yaml
 </code></pre>
               
             </div>
