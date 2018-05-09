@@ -254,7 +254,6 @@ metadata:
 spec:
   selector:
     role: vote
-    version: v1
   ports:
     - port: 80
       targetPort: 80
@@ -300,7 +299,7 @@ Events:                   &lt;none&gt;
 <h2 id="exposing-the-app-with-externalip">Exposing the app with ExternalIP</h2>
 <pre><code>spec:
   selector:
-    app: vote
+    role: vote
   ports:
   - port: 80
     protocol: TCP
@@ -339,7 +338,7 @@ kubectl describe svc redis
 <pre><code>kubectl apply -f redis-deploy.yaml
 </code></pre>
 
-<p>Again, visit the vote app from browser, vote and observe what happens now. </p>
+<p>Again, visit the vote app from browser, vote and observe what happens now.</p>
               
             </div>
           </div>

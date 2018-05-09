@@ -271,7 +271,6 @@ cd ../projects/instavote/dev/
 kind: ReplicaSet
 metadata:
   name: vote
-  namespace: instavote
 spec:
   replicas: 5
   minReadySeconds: 20
@@ -289,7 +288,6 @@ spec:
 kind: ReplicaSet
 metadata:
   name: vote
-  namespace: instavote
 spec:
   replicas: 5
   minReadySeconds: 20

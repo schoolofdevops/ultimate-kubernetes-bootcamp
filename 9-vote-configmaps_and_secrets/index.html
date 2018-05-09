@@ -281,7 +281,7 @@ kubectl get rs --show-labels
 cp -r dev staging
 </code></pre>
 
-<p>Edit the configurationsd  for staging</p>
+<p>Edit the configurations   for staging</p>
 <pre><code>cd staging
 
 </code></pre>
@@ -349,7 +349,7 @@ kubectl describe cm redis
 </code></pre>
 
 <p>To use this confif file, update your redis-deploy.yaml file to use it by mounting it as a volume.</p>
-<p>File: <code>redis-deploy.yaml</code></p>
+<p>File: <code>dev/redis-deploy.yaml</code></p>
 <pre><code>    spec:
       containers:
       - image: schoolofdevops/redis:latest
@@ -372,9 +372,12 @@ kubectl describe cm redis
 <p>And apply it</p>
 <pre><code>kubectl apply -f redis-deploy.yaml
 
+kubectl apply -f redis-svc.yaml
+
 kubectl get rs,deploy --show-labels
 </code></pre>
 
+<p><strong>Exercise:</strong> Connect to redis pod and verify configs.</p>
 <h2 id="secrets">Secrets</h2>
 <p>Secrets are for storing sensitive data like <em>passwords and keychains</em>. We will see how db deployment uses username and password in form of a secret.</p>
 <p>You would define two fields for db,</p>
@@ -466,6 +469,8 @@ spec:
 
 <p>To apply this,</p>
 <pre><code>kubectl apply -f db-deploy.yaml
+
+kubectl apply -f db-svc.yaml
 
 kubectl get rs,deploy --show-labels
 </code></pre>

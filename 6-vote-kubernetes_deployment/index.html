@@ -219,7 +219,6 @@ cp vote-rs.yaml vote-deploy.yaml
 kind: Deployment
 metadata:
   name: vote
-  namespace: instavote
 spec:
   strategy:
     type: RollingUpdate
@@ -276,7 +275,7 @@ vote   3         3         3            1           3m
 
 <h2 id="scaling-a-deployment">Scaling a deployment</h2>
 <p>To scale a deployment in Kubernetes:</p>
-<pre><code>kubectl scale deployment/vote --replicas=15
+<pre><code>kubectl scale deployment/vote --replicas=12
 </code></pre>
 
 <p>Sample output:</p>
@@ -293,9 +292,14 @@ deployment &quot;vote&quot; scaled
 <h2 id="rolling-updates-in-action">Rolling Updates in Action</h2>
 <p>file: vote-deploy.yaml</p>
 <pre><code>spec:
-  containers:
-    - name: app
-      image: schoolofdevops/vote:v1
+...
+  replicas: 8
+...
+template:   
+  spec:
+    containers:
+      - name: app
+        image: schoolofdevops/vote:v1
 
 </code></pre>
 
