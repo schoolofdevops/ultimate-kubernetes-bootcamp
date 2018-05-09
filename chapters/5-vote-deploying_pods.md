@@ -77,7 +77,7 @@ To launch a monitoring screen to see whats being launched, use the following com
 
 
 ```
-watch -n 1  kuebctl get pods,deploy,rs,svc
+watch -n 1  kubectl get pods,deploy,rs,svc
 
 ```
 
@@ -182,6 +182,8 @@ ps aux
 
 ### Port Forwarding
 
+This works if you have setup **kubectl** on a local laptop.
+
 ```
 kubectl port-forward --help
 kubectl port-forward vote 8000:80
@@ -208,11 +210,11 @@ e.g.
 ```
 spec:
   containers:
-  - image: schoolofdevops/vote:latst
+  - image: schoolofdevops/vote:srgwegew
     imagePullPolicy: Always
 ```
 
-where tag **latst** does not exist. As soon as you save this file, kubernetes will apply the change.
+where tag **srgwegew** does not exist. As soon as you save this file, kubernetes will apply the change.
 
 Now check the status,
 ```
@@ -322,26 +324,29 @@ kind: Pod
 metadata:
   name: web
   labels:
+    tier: front
     app: nginx
     role: ui
-    tier: front
 spec:
   containers:
     - name: nginx
       image: nginx:stable-alpine
       ports:
         - containerPort: 80
+          protocol: TCP
       volumeMounts:
-      - name: data
-        mountPath: /var/www/html-sample-app
+        - name: data
+          mountPath: /var/www/html-sample-app
+
     - name: sync
-      image: schoolofdevops/synch
+      image: schoolofdevops/sync:v2
       volumeMounts:
-      - name: data
-        mountPath: /var/www/html-sample-app
+        - name: data
+          mountPath: /var/www/app
+
   volumes:
-  - name: data
-    emptyDir: {}
+    - name: data
+      emptyDir: {}
 ```
 
 To create this pod

@@ -52,9 +52,6 @@ spec:
       containers:
         - name: app
           image: schoolofdevops/vote:v1
-          envFrom:
-            - configMapRef:
-                name: vote
           ports:
             - containerPort: 80
               protocol: TCP
