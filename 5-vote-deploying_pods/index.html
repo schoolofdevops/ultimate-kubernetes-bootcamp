@@ -373,6 +373,7 @@ ps aux
 
 <h3 id="lab-examine-pods-from-the-dashboard">Lab: Examine pods from the dashboard</h3>
 <h3 id="port-forwarding">Port Forwarding</h3>
+<p>This works if you have setup <strong>kubectl</strong> on a local laptop.</p>
 <pre><code>kubectl port-forward --help
 kubectl port-forward vote 8000:80
 </code></pre>
@@ -390,11 +391,11 @@ kubectl port-forward vote 8000:80
 <p>e.g.</p>
 <pre><code>spec:
   containers:
-  - image: schoolofdevops/vote:latst
+  - image: schoolofdevops/vote:srgwegew
     imagePullPolicy: Always
 </code></pre>
 
-<p>where tag <strong>latst</strong> does not exist. As soon as you save this file, kubernetes will apply the change.</p>
+<p>where tag <strong>srgwegew</strong> does not exist. As soon as you save this file, kubernetes will apply the change.</p>
 <p>Now check the status,</p>
 <pre><code>kubectl get pods  
 
@@ -478,26 +479,29 @@ kind: Pod
 metadata:
   name: web
   labels:
+    tier: front
     app: nginx
     role: ui
-    tier: front
 spec:
   containers:
     - name: nginx
       image: nginx:stable-alpine
       ports:
         - containerPort: 80
+          protocol: TCP
       volumeMounts:
-      - name: data
-        mountPath: /var/www/html-sample-app
+        - name: data
+          mountPath: /var/www/html-sample-app
+
     - name: sync
-      image: schoolofdevops/synch
+      image: schoolofdevops/sync:v2
       volumeMounts:
-      - name: data
-        mountPath: /var/www/html-sample-app
+        - name: data
+          mountPath: /var/www/app
+
   volumes:
-  - name: data
-    emptyDir: {}
+    - name: data
+      emptyDir: {}
 </code></pre>
 
 <p>To create this pod</p>

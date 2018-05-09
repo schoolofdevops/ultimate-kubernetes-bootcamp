@@ -235,8 +235,8 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
 </code></pre>
 
 <p>In my case, port <strong>30073</strong> is the nodeport.</p>
-<p>Visit the port from the browser.</p>
-<pre><code>http://&lt;NODE_IP:NODE_PORT&gt;
+<p>Visit the port from the browser. You could add /#scale=2.0 or similar option where 2.0 = 200% the scale. </p>
+<pre><code>http://&lt;NODE_IP:NODE_PORT&gt;/#scale=2.0
 </code></pre>
 
 <p><img alt="kube-visualizer" src="../images/kube-visualizer.png" /></p>
