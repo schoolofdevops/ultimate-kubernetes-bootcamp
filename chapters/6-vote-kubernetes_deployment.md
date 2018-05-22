@@ -25,7 +25,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vote
-  namespace: instavote
 spec:
   strategy:
     type: RollingUpdate
@@ -47,11 +46,11 @@ spec:
       labels:
         app: python
         role: vote
-        version: v1
+        version: v2
     spec:
       containers:
         - name: app
-          image: schoolofdevops/vote:v1
+          image: schoolofdevops/vote:v2
           ports:
             - containerPort: 80
               protocol: TCP
@@ -78,7 +77,7 @@ Now that the deployment is created. To validate,
 
 ```
 kubectl get deployment
-kubectl get rs
+kubectl get rs --show-labels
 kubectl get deploy,pods,rs
 kubectl rollout status deployment/vote
 kubectl get pods --show-labels
@@ -96,14 +95,18 @@ vote   3         3         3            1           3m
 To scale a deployment in Kubernetes:
 
 ```
-kubectl scale deployment/vote --replicas=15
+kubectl scale deployment/vote --replicas=12
+
+kubectl rollout status deployment/vote
+
 ```
 
 Sample output:
 ```
-kubectl rollout status
-kubectl scale deployment/vote --replicas=12
-deployment "vote" scaled
+
+Waiting for rollout to finish: 5 of 12 updated replicas are available...
+Waiting for rollout to finish: 6 of 12 updated replicas are available...
+deployment "vote" successfully rolled out
 ```
 
 You could also update the deployment by editing it.
@@ -115,14 +118,27 @@ kubectl edit deploy/vote
 [change replicas to 15 from the editor, save and observe]
 
 
+
 ## Rolling Updates in Action
+
+Now, update the deployment spec to apply
 
 file: vote-deploy.yaml
 ```
 spec:
-  containers:
-    - name: app
-      image: schoolofdevops/vote:v1
+...
+  replicas: 15
+...
+labels:
+   app: python
+   role: vote
+   version: v3
+...
+template:   
+  spec:
+    containers:
+      - name: app
+        image: schoolofdevops/vote:v3
 
 ```
 
@@ -131,7 +147,7 @@ apply
 ```
 kubectl apply -f vote-deploy.yaml
 
-kubectl rollout status
+kubectl rollout status deployment/vote
 ```
 
 Observe rollout status and monitoring screen.

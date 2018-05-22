@@ -74,7 +74,7 @@ kubectl config view
 To understand how ReplicaSets works with the selectors  lets launch a pod in the new namespace with existing specs.
 
 ```
-cd k8s-code/projects/pods
+cd k8s-code/pods
 kubectl apply -f vote-pod.yaml
 
 kubectl get pods
@@ -90,13 +90,13 @@ Lets now write the spec for the Rplica Set. This is going to mainly contain,
 
 
 
-file: vote-rs.yaml
+*file: vote-rs.yaml*
+
 ```
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: vote
-  namespace: instavote
 spec:
   replicas: 5
   minReadySeconds: 20
@@ -111,14 +111,13 @@ spec:
 
 Lets now add the metadata and spec from pod spec defined in vote-pod.yaml. And with that, the Replica Set Spec changes to
 
-file: vote-rs.yaml
+*file: vote-rs.yaml*
 
 ```
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: vote
-  namespace: instavote
 spec:
   replicas: 5
   minReadySeconds: 20
@@ -137,7 +136,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: schoolofdevops/vote:ergerg
+          image: schoolofdevops/vote:v1
           ports:
             - containerPort: 80
               protocol: TCP
@@ -172,7 +171,7 @@ kubectl get pods
 kubectl get pods --show-labels
 ```
 
-### Deploying  the new version
+### Exercise: Deploying new version of the application
 
 
 ```
@@ -181,7 +180,12 @@ kubectl edit rs/vote
 
 Update the version of the image from **schoolofdevops/vote:v1** to **schoolofdevops/vote:v2**
 
-Save the file. Observe if application got updated. Note what do you observe.
+Save the file. Observe if application got updated. Note what do you observe. Do you see the new version deployed ??
+
+
+### Exercise: Self Healing Replica Sets
+
+List the pods and kill some of those, see what replica set does.
 
 ```
 kubectl get pods
@@ -202,4 +206,5 @@ kubectl get pods
 kubectl delete pods  vote
 ```
 
-Observe what happens. Does replica set take any action after deleting the pod created outside of its spec ?
+Observe what happens.
+  * Does replica set take any action after deleting the pod created outside of its spec ? Why? 

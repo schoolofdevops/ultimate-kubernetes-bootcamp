@@ -67,6 +67,7 @@ Watch the monitoring screen for deployment in progress.
 ```
 kubectl get deploy --show-labels
 kubectl get rs --show-labels
+kubectl  rollout status deploy/vote
 
 ```
 
@@ -74,7 +75,7 @@ kubectl get rs --show-labels
 
 
 
-## Environment Specific Configs
+## Providing environment Specific Configs
 
 Copy the dev env to staging
 
@@ -84,7 +85,7 @@ cd k8s-code/projects/instavote
 cp -r dev staging
 ```
 
-Edit the configurationsd  for staging
+Edit the configurations   for staging
 
 ```
 cd staging
@@ -107,6 +108,24 @@ Edit  *vote-svc.yaml*
   * remove namespace if set
   * remove extIP
   * remove hard coded nodePort config if any
+
+file: vote-svc.yaml
+```
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+  labels:
+    role: vote
+spec:
+  selector:
+    role: vote
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort
+```
 
 Edit *vote-deploy.yaml*
 
@@ -138,14 +157,22 @@ kubectl get svc vote
 
 ```
 
+**Troubleshooting**
+
+  * Do you see the application when you browse to http://host:nodeport
+  * If not, why? Find the root cause and fix it.
+
+#### Switch back the  namespace 
+
 Verify the environment specific options are in effect. Once verified, you could switch the namespace back to instavote.
+
 
 ```
 kubectl config set-context $(kubectl config  current-context) --namespace=instavote
 
 ```
 
-### Configmap as a configuration file
+## Configuration file as ConfigMap
 
 In the  topic above we have seen how to use configmap as environment variables. Now let us see how to use configmap as redis configuration file.
 
@@ -176,7 +203,7 @@ kubectl describe cm redis
 To use this confif file, update your redis-deploy.yaml file to use it by mounting it as a volume.
 
 
-File: `redis-deploy.yaml`
+File: `dev/redis-deploy.yaml`
 
 ```
     spec:
@@ -203,8 +230,12 @@ And apply it
 ```
 kubectl apply -f redis-deploy.yaml
 
+kubectl apply -f redis-svc.yaml
+
 kubectl get rs,deploy --show-labels
 ```
+
+**Exercise:** Connect to redis pod and verify configs.
 
 ## Secrets
 
@@ -315,6 +346,8 @@ To apply this,
 
 ```
 kubectl apply -f db-deploy.yaml
+
+kubectl apply -f db-svc.yaml
 
 kubectl get rs,deploy --show-labels
 ```
