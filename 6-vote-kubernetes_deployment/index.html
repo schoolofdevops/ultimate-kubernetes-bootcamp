@@ -118,6 +118,14 @@
                     
     <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+                </li>
     </ul>
 	    </li>
           
@@ -127,15 +135,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
-                <li class="">
-                    
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -240,11 +240,11 @@ spec:
       labels:
         app: python
         role: vote
-        version: v1
+        version: v2
     spec:
       containers:
         - name: app
-          image: schoolofdevops/vote:v1
+          image: schoolofdevops/vote:v2
           ports:
             - containerPort: 80
               protocol: TCP
@@ -261,7 +261,7 @@ spec:
 <p>Observe the chances to pod labels, specifically the <strong>pod-template-hash</strong>.</p>
 <p>Now that the deployment is created. To validate,</p>
 <pre><code>kubectl get deployment
-kubectl get rs
+kubectl get rs --show-labels
 kubectl get deploy,pods,rs
 kubectl rollout status deployment/vote
 kubectl get pods --show-labels
@@ -276,12 +276,16 @@ vote   3         3         3            1           3m
 <h2 id="scaling-a-deployment">Scaling a deployment</h2>
 <p>To scale a deployment in Kubernetes:</p>
 <pre><code>kubectl scale deployment/vote --replicas=12
+
+kubectl rollout status deployment/vote
+
 </code></pre>
 
 <p>Sample output:</p>
-<pre><code>kubectl rollout status
-kubectl scale deployment/vote --replicas=12
-deployment &quot;vote&quot; scaled
+<pre><code>
+Waiting for rollout to finish: 5 of 12 updated replicas are available...
+Waiting for rollout to finish: 6 of 12 updated replicas are available...
+deployment &quot;vote&quot; successfully rolled out
 </code></pre>
 
 <p>You could also update the deployment by editing it.</p>
@@ -290,23 +294,29 @@ deployment &quot;vote&quot; scaled
 
 <p>[change replicas to 15 from the editor, save and observe]</p>
 <h2 id="rolling-updates-in-action">Rolling Updates in Action</h2>
+<p>Now, update the deployment spec to apply</p>
 <p>file: vote-deploy.yaml</p>
 <pre><code>spec:
 ...
-  replicas: 8
+  replicas: 15
+...
+labels:
+   app: python
+   role: vote
+   version: v3
 ...
 template:   
   spec:
     containers:
       - name: app
-        image: schoolofdevops/vote:v1
+        image: schoolofdevops/vote:v3
 
 </code></pre>
 
 <p>apply</p>
 <pre><code>kubectl apply -f vote-deploy.yaml
 
-kubectl rollout status
+kubectl rollout status deployment/vote
 </code></pre>
 
 <p>Observe rollout status and monitoring screen.</p>

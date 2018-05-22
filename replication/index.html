@@ -97,7 +97,9 @@
         
             <li><a class="toctree-l4" href="#replica-sets-in-action">Replica Sets in Action</a></li>
         
-            <li><a class="toctree-l4" href="#deploying-the-new-version">Deploying  the new version</a></li>
+            <li><a class="toctree-l4" href="#exercise-deploying-new-version-of-the-application">Exercise: Deploying new version of the application</a></li>
+        
+            <li><a class="toctree-l4" href="#exercise-self-healing-replica-sets">Exercise: Self Healing Replica Sets</a></li>
         
         </ul>
     
@@ -120,6 +122,14 @@
                     
     <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+                </li>
     </ul>
 	    </li>
           
@@ -129,15 +139,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
-                <li class="">
-                    
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -252,7 +254,7 @@ kubectl config view
 
 <p><strong>Exercise</strong>: Go back to the monitoring screen and observe what happens after switching the namespace.</p>
 <p>To understand how ReplicaSets works with the selectors  lets launch a pod in the new namespace with existing specs.</p>
-<pre><code>cd k8s-code/projects/pods
+<pre><code>cd k8s-code/pods
 kubectl apply -f vote-pod.yaml
 
 kubectl get pods
@@ -266,7 +268,7 @@ cd ../projects/instavote/dev/
 <li>template (pod spec )</li>
 <li>minReadySeconds</li>
 </ul>
-<p>file: vote-rs.yaml</p>
+<p><em>file: vote-rs.yaml</em></p>
 <pre><code>apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
@@ -283,7 +285,7 @@ spec:
 </code></pre>
 
 <p>Lets now add the metadata and spec from pod spec defined in vote-pod.yaml. And with that, the Replica Set Spec changes to</p>
-<p>file: vote-rs.yaml</p>
+<p><em>file: vote-rs.yaml</em></p>
 <pre><code>apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
@@ -306,7 +308,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: schoolofdevops/vote:ergerg
+          image: schoolofdevops/vote:v1
           ports:
             - containerPort: 80
               protocol: TCP
@@ -337,12 +339,14 @@ kubectl get pods
 kubectl get pods --show-labels
 </code></pre>
 
-<h3 id="deploying-the-new-version">Deploying  the new version</h3>
+<h3 id="exercise-deploying-new-version-of-the-application">Exercise: Deploying new version of the application</h3>
 <pre><code>kubectl edit rs/vote
 </code></pre>
 
 <p>Update the version of the image from <strong>schoolofdevops/vote:v1</strong> to <strong>schoolofdevops/vote:v2</strong></p>
-<p>Save the file. Observe if application got updated. Note what do you observe.</p>
+<p>Save the file. Observe if application got updated. Note what do you observe. Do you see the new version deployed ??</p>
+<h3 id="exercise-self-healing-replica-sets">Exercise: Self Healing Replica Sets</h3>
+<p>List the pods and kill some of those, see what replica set does.</p>
 <pre><code>kubectl get pods
 kubectl delete pods  vote-xxxx  vote-yyyy
 </code></pre>
@@ -358,7 +362,8 @@ kubectl delete pods  vote-xxxx  vote-yyyy
 kubectl delete pods  vote
 </code></pre>
 
-<p>Observe what happens. Does replica set take any action after deleting the pod created outside of its spec ?</p>
+<p>Observe what happens.
+  * Does replica set take any action after deleting the pod created outside of its spec ? Why? </p>
               
             </div>
           </div>

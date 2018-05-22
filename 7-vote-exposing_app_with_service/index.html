@@ -121,6 +121,14 @@
                     
     <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+                </li>
     </ul>
 	    </li>
           
@@ -130,15 +138,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
-                <li class="">
-                    
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -295,7 +295,7 @@ Events:                   &lt;none&gt;
 <p>Go to browser and check hostip:NodePort</p>
 <p>Here the node port is 31429.</p>
 <p>Sample output will be:</p>
-<p><img alt="Vote" src="../images/vote.png" /></p>
+<p><img alt="Vote" src="../images/vote-rc.png" /></p>
 <h2 id="exposing-the-app-with-externalip">Exposing the app with ExternalIP</h2>
 <pre><code>spec:
   selector:
@@ -313,19 +313,39 @@ Events:                   &lt;none&gt;
 <p>Where</p>
 <p>replace xx.xx.xx.xx and yy.yy.yy.yy with IP addresses of the nodes on two of the kubernetes hosts.</p>
 <p>apply</p>
-<pre><code>kubectl apply -f vote-svc.yaml
+<pre><code>kubectl  get svc
+kubectl apply -f vote-svc.yaml
 kubectl  get svc
 kubectl describe svc vote
 </code></pre>
 
+<p>[sample output]</p>
+<pre><code>NAME      TYPE       CLUSTER-IP      EXTERNAL-IP                    PORT(S)        AGE
+vote      NodePort   10.107.71.204   206.189.150.190,159.65.8.227   80:30000/TCP   11m
+</code></pre>
+
+<p>where,</p>
+<p>EXTERNAL-IP column shows which IPs the application is been exposed on. You could go to http://<IPADDRESS>:<SERVICE_PORT> to access this application.  e.g. http://206.189.150.190:80 where you should replace 206.189.150.190 with the actual IP address of the node that you exposed this on.</p>
 <h2 id="internal-service-discovery">Internal Service Discovery</h2>
-<p>Visit the vote app from browser, vote and observe what happens.</p>
-<pre><code>kubectl exec vote-xxxx ping redis
+<ul>
+<li>Visit the vote app from browser</li>
+<li>Attemp to vote by clicking on one of the options</li>
+</ul>
+<p>observe what happens. Does it go through?  </p>
+<p>Debugging,</p>
+<pre><code>kubectl get pod
+kubectl exec vote-xxxx ping redis
 
 </code></pre>
 
 <p>[replace xxxx with the actual pod id of one of the vote pods ]</p>
-<p>keep the above command on a watch.</p>
+<p>keep the above command on a watch. You should create a new terminal to run the watch command.</p>
+<p>e.g.</p>
+<pre><code>watch  kubectl exec vote-kvc7j ping redis
+</code></pre>
+
+<p>where, vote-kvc7j is one of the vote pods that I am running. Replace this with the actual pod id.</p>
+<p>Now create <strong>redis</strong> service</p>
 <pre><code>kubectl apply -f redis-svc.yaml
 
 kubectl get svc
@@ -333,12 +353,64 @@ kubectl get svc
 kubectl describe svc redis
 </code></pre>
 
-<p>Watch the ping and observe if its able to resolve <strong>redis</strong> by hostname.</p>
-<p>Create the endpoints now,</p>
-<pre><code>kubectl apply -f redis-deploy.yaml
+<p>Watch the ping and observe if its able to resolve <strong>redis</strong> by hostname and its pointing to an IP address.</p>
+<p>e.g.</p>
+<pre><code>PING redis (10.102.77.6): 56 data bytes
 </code></pre>
 
-<p>Again, visit the vote app from browser, vote and observe what happens now.</p>
+<p>where <strong>10.102.77.6</strong> is the ClusterIP assigned to the service.  </p>
+<p>What happened here?</p>
+<ul>
+<li>Service <strong>redis</strong> was created with a ClusterIP e.g. 10.102.77.6</li>
+<li>A DNS entry was created for this service. The fqdn of the service is <strong>redis.instavote.svc.cluster.local</strong> and it takes the form of my-svc.my-namespace.svc.cluster.local</li>
+<li>Each pod points to  internal  DNS server running in the cluster. You could see the details of this by running the following commands</li>
+</ul>
+<pre><code>kubectl exec vote-xxxx cat /etc/resolv.conf
+</code></pre>
+
+<p>[replace vote-xxxx with actual pod id]</p>
+<p>[sample output]</p>
+<pre><code>nameserver 10.96.0.10
+search instavote.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5
+</code></pre>
+
+<p>where <strong>10.96.0.10</strong> is the ClusterIP assigned to the DNS service. You could co relate that with,</p>
+<pre><code>kubectl get svc -n kube-system
+
+
+NAME                   TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
+kube-dns               ClusterIP   10.96.0.10     &lt;none&gt;        53/UDP,53/TCP   1h
+kubernetes-dashboard   NodePort    10.104.42.73   &lt;none&gt;        80:31000/TCP    23m
+
+</code></pre>
+
+<p>where, <strong>10.96.0.10</strong> is the ClusterIP assigned to <strong>kube-dns</strong> and matches the configuration in <strong>/etc/resolv.conf</strong> above.</p>
+<h5 id="creating-endpoints-for-redis">Creating Endpoints for Redis</h5>
+<p>Service is been created, but you still need to launch the actual pods running <strong>redis</strong> application.</p>
+<p>Create the endpoints now,</p>
+<pre><code>kubectl apply -f redis-deploy.yaml
+kubectl describe svc redis
+
+</code></pre>
+
+<p>[sample output]</p>
+<pre><code>Name:              redis
+Namespace:         instavote
+Labels:            role=redis
+                   tier=back
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;redis&quot;,&quot;tier&quot;:&quot;back&quot;},&quot;name&quot;:&quot;redis&quot;,&quot;namespace&quot;:&quot;instavote&quot;},&quot;spec&quot;...
+Selector:          app=redis
+Type:              ClusterIP
+IP:                10.102.77.6
+Port:              &lt;unset&gt;  6379/TCP
+TargetPort:        6379/TCP
+Endpoints:         10.32.0.6:6379,10.46.0.6:6379
+Session Affinity:  None
+Events:            &lt;none&gt;
+</code></pre>
+
+<p>Again, visit the vote app from browser, attempt to register your vote  and observe what happens now.</p>
               
             </div>
           </div>

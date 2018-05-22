@@ -103,6 +103,14 @@
                     
     <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+                </li>
     </ul>
 	    </li>
           
@@ -110,10 +118,6 @@
 		
     <span class="caption-text">Being Edited</span>
     <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
                 <li class=" current">
                     
     <a class="current" href="./">Auto Scaling Capacity with HPA</a>
@@ -125,11 +129,9 @@
         
             <li><a class="toctree-l4" href="#prerequisites">Prerequisites</a></li>
         
-            <li><a class="toctree-l4" href="#run-expose-php-apache-server">Run &amp; expose php-apache server</a></li>
+            <li><a class="toctree-l4" href="#create-a-hpa">Create a HPA</a></li>
         
-            <li><a class="toctree-l4" href="#create-horizontal-pod-autoscaler">Create Horizontal Pod Autoscaler</a></li>
-        
-            <li><a class="toctree-l4" href="#increase-load">Increase load</a></li>
+            <li><a class="toctree-l4" href="#load-test-todo-from-here-on">Load Test (TODO from here on)</a></li>
         
             <li><a class="toctree-l4" href="#stop-load">Stop load</a></li>
         
@@ -137,10 +139,6 @@
     
 
     </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -211,66 +209,67 @@
 <p>With Horizontal Pod Autoscaling, Kubernetes automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with alpha support, on some other, application-provided metrics).</p>
 <p>The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user</p>
 <h3 id="prerequisites">Prerequisites</h3>
-<p>Heapster monitoring needs to be deployed in the cluster as Horizontal Pod Autoscaler uses it to collect metrics.</p>
-<h4 id="deploying-heapster">Deploying Heapster</h4>
-<p>Go to the below directory and create the deployment and services.</p>
-<pre><code>git clone https://github.com/kubernetes/heapster.git
-cd heapster
-kubectl apply -f deploy/kube-config/influxdb/
-kubectl apply -f deploy/kube-config/rbac/heapster-rbac.yaml
+<ul>
+<li>Metrics Server (https://github.com/kubernetes-incubator/metrics-server). This replaces heapster from k8s 1.9</li>
+<li>Resource Requests for Containers in Pod Spec is a must</li>
+</ul>
+<h4 id="deploying-metrics-server">Deploying Metrics Server</h4>
+<pre><code>git clone  https://github.com/kubernetes-incubator/metrics-server.git
+kubectl apply -f kubectl create -f metrics-server/deploy/1.8+/
 </code></pre>
 
-<p>Validate that heapster, influxdb and grafana are started</p>
-<pre><code>kubectl get pods -n kube-system
-kubectl get svc -n kube-system
-
+<p>Validate</p>
+<pre><code>kubectl get deploy,pods -n kube-system --selector='k8s-app=metrics-server'
 </code></pre>
 
-<p>Now this will deploy the heapster monitoring.</p>
-<h3 id="run-expose-php-apache-server">Run &amp; expose php-apache server</h3>
+<p>[sample output]</p>
+<pre><code>NAME                                   DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/metrics-server   1         1         1            1           28m
+
+NAME                                  READY     STATUS    RESTARTS   AGE
+pod/metrics-server-6fbfb84cdd-74jww   1/1       Running   0          28m
+</code></pre>
+
+<p>Monitoring has been setup.</p>
+<h3 id="create-a-hpa">Create a HPA</h3>
 <p>To demonstrate Horizontal Pod Autoscaler we will use a custom docker image based on the php-apache image</p>
-<pre><code>kubectl run php-apache --image=gcr.io/google_containers/hpa-example --requests=cpu=200m --expose --port=80  
+<p><code>file: vote-hpa.yaml</code></p>
+<pre><code>apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vote
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vote
+  minReplicas: 4
+  maxReplicas: 12
+  targetCPUUtilizationPercentage: 40
 </code></pre>
 
-<p>Sample Output</p>
-<pre><code>kubectl run php-apache --image=gcr.io/google_containers/hpa-example --requests=cpu=200m --expose --port=80
-service &quot;php-apache&quot; created
-deployment &quot;php-apache&quot; created
+<p>apply</p>
+<pre><code>kubectl apply -f vote-hpa.yaml
 </code></pre>
 
-<p>To verify the created pod:</p>
-<pre><code>kubectl get pods
-</code></pre>
-
-<p>Wait untill the pod changes to running state.</p>
-<h3 id="create-horizontal-pod-autoscaler">Create Horizontal Pod Autoscaler</h3>
-<p>Now that the server is running, we will create the autoscaler using kubectl autoscale. The following command will create a Horizontal Pod Autoscaler that maintains between 1 and 10 replicas of the Pods controlled by the php-apache deployment we created in the first step of these instructions.</p>
-<pre><code>kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-</code></pre>
-
-<p>Sample Output</p>
-<pre><code>kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-deployment &quot;php-apache&quot; autoscaled
-</code></pre>
-
-<p>We may check the current status of autoscaler by running:</p>
+<p>Validate</p>
 <pre><code>kubectl get hpa
+
+kubectl describe hpa vote
+
+kubectl get pod,deploy
+
+
 </code></pre>
 
-<p>Sample Output:</p>
-<pre><code>kubectl get hpa
-NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
-php-apache   Deployment/php-apache   50%       0%        1         10        18s
-</code></pre>
-
-<h3 id="increase-load">Increase load</h3>
+<h3 id="load-test-todo-from-here-on">Load Test (TODO from here on)</h3>
 <p>Now we can increase the load and trying testing what will happen.
 We will start a container, and send an infinite loop of queries to the php-apache service</p>
 <pre><code>kubectl run -i --tty -n dev load-generator --image=busybox /bin/sh
 
 Hit enter for command prompt
 
-while true; do wget -q -O- http://php-apache; done
+while true; do wget -q -O- http://vote; done
 
 </code></pre>
 
@@ -315,6 +314,14 @@ $ kubectl get deployment php-apache
 NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 php-apache   1         1         1            1           27m
 </code></pre>
+
+<h5 id="reading-list">Reading List</h5>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/debug-application-cluster/core-metrics-pipeline/">Core Metrics Pipeline</a></li>
+<li><a href="https://github.com/kubernetes-incubator/metrics-server">Metrics Server</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit">Assignign Resources to Containers and Pods</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a></li>
+</ul>
               
             </div>
           </div>
@@ -322,10 +329,10 @@ php-apache   1         1         1            1           27m
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../11_deploying_sample_app/" class="btn btn-neutral float-right" title="Mini Project">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../cluster_setup_kubespray/" class="btn btn-neutral float-right" title="Production grade setup with Kubespray">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../9_deployement_strategies/" class="btn btn-neutral" title="Deployment Strategies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../vote-deployement_strategies/" class="btn btn-neutral" title="Deployment Strategies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -351,10 +358,10 @@ php-apache   1         1         1            1           27m
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../9_deployement_strategies/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../vote-deployement_strategies/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../11_deploying_sample_app/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../cluster_setup_kubespray/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

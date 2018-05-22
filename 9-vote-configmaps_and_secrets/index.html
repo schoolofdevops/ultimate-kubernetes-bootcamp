@@ -109,13 +109,16 @@
         </ul>
     
 
-    <li class="toctree-l3"><a href="#environment-specific-configs">Environment Specific Configs</a></li>
+    <li class="toctree-l3"><a href="#providing-environment-specific-configs">Providing environment Specific Configs</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#configmap-as-a-configuration-file">Configmap as a configuration file</a></li>
+            <li><a class="toctree-l4" href="#switch-back-the-namespace">Switch back the  namespace</a></li>
         
         </ul>
+    
+
+    <li class="toctree-l3"><a href="#configuration-file-as-configmap">Configuration file as ConfigMap</a></li>
     
 
     <li class="toctree-l3"><a href="#secrets">Secrets</a></li>
@@ -133,6 +136,14 @@
                     
     <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+                </li>
     </ul>
 	    </li>
           
@@ -142,15 +153,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../9_deployement_strategies/">Deployment Strategies</a>
-                </li>
-                <li class="">
-                    
     <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
     </ul>
 	    </li>
@@ -271,11 +274,12 @@ kubectl describe cm vote
 <p>Watch the monitoring screen for deployment in progress.</p>
 <pre><code>kubectl get deploy --show-labels
 kubectl get rs --show-labels
+kubectl  rollout status deploy/vote
 
 </code></pre>
 
 <p><img alt="configmap" src="../images/Configmap.png" title="ConfigMap" /></p>
-<h2 id="environment-specific-configs">Environment Specific Configs</h2>
+<h2 id="providing-environment-specific-configs">Providing environment Specific Configs</h2>
 <p>Copy the dev env to staging</p>
 <pre><code>cd k8s-code/projects/instavote
 cp -r dev staging
@@ -302,6 +306,23 @@ data:
 <li>remove extIP</li>
 <li>remove hard coded nodePort config if any</li>
 </ul>
+<p>file: vote-svc.yaml</p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+  labels:
+    role: vote
+spec:
+  selector:
+    role: vote
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort
+</code></pre>
+
 <p>Edit <em>vote-deploy.yaml</em></p>
 <ul>
 <li>remove namespace if set</li>
@@ -324,12 +345,18 @@ kubectl apply -f vote-deploy.yaml
 
 </code></pre>
 
+<p><strong>Troubleshooting</strong></p>
+<ul>
+<li>Do you see the application when you browse to http://host:nodeport</li>
+<li>If not, why? Find the root cause and fix it.</li>
+</ul>
+<h4 id="switch-back-the-namespace">Switch back the  namespace</h4>
 <p>Verify the environment specific options are in effect. Once verified, you could switch the namespace back to instavote.</p>
 <pre><code>kubectl config set-context $(kubectl config  current-context) --namespace=instavote
 
 </code></pre>
 
-<h3 id="configmap-as-a-configuration-file">Configmap as a configuration file</h3>
+<h2 id="configuration-file-as-configmap">Configuration file as ConfigMap</h2>
 <p>In the  topic above we have seen how to use configmap as environment variables. Now let us see how to use configmap as redis configuration file.</p>
 <p>Syntax for consuming file as a configmap is as follows</p>
 <pre><code>  kubectl create configmap --from-file &lt;CONF-FILE-PATH&gt; &lt;NAME-OF-CONFIGMAP&gt;
