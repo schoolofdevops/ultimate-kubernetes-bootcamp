@@ -6,75 +6,76 @@ The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a 
 
 ### Prerequisites
 
-Heapster monitoring needs to be deployed in the cluster as Horizontal Pod Autoscaler uses it to collect metrics.
+  * Metrics Server (https://github.com/kubernetes-incubator/metrics-server). This replaces heapster from k8s 1.9
+  * Resource Requests for Containers in Pod Spec is a must
 
-#### Deploying Heapster
+#### Deploying Metrics Server
 
-Go to the below directory and create the deployment and services.
-
-```
-git clone https://github.com/kubernetes/heapster.git
-cd heapster
-kubectl apply -f deploy/kube-config/influxdb/
-kubectl apply -f deploy/kube-config/rbac/heapster-rbac.yaml
-```
-
-Validate that heapster, influxdb and grafana are started
-```
-kubectl get pods -n kube-system
-kubectl get svc -n kube-system
 
 ```
+git clone  https://github.com/kubernetes-incubator/metrics-server.git
+kubectl apply -f kubectl create -f metrics-server/deploy/1.8+/
+```
 
-Now this will deploy the heapster monitoring.
+Validate
+```
+kubectl get deploy,pods -n kube-system --selector='k8s-app=metrics-server'
+```
 
-### Run & expose php-apache server
+[sample output]
+```
+NAME                                   DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/metrics-server   1         1         1            1           28m
+
+NAME                                  READY     STATUS    RESTARTS   AGE
+pod/metrics-server-6fbfb84cdd-74jww   1/1       Running   0          28m
+```
+
+Monitoring has been setup.
+
+### Create a HPA
 
 To demonstrate Horizontal Pod Autoscaler we will use a custom docker image based on the php-apache image
 
-```
-kubectl run php-apache --image=gcr.io/google_containers/hpa-example --requests=cpu=200m --expose --port=80  
-```
+`file: vote-hpa.yaml`
 
-Sample Output
-```
-kubectl run php-apache --image=gcr.io/google_containers/hpa-example --requests=cpu=200m --expose --port=80
-service "php-apache" created
-deployment "php-apache" created
-```
-
-To verify the created pod:
-```
-kubectl get pods
-```
-
-Wait untill the pod changes to running state.
-
-### Create Horizontal Pod Autoscaler
-Now that the server is running, we will create the autoscaler using kubectl autoscale. The following command will create a Horizontal Pod Autoscaler that maintains between 1 and 10 replicas of the Pods controlled by the php-apache deployment we created in the first step of these instructions.
 
 ```
-kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vote
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vote
+  minReplicas: 4
+  maxReplicas: 12
+  targetCPUUtilizationPercentage: 40
 ```
 
-Sample Output
+apply
+
 ```
-kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-deployment "php-apache" autoscaled
+kubectl apply -f vote-hpa.yaml
 ```
 
-We may check the current status of autoscaler by running:
+Validate
 
 ```
 kubectl get hpa
+
+kubectl describe hpa vote
+
+kubectl get pod,deploy
+
+
 ```
-Sample Output:
-```
-kubectl get hpa
-NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
-php-apache   Deployment/php-apache   50%       0%        1         10        18s
-```
-### Increase load
+
+
+
+###  Load Test (TODO from here on)
 
 Now we can increase the load and trying testing what will happen.
 We will start a container, and send an infinite loop of queries to the php-apache service
@@ -84,7 +85,7 @@ kubectl run -i --tty -n dev load-generator --image=busybox /bin/sh
 
 Hit enter for command prompt
 
-while true; do wget -q -O- http://php-apache; done
+while true; do wget -q -O- http://vote; done
 
 ```
 Now open a new window of the same machine.
@@ -137,3 +138,10 @@ $ kubectl get deployment php-apache
 NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 php-apache   1         1         1            1           27m
 ```
+
+##### Reading List
+
+  * [Core Metrics Pipeline]( https://kubernetes.io/docs/tasks/debug-application-cluster/core-metrics-pipeline/)
+  * [Metrics Server](https://github.com/kubernetes-incubator/metrics-server)
+  * [Assignign Resources to Containers and Pods](https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit)
+  * [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)

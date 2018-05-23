@@ -11,8 +11,8 @@ In this project , you would write definitions for deploying the vote application
 ## Tasks
 
   * Create deployments for all applications
-  * Define services for each tier
-  * Launch/appy the definitions
+  * Define services for each tier applicable
+  * Launch/apply the definitions
 
 
 Following table depicts the state of readiness of the above services.
@@ -20,10 +20,10 @@ Following table depicts the state of readiness of the above services.
 | App     | Deployment     | Service |
 | :------------- | :------------- | :------------- |
 | vote       | ready       | ready       |
-| redis       | in progress       | ready       |
-| worker       | in progress       | in progress       |
-| db       | in progress       | todo       |
-| results       | todo       | todo       |
+| redis       | ready       | ready       |
+| worker       | TODO       | n/a       |
+| db       | ready       | ready       |
+| results       | TODO       | TODO       |
 
 ### Deploying the sample application
 
@@ -65,7 +65,7 @@ Here the port assigned is 31808, go to the browser and enter
 ```
 masterip:31808
 ```
-![alt text](images/Vote.png "Front-End")
+![alt text](images/vote-rc.png "Front-End")
 
 This will load the page where you can vote.
 
@@ -86,4 +86,4 @@ masterip:32511
 
 ![alt text](images/Result.png "Result Page")
 
-This is the page where we can see the results of the vote.
+This is the page where you should see the results for the vote application stack.
