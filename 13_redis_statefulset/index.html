@@ -291,7 +291,8 @@ data:
 
 <h3 id="redis-statefulsets_1">Redis Statefulsets</h3>
 <p>These redis containers are started after initContainers are succefully ran. One thing to note here, these containers mount the same volume, <code>conf</code>, from the initContainers which has the proper Redis configuration.</p>
-<pre><code>      containers:
+<pre><code>[...]
+      containers:
       - name: redis
         image: redis:4.0.9
         command: [&quot;redis-server&quot;]
