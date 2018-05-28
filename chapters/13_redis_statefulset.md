@@ -86,6 +86,7 @@ We have to deploy redis master/slave set up from one statefulset cluster. This r
 ### Redis Statefulsets
 These redis containers are started after initContainers are succefully ran. One thing to note here, these containers mount the same volume, `conf`, from the initContainers which has the proper Redis configuration.
 ```
+[...]
       containers:
       - name: redis
         image: redis:4.0.9
