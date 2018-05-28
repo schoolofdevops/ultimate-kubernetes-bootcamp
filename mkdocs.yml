@@ -13,6 +13,7 @@ pages:
      - Creating Deployments: "6-vote-kubernetes_deployment.md"
      - Using Configmaps and Secrets: "9-vote-configmaps_and_secrets.md"
      - Persistent Volume Setup: "vote-persistent-volumes.md"
+     - Using Statefulsets: "13_redis_statefulset.md"
      - Mini Project: "11_deploying_sample_app.md"
      - Deployment Strategies: "vote-deployement_strategies.md"
   - Being Edited:
