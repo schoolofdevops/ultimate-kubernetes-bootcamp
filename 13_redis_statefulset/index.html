@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Creating Deployments - Ultimate Kubernetes Bootcamp</title>
+  <title>Using Statefulsets - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Creating Deployments";
-    var mkdocs_page_input_path = "6-vote-kubernetes_deployment.md";
-    var mkdocs_page_url = "/6-vote-kubernetes_deployment/";
+    var mkdocs_page_name = "Using Statefulsets";
+    var mkdocs_page_input_path = "13_redis_statefulset.md";
+    var mkdocs_page_url = "/13_redis_statefulset/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -91,24 +91,9 @@
                     
     <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
                 </li>
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">Creating Deployments</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#creating-a-deployment">Creating a Deployment</a></li>
-    
-
-    <li class="toctree-l3"><a href="#scaling-a-deployment">Scaling a deployment</a></li>
-    
-
-    <li class="toctree-l3"><a href="#rolling-updates-in-action">Rolling Updates in Action</a></li>
-    
-
-    <li class="toctree-l3"><a href="#undo-and-rollback">Undo and Rollback</a></li>
-    
-
-    </ul>
+    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
                 </li>
                 <li class="">
                     
@@ -118,9 +103,29 @@
                     
     <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="current" href="./">Using Statefulsets</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#redis-statefulsets">Redis StatefulSets</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#redis-service">Redis Service</a></li>
+        
+            <li><a class="toctree-l4" href="#redis-configmap">Redis ConfigMap</a></li>
+        
+            <li><a class="toctree-l4" href="#redis-initcontainers">Redis initContainers</a></li>
+        
+            <li><a class="toctree-l4" href="#redis-statefulsets_1">Redis Statefulsets</a></li>
+        
+            <li><a class="toctree-l4" href="#commands-to-apply">Commands to apply</a></li>
+        
+        </ul>
+    
+
+    </ul>
                 </li>
                 <li class="">
                     
@@ -196,7 +201,7 @@
         
       
     
-    <li>Creating Deployments</li>
+    <li>Using Statefulsets</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -206,154 +211,109 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="creating-a-deployment">Creating a Deployment</h2>
-<p>A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.</p>
-<p>Deployment has mainly two responsibilities,</p>
-<ul>
-<li>Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.</li>
-<li>Update Strategy: Define a release strategy and update the pods accordingly.</li>
-</ul>
-<pre><code>/k8s-code/projects/instavote/dev/
-cp vote-rs.yaml vote-deploy.yaml
-</code></pre>
-
-<p>Deployment spec (deployment.spec) contains everything that replica set has + strategy. Lets add it as follows,</p>
-<p>File: vote-deploy.yaml</p>
-<pre><code>apiVersion: apps/v1
-kind: Deployment
+                <h2 id="redis-statefulsets">Redis StatefulSets</h2>
+<h3 id="redis-service">Redis Service</h3>
+<p>We will use Redis as Statefulsets for our Vote application.
+It is similar to Deployment, but Statefulsets requires a <code>Service Name</code>.
+So we will create a <code>headless service</code> (service without endpoints) first.</p>
+<p><code>file: redis-svc.yml</code></p>
+<pre><code>kind: Service
 metadata:
-  name: vote
+  name: redis
+  labels:
+    app: redis
 spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 1
-  revisionHistoryLimit: 4
-  paused: false
-  replicas: 8
-  minReadySeconds: 20
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: redis
+  clusterIP: None
   selector:
-    matchLabels:
-      role: vote
-    matchExpressions:
-      - {key: version, operator: In, values: [v1, v2, v3]}
-  template:
-    metadata:
-      name: vote
-      labels:
-        app: python
-        role: vote
-        version: v2
-    spec:
-      containers:
-        - name: app
-          image: schoolofdevops/vote:v2
-          ports:
-            - containerPort: 80
-              protocol: TCP
+    app: redis
+    role: master
 </code></pre>
 
-<p>This time, start monitoring with --show-labels options added.</p>
-<pre><code>watch -n 1 kubectl get  pod,deploy,rs,svc --show-labels
+<p><em>Note: clusterIP's value is set to None</em>.</p>
+<h3 id="redis-configmap">Redis ConfigMap</h3>
+<p>Redis ConfigMap has two sections. 
+  * master.conf - for Redis master
+  * slave.conf - for Redis slave</p>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis
+data:
+  master.conf: |
+    bind 0.0.0.0
+    protected-mode yes
+    port 6379
+    tcp-backlog 511
+    timeout 0
+    tcp-keepalive 300
+    daemonize no
+    supervised no
+    pidfile /var/run/redis_6379.pid
+    loglevel notice
+    logfile &quot;&quot;
+  slave.conf: |
+    slaveof redis-0.redis 6379
 </code></pre>
 
-<p>Lets  create the Deployment. Do monitor the labels of the pod while applying this.</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
+<h3 id="redis-initcontainers">Redis initContainers</h3>
+<p>We have to deploy redis master/slave set up from one statefulset cluster. This requires two different redis cofigurations , which needs to be described in one Pod template. This complexity can be resolved by using init containers. These init containers copy the appropriate redis configuration by analysing the hostname of the pod. If the Pod's (host)name has <code>0</code> as <strong>Ordinal number</strong>, then it is choosen as the master and master.conf is copied to /etc/ directory. Other Pods will get slave.conf as configuration.</p>
+<p><code>file: redis-sts.yml</code></p>
+<pre><code>[...]
+      initContainers:
+      - name: init-redis
+        image: redis:4.0.9
+        command:
+        - bash
+        - &quot;-c&quot;
+        - |
+          set -ex
+          # Generate mysql server-id from pod ordinal index.
+          [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+          ordinal=${BASH_REMATCH[1]}
+          # Copy appropriate conf.d files from config-map to emptyDir.
+          if [[ $ordinal -eq 0 ]]; then
+            cp /mnt/config-map/master.conf /etc/redis.conf
+          else
+            cp /mnt/config-map/slave.conf /etc/redis.conf
+          fi
+        volumeMounts:
+        - name: conf
+          mountPath: /etc
+          subPath: redis.conf
+        - name: config-map
+          mountPath: /mnt/config-map
 </code></pre>
 
-<p>Observe the chances to pod labels, specifically the <strong>pod-template-hash</strong>.</p>
-<p>Now that the deployment is created. To validate,</p>
-<pre><code>kubectl get deployment
-kubectl get rs --show-labels
-kubectl get deploy,pods,rs
-kubectl rollout status deployment/vote
-kubectl get pods --show-labels
+<h3 id="redis-statefulsets_1">Redis Statefulsets</h3>
+<p>These redis containers are started after initContainers are succefully ran. One thing to note here, these containers mount the same volume, <code>conf</code>, from the initContainers which has the proper Redis configuration.</p>
+<pre><code>      containers:
+      - name: redis
+        image: redis:4.0.9
+        command: [&quot;redis-server&quot;]
+        args: [&quot;/etc/redis.conf&quot;]
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: &quot;yes&quot;
+        ports:
+        - name: redis
+          containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        - name: conf
+          mountPath: /etc/
+          subPath: redis.conf
 </code></pre>
 
-<p>Sample Output</p>
-<pre><code>kubectl get deployments
-NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-vote   3         3         3            1           3m
-</code></pre>
-
-<h2 id="scaling-a-deployment">Scaling a deployment</h2>
-<p>To scale a deployment in Kubernetes:</p>
-<pre><code>kubectl scale deployment/vote --replicas=12
-
-kubectl rollout status deployment/vote
-
-</code></pre>
-
-<p>Sample output:</p>
-<pre><code>
-Waiting for rollout to finish: 5 of 12 updated replicas are available...
-Waiting for rollout to finish: 6 of 12 updated replicas are available...
-deployment &quot;vote&quot; successfully rolled out
-</code></pre>
-
-<p>You could also update the deployment by editing it.</p>
-<pre><code>kubectl edit deploy/vote
-</code></pre>
-
-<p>[change replicas to 15 from the editor, save and observe]</p>
-<h2 id="rolling-updates-in-action">Rolling Updates in Action</h2>
-<p>Now, update the deployment spec to apply</p>
-<p>file: vote-deploy.yaml</p>
-<pre><code>spec:
-...
-  replicas: 15
-...
-labels:
-   app: python
-   role: vote
-   version: v3
-...
-template:   
-  spec:
-    containers:
-      - name: app
-        image: schoolofdevops/vote:v3
-
-</code></pre>
-
-<p>apply</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
-
-kubectl rollout status deployment/vote
-</code></pre>
-
-<p>Observe rollout status and monitoring screen.</p>
-<pre><code>
-kubectl rollout history deploy/vote
-
-kubectl rollout history deploy/vote --revision=1
-
-</code></pre>
-
-<h2 id="undo-and-rollback">Undo and Rollback</h2>
-<p>file: vote-deploy.yaml</p>
-<pre><code>spec:
-  containers:
-    - name: app
-      image: schoolofdevops/vote:rgjerdf
-
-</code></pre>
-
-<p>apply</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
-
-kubectl rollout status
-
-kubectl rollout history deploy/vote
-
-kubectl rollout history deploy/vote --revision=xx
-</code></pre>
-
-<p>where replace xxx with revisions</p>
-<p>Find out the previous revision with sane configs.</p>
-<p>To undo to a sane version (for example revision 3)</p>
-<pre><code>kubectl rollout undo deploy/vote --revision=3
+<h3 id="commands-to-apply">Commands to apply</h3>
+<pre><code>kubectl apply -f redis-cm.yml
+kubectl apply -f redis-svc.yml
+kubectl apply -f redis-sts.yml
 </code></pre>
               
             </div>
@@ -362,10 +322,10 @@ kubectl rollout history deploy/vote --revision=xx
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral float-right" title="Using Configmaps and Secrets">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../11_deploying_sample_app/" class="btn btn-neutral float-right" title="Mini Project">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral" title="Service Discovery and Publishing App"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../vote-persistent-volumes/" class="btn btn-neutral" title="Persistent Volume Setup"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -391,10 +351,10 @@ kubectl rollout history deploy/vote --revision=xx
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../7-vote-exposing_app_with_service/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../vote-persistent-volumes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../9-vote-configmaps_and_secrets/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../11_deploying_sample_app/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

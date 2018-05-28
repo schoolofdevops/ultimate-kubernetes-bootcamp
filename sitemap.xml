@@ -76,6 +76,12 @@
     </url>
         
     <url>
+     <loc>/13_redis_statefulset/</loc>
+     <lastmod>2018-05-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
      <loc>/11_deploying_sample_app/</loc>
      <lastmod>2018-05-28</lastmod>
      <changefreq>daily</changefreq>
