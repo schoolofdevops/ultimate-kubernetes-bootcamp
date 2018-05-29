@@ -10,7 +10,17 @@ This will create some downtime in our stack.
 
 Let us change the deployment strategy to **recreate** and image tag to *v4*.
 
-file: vote-deploy-recreate.yaml
+```
+cp vote-deploy.yaml vote-deploy-recreate.yaml
+```
+
+And edit the specs with following changes
+
+  * Update strategy to **Recreate**
+  * Remove rolling update specs
+
+
+`file: vote-deploy-recreate.yaml`
 
 ```
 apiVersion: apps/v1
@@ -35,7 +45,7 @@ spec:
       labels:
         app: python
         role: vote
-        version: v3
+        version: v4
     spec:
       containers:
         - name: app
@@ -85,37 +95,39 @@ File: canary/frontend-canary-deploy.yml
 
 
 ```
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-canary
-  namespace: mogambo
+  name: vote-canary
 spec:
-  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
+      maxSurge: 2
       maxUnavailable: 1
-      maxSurge: 1
-  minReadySeconds: 40
   revisionHistoryLimit: 4
   paused: false
+  replicas: 3
+  selector:
+    matchLabels:
+      role: vote
+    matchExpressions:
+      - {key: version, operator: In, values: [v1, v2, v3, v4, v5]}
+  minReadySeconds: 40
   template:
     metadata:
-      name: frontend
+      name: vote
       labels:
-        tier: "1"
-        app: frontend
-        env: dev
-        release: canary
+        app: python
+        role: vote
+        version: v4
     spec:
       containers:
-        - name: frontend
-          image: schoolofdevops/frontend:v2.0
+        - name: app
+          image: schoolofdevops/vote:v4
           ports:
-            - containerPort: 8079
+            - containerPort: 80
               protocol: TCP
-
 ```
 
 Before creating this deployment, find out how many endpoints the service has,
@@ -531,7 +543,7 @@ When you are in the middle of a new update for your application and you found ou
   2. fix the issue,
   3. resume the update.
 
-Let us change the image tag to V2 in pod spec.
+Let us change the image tag to V4 in pod spec.
 
 `File: vote-deploy.yaml`
 

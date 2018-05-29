@@ -94,7 +94,7 @@ cd staging
 Edit *vote-cm.yaml*
 
 ```
-piVersion: v1
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vote
@@ -162,13 +162,17 @@ kubectl get svc vote
   * Do you see the application when you browse to http://host:nodeport
   * If not, why? Find the root cause and fix it.
 
-#### Switch back the  namespace 
+#### Clean up and Switch back the  namespace
 
 Verify the environment specific options are in effect. Once verified, you could switch the namespace back to instavote.
 
 
 ```
+kubectl delete deploy/vote svc/vote
+
 kubectl config set-context $(kubectl config  current-context) --namespace=instavote
+
+cd ../dev/
 
 ```
 
@@ -327,7 +331,7 @@ spec:
         ports:
         - containerPort: 5432
           protocol: TCP
-# Secret definition
+        # Secret definition
         env:
           - name: POSTGRES_USER
             valueFrom:

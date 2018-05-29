@@ -268,3 +268,11 @@ Events:            <none>
 ```
 
 Again, visit the vote app from browser, attempt to register your vote  and observe what happens now.
+
+
+##### Reading
+
+[Debugging   
+  * Services](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-service/)
+  * [Kubernetes Services Documentation](https://kubernetes.io/docs/concepts/services-networking/service/)
+  * [Service API Specs for Kubernetes Version 1.10](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#service-v1-core)

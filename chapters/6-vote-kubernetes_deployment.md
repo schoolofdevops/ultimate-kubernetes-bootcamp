@@ -192,5 +192,5 @@ Find out the previous revision with sane configs.
 To undo to a sane version (for example revision 3)
 
 ```
-kubectl rollout undo deploy/vote --revision=3
+kubectl rollout undo deploy/vote --to-revision=3
 ```

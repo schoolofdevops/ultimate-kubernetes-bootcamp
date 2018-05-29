@@ -15,8 +15,9 @@ pages:
      - Persistent Volume Setup: "vote-persistent-volumes.md"
      - Mini Project: "11_deploying_sample_app.md"
      - Deployment Strategies: "vote-deployement_strategies.md"
-  - Being Edited:
      - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
+  - Being Edited:
+     - Application Routing with Ingress Controllers : "ingress.md"
   - Additional Topics:
      - Production grade setup with Kubespray: "cluster_setup_kubespray.md"
      - Troubleshooting Tips: "12_troubleshooting.md"
