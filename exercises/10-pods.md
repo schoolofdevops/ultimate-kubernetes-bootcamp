@@ -44,7 +44,7 @@ spec:
       image: schoolofdevops/nginx:break
       ports: 80
 ```
-`Reference`: [Debugging a crashed Pod] (https://sysdig.com/blog/debug-kubernetes-crashloopbackoff/)
+`Reference`: [Debugging a crashed Pod](https://sysdig.com/blog/debug-kubernetes-crashloopbackoff/)
 
 #### 5. You are running a Pod with hostPort option. Your Pod status stays “pending”. What could be the issue for the Pod not being scheduled?
 `Reference`: [Debugging a unscheduled Pod](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/#my-pod-stays-waiting)
