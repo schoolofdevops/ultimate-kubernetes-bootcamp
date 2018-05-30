@@ -1,5 +1,5 @@
 ## Exercise 1: Setting up the Environment
-#### 1. Create a new K8s cluster and change its network plugin from “Weave” to “Cannel”.
+#### 1. Create a new K8s cluster and change its network plugin from “Weave” to “Cannel”.  
         Reference: [Create K8s cluster using Kubeadm](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
 
 #### 2. When you create a K8s cluster using Kubeadm, you lost the init token accidently. How do you recover this init token again?
