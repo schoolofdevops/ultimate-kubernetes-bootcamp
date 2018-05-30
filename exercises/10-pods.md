@@ -1,34 +1,48 @@
 # Exercise 2: Pods
 
-#### 1. Create a Pod manifest which uses influxdb image and open port 8086.
+#### 1. Create a Pod manifest which uses ghost image and open port 2368. Get the name of the Node in which the Pod is scheduled Try to access the application on the host's port 2368.
+`Reference`: [Ghost Docker image](https://hub.docker.com/_/ghost/)
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ghost
+spec:
+  containers:
+  - image: xxx
+    name: ghost
+    ports:
+    - containerPort: xxx
+      hostPort: xxx
+```
 
 #### 2. Create a Pod with ubuntu:trusty image and a command to echo “YOUR_NAME” which overrides the default CMD/ENTRYPOINT of the image.
 `Reference`: [Define command argument in a Pod](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/)
 
 #### 3. Apply the following Pod manifest and read the error. Fix it by editing it.
 ```
-              apiVersion: v1apps/beta1
-              kind: Pod
-              metadata:
-                name: mogambo-frontend
-                label:
-                  role: frontend
-              spec:
-                containers:
-                  - name: frontend
-                    image: schoolofdevops/frontend:orange
-                    ports:
-                      - containerName: web
-                        Port: 8079
-                        protocol: TCP
+apiVersion: v1apps/beta1
+kind: Pod
+metadata:
+  name: mogambo-frontend
+  label:
+    role: frontend
+spec:
+  containers:
+    - name: frontend
+      image: schoolofdevops/frontend:orange
+      ports:
+        - containerName: web
+          Port: 8079
+          protocol: TCP
 ```
 `Reference`: [Debugging a unscheduled Pod](https://stackoverflow.com/questions/37302776/kubectl-get-pods-kubectl-get-pods-status-imagepullbackoff)
 
 #### 4. A Pod with the following pod always crashes with CrashLoopBackOff error. How would you fix it?
 
 ```
-              image: schoolofdevops/nginx:break
-              ports: 80
+      image: schoolofdevops/nginx:break
+      ports: 80
 ```
 `Reference`: [Debugging a crashed Pod] (https://sysdig.com/blog/debug-kubernetes-crashloopbackoff/)
 
@@ -72,4 +86,3 @@ spec:
 ```
 kubeclt exec -it web -sh -c synch
 ```
-
