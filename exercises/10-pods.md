@@ -1,7 +1,7 @@
 # Exercise 2: Pods
 
-#### 1. Create a Pod manifest which uses ghost image and open port 2368. Get the name of the Node in which the Pod is scheduled Try to access the application on the host's port 2368.
-`Reference`: [Ghost Docker image](https://hub.docker.com/_/ghost/)
+#### 1. Create a Pod manifest which uses "ghost" image and open port 2368. 
+
 ```
 apiVersion: v1
 kind: Pod
@@ -15,6 +15,25 @@ spec:
     - containerPort: xxx
       hostPort: xxx
 ```
+
+Get the name of the Node in which the Pod is scheduled by running,
+```
+kubectl describe pod <POD_NAME>
+
+[output]
+Name:           <POD_NAME>
+Namespace:      default
+Node:           <NODE_NAME>/<NODE_IP>
+Start Time:     Wed, xx May 201x 15:59:29 +0530
+```
+
+Try to access the application on the host's port 2368.
+
+```
+curl <NODE_IP>:2368
+```
+
+`Reference`: [Ghost Docker image](https://hub.docker.com/_/ghost/)
 
 #### 2. Create a Pod with ubuntu:trusty image and a command to echo “YOUR_NAME” which overrides the default CMD/ENTRYPOINT of the image.
 `Reference`: [Define command argument in a Pod](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/)
