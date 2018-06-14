@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Creating Deployments - Ultimate Kubernetes Bootcamp</title>
+  <title>Defining Update Strategy - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Creating Deployments";
+    var mkdocs_page_name = "Defining Update Strategy";
     var mkdocs_page_input_path = "6-vote-kubernetes_deployment.md";
     var mkdocs_page_url = "/6-vote-kubernetes_deployment/";
   </script>
@@ -85,15 +85,15 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../replication/">High Availability with Replica Sets</a>
+    <a class="" href="../replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Creating Deployments</a>
+    <a class="current" href="./">Defining Update Strategy</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#creating-a-deployment">Creating a Deployment</a></li>
@@ -112,15 +112,11 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
                 <li class="">
                     
@@ -128,7 +124,27 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
                 </li>
     </ul>
 	    </li>
@@ -139,7 +155,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -196,7 +212,7 @@
         
       
     
-    <li>Creating Deployments</li>
+    <li>Defining Update Strategy</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -353,7 +369,7 @@ kubectl rollout history deploy/vote --revision=xx
 <p>where replace xxx with revisions</p>
 <p>Find out the previous revision with sane configs.</p>
 <p>To undo to a sane version (for example revision 3)</p>
-<pre><code>kubectl rollout undo deploy/vote --revision=3
+<pre><code>kubectl rollout undo deploy/vote --to-revision=3
 </code></pre>
               
             </div>
@@ -362,10 +378,10 @@ kubectl rollout history deploy/vote --revision=xx
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral float-right" title="Using Configmaps and Secrets">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral float-right" title="Managing Configurations and Secrets">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral" title="Service Discovery and Publishing App"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral" title="Publishing appliaction and Service Discovery"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   

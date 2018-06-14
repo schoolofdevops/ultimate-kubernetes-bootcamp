@@ -85,27 +85,23 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../replication/">High Availability with Replica Sets</a>
+    <a class="" href="../replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
                 <li class="">
                     
@@ -113,7 +109,27 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
                 </li>
     </ul>
 	    </li>
@@ -124,7 +140,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -294,14 +310,14 @@ roleRef:
 <h2 id="kubernetes-access-control">Kubernetes Access Control</h2>
 <p>In this chapter, we will see about how to use authentication and authorisation of Kubernetes.</p>
 <h2 id="how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</h2>
-<p>The Kubernetes API can be accessed by three ways. 
-  * Kubeclt - A command line utility of Kubernetes 
-  * Client libraries - Go, Python, etc., 
-  * REST requests </p>
+<p>The Kubernetes API can be accessed by three ways.
+  * Kubeclt - A command line utility of Kubernetes
+  * Client libraries - Go, Python, etc.,
+  * REST requests</p>
 <h2 id="who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</h2>
 <p>Kubernetes API can be accessed by,
-  * Human users 
-  * Service Accounts 
+  * Human users
+  * Service Accounts
 Each of these topics will be discussed in detail in the later part of this chapter.</p>
 <h2 id="stages-of-a-request">Stages of a Request</h2>
 <p>When a request tries to contact the API , it goes through various stages as illustrated in the image given below.</p>
@@ -309,12 +325,12 @@ Each of these topics will be discussed in detail in the later part of this chapt
 <sub><a href="https://kubernetes.io/docs/home/">source: official kubernetes site</a></sub></p>
 <h3 id="tls-in-kubernetes">TLS in Kubernetes</h3>
 <p>Kubernetes API typically runs on two ports.
-  * 8080 
-    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager). 
-    * This port is insecure. 
-  * 6443 
-    * TLS Enabled. 
-    * Available for kubectl and others. </p>
+  * 8080
+    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).
+    * This port is insecure.
+  * 6443
+    * TLS Enabled.
+    * Available for kubectl and others.</p>
 <h3 id="stage-1-authentication">Stage 1: Authentication</h3>
 <ul>
 <li>Authentication operation checks whether the <em>user/service account</em> has the permission to talk to the api server or not.</li>
@@ -419,7 +435,7 @@ Each of these topics will be discussed in detail in the later part of this chapt
 <li>RoleBidings are used to grant permission defined in a Role to <strong>a user or a set of users</strong>.</li>
 <li>RoleBindings can also refer to <em>ClusterRoles</em>.</li>
 </ul>
-<h3 id="clusrerrolebindings">ClusrerRoleBindings</h3>
+<h3 id="clusterrolebindings">ClusterRoleBindings</h3>
 <ul>
 <li>ClusterRoleBindings works same as RoleBindings, but cluster-wide.</li>
 </ul>

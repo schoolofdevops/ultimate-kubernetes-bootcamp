@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Deployment Strategies - Ultimate Kubernetes Bootcamp</title>
+  <title>Building Deployment Strategies - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Deployment Strategies";
+    var mkdocs_page_name = "Building Deployment Strategies";
     var mkdocs_page_input_path = "vote-deployement_strategies.md";
     var mkdocs_page_url = "/vote-deployement_strategies/";
   </script>
@@ -85,27 +85,23 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../replication/">High Availability with Replica Sets</a>
+    <a class="" href="../replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
                 <li class="">
                     
@@ -113,7 +109,7 @@
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Deployment Strategies</a>
+    <a class="current" href="./">Building Deployment Strategies</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#release-strategies">Release Strategies</a></li>
@@ -131,6 +127,26 @@
 
     </ul>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
+                </li>
     </ul>
 	    </li>
           
@@ -140,7 +156,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -197,7 +213,7 @@
         
       
     
-    <li>Deployment Strategies</li>
+    <li>Building Deployment Strategies</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -214,7 +230,15 @@
   * Then the new pods will be created.</p>
 <p>This will create some downtime in our stack.</p>
 <p>Let us change the deployment strategy to <strong>recreate</strong> and image tag to <em>v4</em>.</p>
-<p>file: vote-deploy-recreate.yaml</p>
+<pre><code>cp vote-deploy.yaml vote-deploy-recreate.yaml
+</code></pre>
+
+<p>And edit the specs with following changes</p>
+<ul>
+<li>Update strategy to <strong>Recreate</strong></li>
+<li>Remove rolling update specs</li>
+</ul>
+<p><code>file: vote-deploy-recreate.yaml</code></p>
 <pre><code>apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -237,7 +261,7 @@ spec:
       labels:
         app: python
         role: vote
-        version: v3
+        version: v4
     spec:
       containers:
         - name: app
@@ -278,37 +302,39 @@ cp vote-deploy.yaml canary/vote-canary-deploy.yaml
 <li>template.spec.containers.image: schoolofdevops/vote:v4</li>
 </ul>
 <p>File: canary/frontend-canary-deploy.yml</p>
-<pre><code>apiVersion: apps/v1beta1
+<pre><code>apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-canary
-  namespace: mogambo
+  name: vote-canary
 spec:
-  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
+      maxSurge: 2
       maxUnavailable: 1
-      maxSurge: 1
-  minReadySeconds: 40
   revisionHistoryLimit: 4
   paused: false
+  replicas: 3
+  selector:
+    matchLabels:
+      role: vote
+    matchExpressions:
+      - {key: version, operator: In, values: [v1, v2, v3, v4, v5]}
+  minReadySeconds: 40
   template:
     metadata:
-      name: frontend
+      name: vote
       labels:
-        tier: &quot;1&quot;
-        app: frontend
-        env: dev
-        release: canary
+        app: python
+        role: vote
+        version: v4
     spec:
       containers:
-        - name: frontend
-          image: schoolofdevops/frontend:v2.0
+        - name: app
+          image: schoolofdevops/vote:v4
           ports:
-            - containerPort: 8079
+            - containerPort: 80
               protocol: TCP
-
 </code></pre>
 
 <p>Before creating this deployment, find out how many endpoints the service has,</p>
@@ -650,7 +676,7 @@ spec:
   1. we can pause the update,
   2. fix the issue,
   3. resume the update.</p>
-<p>Let us change the image tag to V2 in pod spec.</p>
+<p>Let us change the image tag to V4 in pod spec.</p>
 <p><code>File: vote-deploy.yaml</code></p>
 <pre><code>    spec:
        containers:

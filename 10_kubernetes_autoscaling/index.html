@@ -85,27 +85,23 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../replication/">High Availability with Replica Sets</a>
+    <a class="" href="../replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
                 <li class="">
                     
@@ -113,15 +109,8 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
                 </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Being Edited</span>
-    <ul class="subnav">
                 <li class=" current">
                     
     <a class="current" href="./">Auto Scaling Capacity with HPA</a>
@@ -133,16 +122,43 @@
         
             <li><a class="toctree-l4" href="#prerequisites">Prerequisites</a></li>
         
+            <li><a class="toctree-l4" href="#defining-resource-requests-and-limits">Defining Resource Requests and Limits</a></li>
+        
             <li><a class="toctree-l4" href="#create-a-hpa">Create a HPA</a></li>
         
-            <li><a class="toctree-l4" href="#load-test-todo-from-here-on">Load Test (TODO from here on)</a></li>
-        
-            <li><a class="toctree-l4" href="#stop-load">Stop load</a></li>
+            <li><a class="toctree-l4" href="#load-test">Load Test</a></li>
         
         </ul>
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Being Edited</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -195,7 +211,7 @@
     
       
         
-          <li>Being Edited &raquo;</li>
+          <li>Bootcamp &raquo;</li>
         
       
     
@@ -214,10 +230,24 @@
 <p>The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user</p>
 <h3 id="prerequisites">Prerequisites</h3>
 <ul>
-<li>Metrics Server (https://github.com/kubernetes-incubator/metrics-server). This replaces heapster from k8s 1.9</li>
-<li>Resource Requests for Containers in Pod Spec is a must</li>
+<li><a href="https://github.com/kubernetes-incubator/metrics-server">Metrics Server</a>. This needs to be setup if you are using kubeadm etc.  and replaces <strong>heapster</strong> starting with kubernetes version  1.8.</li>
+<li>Resource Requests and Limits. Defining <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit">CPU</a>as well as <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/">Memory</a> requirements for containers in Pod Spec is a must</li>
 </ul>
 <h4 id="deploying-metrics-server">Deploying Metrics Server</h4>
+<p>Kubernetes Horizontal Pod Autoscaler along with <code>kubectl top</code> command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called <strong>heapster</strong> in order to collect this data and feed it to the <strong>hpa</strong> controller. With 1.8 version of Kubernetes, this behavior is changed, and now <strong>metrics-server</strong> would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.</p>
+<p>If you try to pull monitoring information using the following commands</p>
+<pre><code>kubectl top pod
+
+kubectl top node
+</code></pre>
+
+<p>it does not show it, rather gives you a error message similar to</p>
+<p>[output]</p>
+<pre><code>Error from server (NotFound): the server could not find the requested resource (get services http:heapster:)
+</code></pre>
+
+<p>Even though the error mentions heapster, its replaced with metrics server by default now.</p>
+<p>Deploy  metric server with the following commands,</p>
 <pre><code>git clone  https://github.com/kubernetes-incubator/metrics-server.git
 kubectl apply -f kubectl create -f metrics-server/deploy/1.8+/
 </code></pre>
@@ -235,6 +265,38 @@ pod/metrics-server-6fbfb84cdd-74jww   1/1       Running   0          28m
 </code></pre>
 
 <p>Monitoring has been setup.</p>
+<h3 id="defining-resource-requests-and-limits">Defining Resource Requests and Limits</h3>
+<p><code>file: vote-deploy.yaml</code></p>
+<pre><code>....
+spec:
+containers:
+- name: app
+  image: schoolofdevops/vote:v4
+  ports:
+    - containerPort: 80
+      protocol: TCP
+  envFrom:
+  - configMapRef:
+      name: vote
+  resources:
+    limits:
+      cpu: &quot;200m&quot;
+      memory: &quot;250Mi&quot;
+    requests:
+      cpu: &quot;100m&quot;
+      memory: &quot;50Mi&quot;
+
+</code></pre>
+
+<p>And apply</p>
+<pre><code>kubectl apply -f vote-deploy.yaml
+</code></pre>
+
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>Define the value of <strong>cpu.request</strong> &gt; <strong>cpu.limit</strong> Try to apply and observe.</li>
+<li>Define the values for <strong>memory.request</strong> and <strong>memory.limit</strong> higher than the total system memory. Apply and observe the deployment and pods.  </li>
+</ul>
 <h3 id="create-a-hpa">Create a HPA</h3>
 <p>To demonstrate Horizontal Pod Autoscaler we will use a custom docker image based on the php-apache image</p>
 <p><code>file: vote-hpa.yaml</code></p>
@@ -243,13 +305,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: vote
 spec:
+  minReplicas: 4
+  maxReplicas: 15
+  targetCPUUtilizationPercentage: 40
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: vote
-  minReplicas: 4
-  maxReplicas: 12
-  targetCPUUtilizationPercentage: 40
 </code></pre>
 
 <p>apply</p>
@@ -266,64 +328,87 @@ kubectl get pod,deploy
 
 </code></pre>
 
-<h3 id="load-test-todo-from-here-on">Load Test (TODO from here on)</h3>
-<p>Now we can increase the load and trying testing what will happen.
-We will start a container, and send an infinite loop of queries to the php-apache service</p>
-<pre><code>kubectl run -i --tty -n dev load-generator --image=busybox /bin/sh
+<h3 id="load-test">Load Test</h3>
+<p><code>file: loadtest-job.yaml</code></p>
+<pre><code>apiVersion: batch/v1
+kind: Job
+metadata:
+  name: loadtest
+spec:
+  template:
+    spec:
+      containers:
+      - name: siege
+        image: schoolofdevops/loadtest:v1
+        command: [&quot;siege&quot;,  &quot;--concurrent=5&quot;, &quot;--benchmark&quot;, &quot;--time=10m&quot;, &quot;http://vote&quot;]
+      restartPolicy: Never
+  backoffLimit: 4
+</code></pre>
 
-Hit enter for command prompt
+<p>And launch the loadtest</p>
+<pre><code>kubectl apply -f loadtest-job.yaml
+</code></pre>
 
-while true; do wget -q -O- http://vote; done
+<p>To monitor while the load test is running ,</p>
+<pre><code>watch kubectl top pods
 
 </code></pre>
 
-<p>Now open a new window of the same machine.</p>
-<p>And check the status of the hpa</p>
-<pre><code>kubectl get hpa
+<p>To get information about the job</p>
+<pre><code>kubectl get jobs
+kubectl describe  job loadtest
+
 </code></pre>
 
-<p>Sample Output:</p>
-<pre><code>kubectl get hpa
-NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
-php-apache   Deployment/php-apache/scale   50%       305%      1         10        3m
+<p>To check the load test output</p>
+<pre><code>kubectl logs  -f loadtest-xxxx
 </code></pre>
 
-<p>Now if you check the pods it will be automatically scaled to the desired value.</p>
-<pre><code>kubectl get pods
+<p>[replace <strong>loadtest-xxxx</strong> with the actual pod id.]</p>
+<p>[Sample Output]</p>
+<pre><code>** SIEGE 3.0.8
+** Preparing 15 concurrent users for battle.
+root@kube-01:~# kubectl logs vote-loadtest-tv6r2 -f
+** SIEGE 3.0.8
+** Preparing 15 concurrent users for battle.
+
+.....
+
+
+Lifting the server siege...      done.
+
+Transactions:              41618 hits
+Availability:              99.98 %
+Elapsed time:             299.13 secs
+Data transferred:         127.05 MB
+Response time:              0.11 secs
+Transaction rate:         139.13 trans/sec
+Throughput:             0.42 MB/sec
+Concurrency:               14.98
+Successful transactions:       41618
+Failed transactions:               8
+Longest transaction:            3.70
+Shortest transaction:           0.00
+
+FILE: /var/log/siege.log
+You can disable this annoying message by editing
+the .siegerc file in your home directory; change
+the directive 'show-logfile' to false.
 </code></pre>
 
-<p>Sample Output</p>
-<pre><code>kubectl get pods
-NAME                              READY     STATUS    RESTARTS   AGE
-load-generator-1930141919-1pqn0   1/1       Running   0          1h
-php-apache-3815965786-2jmm9       1/1       Running   0          1h
-php-apache-3815965786-4f0ck       1/1       Running   0          1h
-php-apache-3815965786-73w24       1/1       Running   0          1h
-php-apache-3815965786-80n2x       1/1       Running   0          1h
-php-apache-3815965786-c6w0k       1/1       Running   0          1h
-php-apache-3815965786-f06dg       1/1       Running   0          1h
-php-apache-3815965786-nfs8d       1/1       Running   0          1h
-php-apache-3815965786-phrhs       1/1       Running   0          1h
-php-apache-3815965786-z6rnm       1/1       Running   0          1h
-</code></pre>
+<p>Now check the job status again,</p>
+<pre><code>kubectl get jobs
+NAME            DESIRED   SUCCESSFUL   AGE
+vote-loadtest   1         1            10m
 
-<h3 id="stop-load">Stop load</h3>
-<p>In the terminal where we created the container with busybox image, terminate the load generation by typing <Ctrl> + C</p>
-<p>Then we will verify the result state (after a minute or so)</p>
-<pre><code>kubectl get hpa
-NAME         REFERENCE                     TARGET    CURRENT   MINPODS   MAXPODS   AGE
-php-apache   Deployment/php-apache/scale   50%       0%        1         10        11m
-
-$ kubectl get deployment php-apache
-NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-php-apache   1         1         1            1           27m
 </code></pre>
 
 <h5 id="reading-list">Reading List</h5>
 <ul>
+<li><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/instrumentation/monitoring_architecture.md">Kubernetes Monitoring Architecture</a></li>
 <li><a href="https://kubernetes.io/docs/tasks/debug-application-cluster/core-metrics-pipeline/">Core Metrics Pipeline</a></li>
 <li><a href="https://github.com/kubernetes-incubator/metrics-server">Metrics Server</a></li>
-<li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit">Assignign Resources to Containers and Pods</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit">Assigning Resources to Containers and Pods</a></li>
 <li><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a></li>
 </ul>
               
@@ -333,10 +418,10 @@ php-apache   1         1         1            1           27m
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../cluster_setup_kubespray/" class="btn btn-neutral float-right" title="Production grade setup with Kubespray">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../ingress/" class="btn btn-neutral float-right" title="Application Routing with Ingress Controllers">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../vote-deployement_strategies/" class="btn btn-neutral" title="Deployment Strategies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../vote-deployement_strategies/" class="btn btn-neutral" title="Building Deployment Strategies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -365,7 +450,7 @@ php-apache   1         1         1            1           27m
         <span><a href="../vote-deployement_strategies/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../cluster_setup_kubespray/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../ingress/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

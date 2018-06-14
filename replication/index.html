@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>High Availability with Replica Sets - Ultimate Kubernetes Bootcamp</title>
+  <title>Making application highly available - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "High Availability with Replica Sets";
+    var mkdocs_page_name = "Making application highly available";
     var mkdocs_page_input_path = "replication.md";
     var mkdocs_page_url = "/replication/";
   </script>
@@ -85,21 +85,16 @@
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">High Availability with Replica Sets</a>
+    <a class="current" href="./">Making application highly available</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#setting-up-a-namespace">Setting up a Namespace</a></li>
-    
-
-    <li class="toctree-l3"><a href="#creating-a-namespace">Creating a namespace</a></li>
+    <li class="toctree-l3"><a href="#making-application-high-available-with-replication-controllers">Making application high available with Replication Controllers</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#replica-sets-in-action">Replica Sets in Action</a></li>
+            <li><a class="toctree-l4" href="#setting-up-a-namespace">Setting up a Namespace</a></li>
         
-            <li><a class="toctree-l4" href="#exercise-deploying-new-version-of-the-application">Exercise: Deploying new version of the application</a></li>
-        
-            <li><a class="toctree-l4" href="#exercise-self-healing-replica-sets">Exercise: Self Healing Replica Sets</a></li>
+            <li><a class="toctree-l4" href="#creating-a-namespace">Creating a namespace</a></li>
         
         </ul>
     
@@ -108,23 +103,19 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
                 <li class="">
                     
@@ -132,7 +123,27 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
                 </li>
     </ul>
 	    </li>
@@ -143,7 +154,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -200,7 +211,7 @@
         
       
     
-    <li>High Availability with Replica Sets</li>
+    <li>Making application highly available</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -210,7 +221,8 @@
           <div role="main">
             <div class="section">
               
-                <p>If you are not running a monitoring screen, start it in a new terminal with the following command.</p>
+                <h1 id="making-application-high-available-with-replication-controllers">Making application high available with Replication Controllers</h1>
+<p>If you are not running a monitoring screen, start it in a new terminal with the following command.</p>
 <pre><code>watch -n 1 kubectl get  pod,deploy,rs,svc
 </code></pre>
 
@@ -367,7 +379,7 @@ kubectl delete pods  vote
 </code></pre>
 
 <p>Observe what happens.
-  * Does replica set take any action after deleting the pod created outside of its spec ? Why? </p>
+  * Does replica set take any action after deleting the pod created outside of its spec ? Why?</p>
               
             </div>
           </div>
@@ -375,7 +387,7 @@ kubectl delete pods  vote
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral float-right" title="Service Discovery and Publishing App">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral float-right" title="Publishing appliaction and Service Discovery">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../5-vote-deploying_pods/" class="btn btn-neutral" title="Launching Pods"><span class="icon icon-circle-arrow-left"></span> Previous</a>

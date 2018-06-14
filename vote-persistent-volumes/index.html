@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Persistent Volume Setup - Ultimate Kubernetes Bootcamp</title>
+  <title>Making Data Persist - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Persistent Volume Setup";
+    var mkdocs_page_name = "Making Data Persist";
     var mkdocs_page_input_path = "vote-persistent-volumes.md";
     var mkdocs_page_url = "/vote-persistent-volumes/";
   </script>
@@ -85,23 +85,23 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../replication/">High Availability with Replica Sets</a>
+    <a class="" href="../replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../9-vote-configmaps_and_secrets/">Using Configmaps and Secrets</a>
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Persistent Volume Setup</a>
+    <a class="current" href="./">Making Data Persist</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#steps-to-set-up-nfs-based-persistent-volumes">Steps to set up NFS based Persistent Volumes</a></li>
@@ -119,15 +119,31 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
-                </li>
-                <li class="">
-                    
     <a class="" href="../11_deploying_sample_app/">Mini Project</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
                 </li>
     </ul>
 	    </li>
@@ -138,7 +154,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -195,7 +211,7 @@
         
       
     
-    <li>Persistent Volume Setup</li>
+    <li>Making Data Persist</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -301,10 +317,10 @@ kubectl get pod -o wide --selector='role=db'
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../13_redis_statefulset/" class="btn btn-neutral float-right" title="Using Statefulsets">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../11_deploying_sample_app/" class="btn btn-neutral float-right" title="Mini Project">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral" title="Using Configmaps and Secrets"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral" title="Managing Configurations and Secrets"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -333,7 +349,7 @@ kubectl get pod -o wide --selector='role=db'
         <span><a href="../9-vote-configmaps_and_secrets/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../13_redis_statefulset/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../11_deploying_sample_app/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

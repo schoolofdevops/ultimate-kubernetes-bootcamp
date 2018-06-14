@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Using Configmaps and Secrets - Ultimate Kubernetes Bootcamp</title>
+  <title>Managing Configurations and Secrets - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Using Configmaps and Secrets";
+    var mkdocs_page_name = "Managing Configurations and Secrets";
     var mkdocs_page_input_path = "9-vote-configmaps_and_secrets.md";
     var mkdocs_page_url = "/9-vote-configmaps_and_secrets/";
   </script>
@@ -85,19 +85,19 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../replication/">High Availability with Replica Sets</a>
+    <a class="" href="../replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../7-vote-exposing_app_with_service/">Service Discovery and Publishing App</a>
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../6-vote-kubernetes_deployment/">Creating Deployments</a>
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Using Configmaps and Secrets</a>
+    <a class="current" href="./">Managing Configurations and Secrets</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#configmap">Configmap</a></li>
@@ -113,7 +113,7 @@
     
         <ul>
         
-            <li><a class="toctree-l4" href="#switch-back-the-namespace">Switch back the  namespace</a></li>
+            <li><a class="toctree-l4" href="#clean-up-and-switch-back-the-namespace">Clean up and Switch back the  namespace</a></li>
         
         </ul>
     
@@ -134,11 +134,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-persistent-volumes/">Persistent Volume Setup</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../13_redis_statefulset/">Using Statefulsets</a>
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
                 <li class="">
                     
@@ -146,7 +142,27 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../vote-deployement_strategies/">Deployment Strategies</a>
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
                 </li>
     </ul>
 	    </li>
@@ -157,7 +173,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
     </ul>
 	    </li>
@@ -214,7 +230,7 @@
         
       
     
-    <li>Using Configmaps and Secrets</li>
+    <li>Managing Configurations and Secrets</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -295,7 +311,7 @@ cp -r dev staging
 </code></pre>
 
 <p>Edit <em>vote-cm.yaml</em></p>
-<pre><code>piVersion: v1
+<pre><code>apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vote
@@ -354,9 +370,13 @@ kubectl apply -f vote-deploy.yaml
 <li>Do you see the application when you browse to http://host:nodeport</li>
 <li>If not, why? Find the root cause and fix it.</li>
 </ul>
-<h4 id="switch-back-the-namespace">Switch back the  namespace</h4>
+<h4 id="clean-up-and-switch-back-the-namespace">Clean up and Switch back the  namespace</h4>
 <p>Verify the environment specific options are in effect. Once verified, you could switch the namespace back to instavote.</p>
-<pre><code>kubectl config set-context $(kubectl config  current-context) --namespace=instavote
+<pre><code>kubectl delete deploy/vote svc/vote
+
+kubectl config set-context $(kubectl config  current-context) --namespace=instavote
+
+cd ../dev/
 
 </code></pre>
 
@@ -483,7 +503,7 @@ spec:
         ports:
         - containerPort: 5432
           protocol: TCP
-# Secret definition
+        # Secret definition
         env:
           - name: POSTGRES_USER
             valueFrom:
@@ -522,10 +542,10 @@ kubectl get rs,deploy --show-labels
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../vote-persistent-volumes/" class="btn btn-neutral float-right" title="Persistent Volume Setup">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../vote-persistent-volumes/" class="btn btn-neutral float-right" title="Making Data Persist">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral" title="Creating Deployments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral" title="Defining Update Strategy"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
