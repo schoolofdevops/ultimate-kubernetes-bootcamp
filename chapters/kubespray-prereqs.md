@@ -7,7 +7,7 @@
    * Disk: 50 GB
 
 ## Vagrant Setup:
-This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements but the lessons learned in this tutorial can be applied to other platforms. Start from [Set up Kubernetes Using Kubespray](#Settin-Up-Kubernetes-Using-Kubespray), if you have VMs running elsewhere.
+This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements, the lessons learned in this tutorial can be applied to other platforms. Start from [Set up Kubernetes Using Kubespray](#Settin-Up-Kubernetes-Using-Kubespray)(or) Refer to this [Document](https://github.com/schoolofdevops/ultimate-kubernetes-bootcamp/blob/master/chapters/cluster_setup_kubespray.md), if you have VMs running elsewhere
 
 ### Software Requirements on Host Machine:
    * Virtual Box (latest)
@@ -163,3 +163,50 @@ Deploy Kubespray with Ansible Playbook. This takes about 20-30 minutes depending
   ```
   ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -b -v -c paramiko
   ```
+## Install Kubectl
+
+`On Ansible Controller`
+
+Before we proceed further, we will need to install **kubectl** binary in our control node. Read installation procedure from this [link](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+
+## Getting the Kubernetes Configuration File
+
+`On Ansible Controller`
+
+Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.
+
+```
+sudo su
+cp /etc/kubernetes/admin.conf /home/ubuntu
+chown ubuntu:ubuntu /home/ubuntu/admin.conf
+exit
+mkdir .kube
+mv admin.conf .kube/config
+```
+
+## Check the State of the Cluster
+
+`On Ansible Controller`
+
+Let us check the state of the cluster by running,
+
+```
+kubectl cluster-info
+
+Kubernetes master is running at https://10.10.1.101:6443
+KubeDNS is running at https://10.10.1.101:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+```
+
+```
+kubectl get nodes
+
+NAME      STATUS    ROLES         AGE       VERSION
+node1     Ready     master,node   21h       v1.9.0+coreos.0
+node2     Ready     master,node   21h       v1.9.0+coreos.0
+node3     Ready     node          21h       v1.9.0+coreos.0
+node4     Ready     node          21h       v1.9.0+coreos.0
+```
+
+If you are able to see this, your cluster has been set up successfully.
