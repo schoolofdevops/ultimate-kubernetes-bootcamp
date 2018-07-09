@@ -145,6 +145,8 @@ Copy the Sample Inventory.
 Update Ansible inventory file with inventory builder. **Do not forget to replace these IPs with the IPs of your VMs**.
   ```
   declare -a IPS=(10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104)
+  ```
+  ```
   CONFIG_FILE=inventory/mycluster/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]}
   ```
 Review and Change Kubespray variables, *only if necessary*.
