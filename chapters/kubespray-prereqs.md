@@ -6,12 +6,16 @@
    * CPU: 2 Cores
    * Disk: 50 GB
 
-## Software Requirements on Host Machine:
+## Vagrant Setup:
+This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements but the lessons learned in this tutorial can be applied to other platforms. Start from [Set up Kubernetes Using Kubespray](#Settin-Up-Kubernetes-Using-Kubespray), if you have VMs running elsewhere.
+
+### Software Requirements on Host Machine:
    * Virtual Box (latest)
    * Vagrant (latest)
    * Git Bash (Only for Windows)
    * Conemu (Only for Windows)
-## Set up Learning Environment:
+
+### Set up Learning Environment:
    * Make a work directory and change to that directory
 
      ```
@@ -19,7 +23,7 @@
      cd avanced-kubernetes
      ```
 
-   * Download the Vagrantfile
+   * Download the Vagrant template
 
      ```
      curl -O https://raw.githubusercontent.com/schoolofdevops/kubespray-1/master/Vagrantfile
@@ -30,16 +34,17 @@
      ```
      vagrant up
      ```
-
-## Software Requirements on Control Node:
-### Prerequisite 1: Install Python
   * SSH into your first VM `k8s-01` by running,
 
     ```
     vagrant ssh k8s-01
     ```
 
-  * This VM will be your `Ansible Controller`.
+## Software Requirements on Control Node:
+
+### Prerequisite 1: Install Python
+
+  * Select the first VM as your `Ansible Controller`.
   * Install Python Pip on your `Ansible Controller` machine. We don't need to install Python as it comes preinstalled on Ubuntu 16.04
 
     ```
@@ -127,7 +132,7 @@ ssh vagrant@10.10.1.104
 ```
 
 
-## Set up Kubernetes Cluster for Kubespray
+## Setting Up Kubernetes Using Kubespray
 `On Ansible Controller`  
 First clone the Kubespray repository and change directory.
   ```
