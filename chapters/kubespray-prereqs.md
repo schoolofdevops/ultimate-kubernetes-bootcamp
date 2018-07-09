@@ -156,5 +156,5 @@ Review and Change Kubespray variables, *only if necessary*.
   ```
 Deploy Kubespray with Ansible Playbook. This takes about 20-30 minutes depending on your infrastructure.
   ```
-  ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -b -v
+  ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -b -v -c paramiko
   ```
