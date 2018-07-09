@@ -131,8 +131,8 @@ ssh vagrant@10.10.1.104
 `On Ansible Controller`  
 First clone the Kubespray repository and change directory.
   ```
-  git clone https://github.com/kubernetes-incubator/kubespray.git
-  cd kubespray
+  git clone https://github.com/schoolofdevops/kubespray-1.git
+  cd kubespray-1
   ```
 Install the python dependencies. **This step installs Ansible as well. You do not need to install Ansible separately**.
   ```
