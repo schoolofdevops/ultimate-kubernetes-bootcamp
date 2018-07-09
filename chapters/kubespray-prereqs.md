@@ -88,7 +88,8 @@ The key's randomart image is:
 
 #### Copying public key to inventory hosts
 `On Ansible Controller`  
-Copy public key of control node to other hosts
+Copy public key of control node to other hosts.
+Password for this command: *vagrant*
 
 ```
 ssh-copy-id vagrant@10.10.1.101
