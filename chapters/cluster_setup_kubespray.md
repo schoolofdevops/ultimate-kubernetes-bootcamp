@@ -69,6 +69,11 @@ Enalbe IPv4 forwarding by uncommenting the following line
 net.ipv4.ip_forward=1
 ```
 
+Disable Swap
+```
+swapoff -a
+```
+
 ### Stop and Disable Firewall (UFW Service)
 
 `On all nodes`
