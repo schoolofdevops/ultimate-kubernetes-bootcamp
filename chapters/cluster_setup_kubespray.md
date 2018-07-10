@@ -21,9 +21,10 @@ Kubespray is an *Ansible* based kubernetes provisioner. It helps us to setup a p
   * SSH Server
   * Privileged user
 
-`On Ansible Control  Node`   
-  * Ansible >= 2.4
-  * Jinja
+`On Ansible Control  Node`    
+
+  * Ansible version  2.4 or greater  
+  * Jinja  
 
 ### Networking Pre Requisites
 
@@ -47,7 +48,7 @@ Ansible needs python to be installed on all the machines.
 
 ```
 sudo apt update
-sudo apt install python
+sudo apt install python3
 ```
 
 
@@ -191,27 +192,30 @@ remote_user=ubuntu
 
 
 ```
-cp -rfp inventory/sample inventory/mycluster
+cp -rfp inventory/sample inventory/prod
 ```
 
-where mycluster is the custom configuration name. Replace is with whatever name you would like to assign to the current cluster. 
+where **prod** is the custom configuration name. Replace is with whatever name you would like to assign to the current cluster.
 
 To build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments
 
 ```
-python inventory.py 10.40.1.26 10.40.1.25 10.40.1.20 10.40.1.11
+CONFIG_FILE=inventory/prod/hosts.ini python3 contrib/inventory_builder/inventory.py 10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104
 ```
 
-These IPs are different for you. Please replace them with your corresponding IPs.
-This step will result in the creation of a new file **inventory.cfg**. This is our inventory file.
+Where replace the IP addresses (e.g. 10.10.1.101) with the actual IPs of your nodes
 
-`inventory.cfg`
+Once its run, you should see an inventory file generated which may look similar to below
+
+
+
+`file: inventory/prod/hosts.ini`
 ```
 [all]
-node1    ansible_host=10.40.1.26 ip=10.40.1.26
-node2    ansible_host=10.40.1.25 ip=10.40.1.25
-node3    ansible_host=10.40.1.20 ip=10.40.1.20
-node4    ansible_host=10.40.1.11 ip=10.40.1.11
+node1    ansible_host=10.10.1.101 ip=10.10.1.101
+node2    ansible_host=10.10.1.102 ip=10.10.1.102
+node3    ansible_host=10.10.1.103 ip=10.10.1.103
+node4    ansible_host=10.10.1.104 ip=10.10.1.104
 
 [kube-master]
 node1
@@ -247,51 +251,59 @@ node3
 We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.
 
 ```
-ansible-playbook -i inventory/inventory.cfg cluster.yml -b -v
+ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
 ```
 
-Option -i = Inventory file path
-Option -b = Become as root user
-Option -v = Give verbose output
+Option -i = Inventory file path  
+Option -b = Become as root user  
+Option -v = Give verbose output  
+
 
 This Ansible run will take around 30 mins to complete.
 
 ## Install Kubectl
 
-`On control node`
+`On any master node`
 
-Before we proceed further, we will need to install **kubectl** binary in our control node. Read installation procedure from this [link](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+Before we proceed further, we will need to install **kubectl** binary in our control node.
+To install **kubectl** on Ubuntu
+
+```
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo touch /etc/apt/sources.list.d/kubernetes.list
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+```
+
+
+**Note**: You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,   [refer to the  procedure here](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+
 
 ## Getting the Kubernetes Configuration File
 
-`On control node`
+`On same  master node as above`
 
 Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.
 
 ```
-ssh ubuntu@10.40.1.26
-sudo su
-cp /etc/kubernetes/admin.conf /home/ubuntu
-chown ubuntu:ubuntu /home/ubuntu/admin.conf
-exit
-exit
-scp ubuntu@10.40.1.26:~/admin.conf .
-cd
-mkdir .kube
-mv admin.conf .kube/config
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
 ## Check the State of the Cluster
 
-`On control node`
+`On the node where kubectl is setup`
 
 Let us check the state of the cluster by running,
 
 ```
 kubectl cluster-info
 
-Kubernetes master is running at https://10.40.1.26:6443
-KubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Kubernetes master is running at https://10.10.1.101:6443
+KubeDNS is running at https://10.10.1.101:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```

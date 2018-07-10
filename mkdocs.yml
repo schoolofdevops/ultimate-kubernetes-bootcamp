@@ -15,6 +15,7 @@ pages:
      - Making Data Persist: "vote-persistent-volumes.md"
      - Mini Project: "11_deploying_sample_app.md"
   - Advanced Kubernetes:
+     - Kubespray lab setup with Vagrant: "kubespray-prereqs.md"
      - Production grade setup with Kubespray: "cluster_setup_kubespray.md"
      - Authentication and Authorization: "configuring_authentication_and_authorization.md"
      - Building Deployment Strategies: "vote-deployement_strategies.md"
