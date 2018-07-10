@@ -354,7 +354,7 @@ First clone the Kubespray repository and change directory.
   <code>git clone https://github.com/schoolofdevops/kubespray-1.git
   cd kubespray-1</code>
 Install the python dependencies. <strong>This step installs Ansible as well. You do not need to install Ansible separately</strong>.
-  <code>sudo pip install -r requirements.txt</code>
+  <code>sudo pip3 install -r requirements.txt</code>
 Copy the Sample Inventory.
   <code>cp -rfp inventory/sample inventory/mycluster</code>
 Update Ansible inventory file with inventory builder. <strong>Do not forget to replace these IPs with the IPs of your VMs</strong>.
