@@ -26,6 +26,8 @@ pages:
      - Ingress Controllers: "ingress.md"
   - Additional Topics:
      - Troubleshooting Tips: "12_troubleshooting.md"
+  - References:
+     - RBAC apiGroups to Resource Mapping: "rbac-resource-group-mapping.md"
 docs_dir: chapters
 theme: readthedocs
 plugins:
