@@ -330,6 +330,30 @@ If you are able to see this, your cluster has been set up successfully.
 ---
 <sup>1</sup> You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.
 
+## Access Kubernetes Cluster Remotely(Optional)
+
+`On your local machine`
+You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,   [refer to the  procedure here](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+To install **kubectl** on Ubuntu,
+
+```
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo touch /etc/apt/sources.list.d/kubernetes.list
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+```
+
+### Copy kubernetes config to your local machine
+Copy `kubeconfig` file to your local machine
+```
+mkdir ~/.kube
+scp -r ubuntu@10.10.1.101:~/.kube/config ~/.kube
+# Check the status
+kubectl cluster-info
+```
+
 
 ##### References  
 
