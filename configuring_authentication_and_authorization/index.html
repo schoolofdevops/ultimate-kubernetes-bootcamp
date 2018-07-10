@@ -324,6 +324,7 @@
 <th align="left">User</th>
 <th align="left">Namespace</th>
 <th align="left">Resources</th>
+<th align="left">Access Type (verbs)</th>
 </tr>
 </thead>
 <tbody>
@@ -332,12 +333,39 @@
 <td align="left">maya</td>
 <td align="left">all</td>
 <td align="left">all</td>
+<td align="left">all</td>
 </tr>
 <tr>
 <td align="left">dev</td>
 <td align="left">kim</td>
 <td align="left">instavote</td>
-<td align="left">pods, deployments, statefulsets, configmaps, secrets, services, jobs, crons</td>
+<td align="left">all in <strong>apps</strong> group</td>
+<td align="left">all</td>
+</tr>
+<tr>
+<td align="left">interns</td>
+<td align="left">yono</td>
+<td align="left">all</td>
+<td align="left">readonly</td>
+<td align="left">readonly</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th align="left">Service Accounts</th>
+<th align="left">Namespace</th>
+<th align="left">Resources</th>
+<th align="left">Access Type (verbs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">monitoring</td>
+<td align="left">all</td>
+<td align="left">all</td>
+<td align="left">readonly</td>
 </tr>
 </tbody>
 </table>
