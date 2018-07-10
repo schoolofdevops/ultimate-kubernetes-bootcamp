@@ -127,19 +127,9 @@
     <a class="current" href="./">Authentication and Authorization</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#configuring-authentication-and-authorization">Configuring Authentication and Authorization</a></li>
+    <li class="toctree-l3"><a href="#kubernetes-access-control-authentication-and-authorization">Kubernetes Access Control:  Authentication and Authorization</a></li>
     
         <ul>
-        
-            <li><a class="toctree-l4" href="#create-namespace-for-a-useroptional">Create namespace for a user(Optional)</a></li>
-        
-            <li><a class="toctree-l4" href="#create-the-user-credentials">Create the user credentials</a></li>
-        
-            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
-        
-            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
-        
-            <li><a class="toctree-l4" href="#kubernetes-access-control">Kubernetes Access Control</a></li>
         
             <li><a class="toctree-l4" href="#how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</a></li>
         
@@ -148,6 +138,12 @@
             <li><a class="toctree-l4" href="#stages-of-a-request">Stages of a Request</a></li>
         
             <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
+        
+            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
+        
+            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
+        
+            <li><a class="toctree-l4" href="#role-based-access-control-rbac_1">Role Based Access Control (RBAC)</a></li>
         
         </ul>
     
@@ -192,6 +188,17 @@
     </ul>
 	    </li>
           
+            <li class="toctree-l1">
+		
+    <span class="caption-text">References</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../rbac-resource-group-mapping/">RBAC apiGroups to Resource Mapping</a>
+                </li>
+    </ul>
+	    </li>
+          
         </ul>
       </div>
       &nbsp;
@@ -228,23 +235,112 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="configuring-authentication-and-authorization">Configuring Authentication and Authorization</h1>
-<p>Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.</p>
-<h2 id="create-namespace-for-a-useroptional">Create namespace for a user(Optional)</h2>
-<p>Create the <strong>dev</strong> namespace if it has not been created already.</p>
-<p><code>dev-namespace.yml</code></p>
-<pre><code>apiVersion: v1
-kind: Namespace
-metadata:
-  name: dev
-  labels:
-    name: dev
-</code></pre>
-
-<pre><code>kubectl apply -f dev-namespace.yml
-</code></pre>
-
-<h2 id="create-the-user-credentials">Create the user credentials</h2>
+                <h1 id="kubernetes-access-control-authentication-and-authorization">Kubernetes Access Control:  Authentication and Authorization</h1>
+<p>In  this lab you are going to,</p>
+<ul>
+<li>Create users and groups and setup certs based authentication</li>
+<li>Create service accounts for applications</li>
+<li>Create Roles and ClusterRoles to define authorizations</li>
+<li>Map Roles and ClusterRoles to subjects i.e. users, groups and service accounts using RoleBingings and ClusterRoleBindings.</li>
+</ul>
+<h2 id="how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</h2>
+<p>The Kubernetes API can be accessed by three ways.</p>
+<ul>
+<li>Kubectl - A command line utility of Kubernetes</li>
+<li>Client libraries - Go, Python, etc.,</li>
+<li>REST requests</li>
+</ul>
+<h2 id="who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</h2>
+<p>Kubernetes API can be accessed by,</p>
+<ul>
+<li>Human Users</li>
+<li>Service Accounts  </li>
+</ul>
+<p>Each of these topics will be discussed in detail in the later part of this chapter.</p>
+<h2 id="stages-of-a-request">Stages of a Request</h2>
+<p>When a request tries to contact the API , it goes through various stages as illustrated in the image given below.</p>
+<p><img alt="request-stages" src="../images/access-control.svg" />
+  <sub><a href="https://kubernetes.io/docs/home/">source: official kubernetes site</a></sub></p>
+<h3 id="stage-1-authentication">Stage 1: Authentication</h3>
+<ul>
+<li>Authentication operation checks whether the <em>user/service account</em> has the permission to talk to the api server or not.  </li>
+<li>Authentication is done by the authentication modules which are configured with the api server.  </li>
+<li>Cluster uses with one or more authentication modules enabled.  </li>
+<li>If the request fails to authenticate itself, it will be served with <strong>401 error</strong>.  </li>
+</ul>
+<h4 id="authentication-for-human-users">Authentication for Human  Users</h4>
+<ul>
+<li>Kubernetes uses <strong>usernames</strong> for access control.  </li>
+<li>But it neither has an api object nor stores information about users in its data store.  </li>
+<li>Users need to be managed externally by the cluster administrator.  </li>
+</ul>
+<h4 id="authentication-for-service-accounts">Authentication for Service Accounts</h4>
+<ul>
+<li>Unlike user accounts, service accounts are managed by Kubernetes.  </li>
+<li><em>service accounts</em> are bound to specific namespaces.  </li>
+<li>Credentials for <em>service Accounts</em> are stored as <em>secrets</em>.  </li>
+<li>These secrets are mounted to pods when a deployment starts using the Service Account.  </li>
+</ul>
+<h3 id="stage-2-authorization">Stage 2: Authorization</h3>
+<ul>
+<li>After a request successfully authenticated, it goes through the authorization process.</li>
+<li>In order for a request to be authorized, it must consist following attributes.<ul>
+<li>Username of the requester(User)</li>
+<li>Requested action(Verb)</li>
+<li>The object affected(Resource)</li>
+</ul>
+</li>
+<li>Authorization is done by the following modules. Each of these modules has a special purpose.<ul>
+<li>Attribute Based Access Control(ABAC)</li>
+<li>Role Based Access Control(RBAC)</li>
+<li>Node Authorizer</li>
+<li>Webhook module</li>
+</ul>
+</li>
+<li>If a request is failed to get authorized, it will be served with <strong>403 error</strong>.</li>
+<li>Among these modules, RBAC is the most used authorizer while,<ul>
+<li>ABAC is used for,</li>
+<li>Policy based, fine grained access control</li>
+<li>The caveat is api server has to be restarted whenever we define a ABAC policy</li>
+<li>Node Authorizer is,</li>
+<li>Enabled in all the worker nodes</li>
+<li>Grants access to kubelet for some of the resources.</li>
+</ul>
+</li>
+<li>We have already talked about the user in detail. Now lets focus on <strong>verbs</strong> and <strong>resources</strong></li>
+<li>We will talk about RBAC in detail in the later part</li>
+</ul>
+<h3 id="stage-3-admission-control">Stage 3: Admission Control</h3>
+<ul>
+<li>Admission control part is taken care of by the software modules that can modify/reject requests.</li>
+<li>Admission control is mainly used for fine-tuning access control.</li>
+<li>Admission control can directly act on the object being modified.</li>
+</ul>
+<h2 id="role-based-access-control-rbac">Role Based Access Control (RBAC)</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Group</th>
+<th align="left">User</th>
+<th align="left">Namespace</th>
+<th align="left">Resources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">ops</td>
+<td align="left">maya</td>
+<td align="left">all</td>
+<td align="left">all</td>
+</tr>
+<tr>
+<td align="left">dev</td>
+<td align="left">kim</td>
+<td align="left">instavote</td>
+<td align="left">pods, deployments, statefulsets, configmaps, secrets, services, jobs, crons</td>
+</tr>
+</tbody>
+</table>
 <p>Generate the user's private key</p>
 <pre><code>openssl genrsa -out john.key 2048
 openssl req -new -key john.key -out john.csr -subj &quot;/CN=john/O=initcron&quot;
@@ -300,22 +396,6 @@ roleRef:
 <pre><code>kubectl create -f dev-rolebinding.yaml
 </code></pre>
 
-<h2 id="kubernetes-access-control">Kubernetes Access Control</h2>
-<p>In this chapter, we will see about how to use authentication and authorisation of Kubernetes.</p>
-<h2 id="how-one-can-access-the-kubernetes-api">How one can access the Kubernetes API?</h2>
-<p>The Kubernetes API can be accessed by three ways.
-  * Kubeclt - A command line utility of Kubernetes
-  * Client libraries - Go, Python, etc.,
-  * REST requests</p>
-<h2 id="who-can-access-the-kubernetes-api">Who can access the Kubernetes API?</h2>
-<p>Kubernetes API can be accessed by,
-  * Human users
-  * Service Accounts
-Each of these topics will be discussed in detail in the later part of this chapter.</p>
-<h2 id="stages-of-a-request">Stages of a Request</h2>
-<p>When a request tries to contact the API , it goes through various stages as illustrated in the image given below.</p>
-<p><img alt="request-stages" src="../images/access-control.svg" />
-<sub><a href="https://kubernetes.io/docs/home/">source: official kubernetes site</a></sub></p>
 <h3 id="tls-in-kubernetes">TLS in Kubernetes</h3>
 <p>Kubernetes API typically runs on two ports.
   * 8080
@@ -324,55 +404,6 @@ Each of these topics will be discussed in detail in the later part of this chapt
   * 6443
     * TLS Enabled.
     * Available for kubectl and others.</p>
-<h3 id="stage-1-authentication">Stage 1: Authentication</h3>
-<ul>
-<li>Authentication operation checks whether the <em>user/service account</em> has the permission to talk to the api server or not.</li>
-<li>Authentication is done by the authentication modules which are configured with the api server.</li>
-<li>Cluster uses with one or more authentication modules enabled.</li>
-<li>If the request fails to authenticate itself, it will be served with <strong>401 error</strong>.</li>
-</ul>
-<h4 id="authentication-for-normal-user">Authentication for Normal User</h4>
-<ul>
-<li>Kubernetes uses <strong>usernames</strong> for access control.</li>
-<li>But it neither has an api object nor stores information about users in its data store.</li>
-<li>Users need to be managed externally by the cluster administrator.</li>
-</ul>
-<h4 id="authentication-for-service-accounts">Authentication for Service Accounts</h4>
-<ul>
-<li>Unlike user accounts, service accounts are managed by Kubernetes.</li>
-<li><em>service accounts</em> are bound to specific namespaces.</li>
-<li>Credentials for <em>service Accounts</em> are stored as <em>secrets</em>.</li>
-<li>These secrets are mounted to pods when a deployment starts using the Service Account.</li>
-</ul>
-<h3 id="stage-2-authorization">Stage 2: Authorization</h3>
-<ul>
-<li>After a request successfully authenticated, it goes through the authorization process.</li>
-<li>In order for a request to be authorized, it must consist following attributes.<ul>
-<li>Username of the requester(User)</li>
-<li>Requested action(Verb)</li>
-<li>The object affected(Resource)</li>
-</ul>
-</li>
-<li>Authorization is done by the following modules. Each of these modules has a special purpose.<ul>
-<li>Attribute Based Access Control(ABAC)</li>
-<li>Role Based Access Control(RBAC)</li>
-<li>Node Authorizer</li>
-<li>Webhook module</li>
-</ul>
-</li>
-<li>If a request is failed to get authorized, it will be served with <strong>403 error</strong>.</li>
-<li>Among these modules, RBAC is the most used authorizer while,<ul>
-<li>ABAC is used for,</li>
-<li>Policy based, fine grained access control</li>
-<li>The caveat is api server has to be restarted whenever we define a ABAC policy</li>
-<li>Node Authorizer is,</li>
-<li>Enabled in all the worker nodes</li>
-<li>Grants access to kubelet for some of the resources.</li>
-</ul>
-</li>
-<li>We have already talked about the user in detail. Now lets focus on <strong>verbs</strong> and <strong>resources</strong></li>
-<li>We will talk about RBAC in detail in the later part</li>
-</ul>
 <h4 id="verbs">Verbs</h4>
 <ul>
 <li>Verbs are the <strong>action</strong> to be taken on resources.</li>
@@ -392,13 +423,7 @@ Each of these topics will be discussed in detail in the later part of this chapt
 <li>Resources are the object being manipulated by the verb.</li>
 <li>Ex: pods, deployments, service, namespaces, nodes, etc.,</li>
 </ul>
-<h3 id="stage-3-admission-control">Stage 3: Admission Control</h3>
-<ul>
-<li>Admission control part is taken care of by the software modules that can modify/reject requests.</li>
-<li>Admission control is mainly used for fine-tuning access control.</li>
-<li>Admission control can directly act on the object being modified.</li>
-</ul>
-<h2 id="role-based-access-control-rbac">Role Based Access Control (RBAC)</h2>
+<h2 id="role-based-access-control-rbac_1">Role Based Access Control (RBAC)</h2>
 <ul>
 <li>RBAC is the most used form of access control to <strong>grant or revoke</strong> permissions to users.</li>
 <li>It is used for dynamically configuring policies through API.</li>
