@@ -25,6 +25,16 @@ Following table depicts the state of readiness of the above services.
 | db       | ready       | ready       |
 | results       | TODO       | TODO       |
 
+
+**Specs:**
+
+  * worker
+    * image: schoolofdevops/worker:v1
+  * results
+    * image: schoolofdevops/vote-result
+    * port: 80
+
+
 ### Deploying the sample application
 
 To create deploy the sample applications,

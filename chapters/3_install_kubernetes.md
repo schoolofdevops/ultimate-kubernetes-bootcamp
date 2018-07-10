@@ -142,7 +142,7 @@ To check if nodes are ready
 
 ```
 kubectl get nodes
-kubectl cs
+kubectl get cs
 
 ```
 

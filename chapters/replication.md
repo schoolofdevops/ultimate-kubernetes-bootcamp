@@ -1,4 +1,5 @@
 
+# Making application high available with Replication Controllers
 
 If you are not running a monitoring screen, start it in a new terminal with the following command.
 
@@ -207,4 +208,4 @@ kubectl delete pods  vote
 ```
 
 Observe what happens.
-  * Does replica set take any action after deleting the pod created outside of its spec ? Why? 
+  * Does replica set take any action after deleting the pod created outside of its spec ? Why?

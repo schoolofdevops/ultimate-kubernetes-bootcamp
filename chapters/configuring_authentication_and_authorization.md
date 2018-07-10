@@ -81,15 +81,15 @@ kubectl create -f dev-rolebinding.yaml
 ## Kubernetes Access Control
 In this chapter, we will see about how to use authentication and authorisation of Kubernetes.
 ## How one can access the Kubernetes API?
-The Kubernetes API can be accessed by three ways. 
-  * Kubeclt - A command line utility of Kubernetes 
-  * Client libraries - Go, Python, etc., 
-  * REST requests 
+The Kubernetes API can be accessed by three ways.
+  * Kubeclt - A command line utility of Kubernetes
+  * Client libraries - Go, Python, etc.,
+  * REST requests
 
 ## Who can access the Kubernetes API?
 Kubernetes API can be accessed by,
-  * Human users 
-  * Service Accounts 
+  * Human users
+  * Service Accounts
 Each of these topics will be discussed in detail in the later part of this chapter.
 
 ## Stages of a Request
@@ -100,12 +100,12 @@ When a request tries to contact the API , it goes through various stages as illu
 
 ### TLS in Kubernetes
 Kubernetes API typically runs on two ports.
-  * 8080 
-    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager). 
-    * This port is insecure. 
-  * 6443 
-    * TLS Enabled. 
-    * Available for kubectl and others. 
+  * 8080
+    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).
+    * This port is insecure.
+  * 6443
+    * TLS Enabled.
+    * Available for kubectl and others.
 
 ### Stage 1: Authentication
   * Authentication operation checks whether the *user/service account* has the permission to talk to the api server or not.
@@ -188,5 +188,5 @@ Kubernetes API typically runs on two ports.
   * RoleBidings are used to grant permission defined in a Role to **a user or a set of users**.
   * RoleBindings can also refer to *ClusterRoles*.
 
-### ClusrerRoleBindings
+### ClusterRoleBindings
   * ClusterRoleBindings works same as RoleBindings, but cluster-wide.

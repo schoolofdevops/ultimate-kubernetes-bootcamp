@@ -1,11 +1,19 @@
-## Redis StatefulSets
+## Deploying Redis Cluster with StatefulSets
+
+What will you learn  
+
+  * Statefulsets  
+  * initContainers
+
 
 ### Redis Service
+
 We will use Redis as Statefulsets for our Vote application.
 It is similar to Deployment, but Statefulsets requires a `Service Name`.
 So we will create a `headless service` (service without endpoints) first.
 
 `file: redis-svc.yml`
+
 ```
 kind: Service
 metadata:
@@ -23,13 +31,23 @@ spec:
     app: redis
     role: master
 ```
+
+apply
+
+```
+kubectl apply -f redis-svc.yml
+```
+
 *Note: clusterIP's value is set to None*.
 
 ### Redis ConfigMap
 
-Redis ConfigMap has two sections. 
+Redis ConfigMap has two sections.
   * master.conf - for Redis master
   * slave.conf - for Redis slave
+
+`file: redis-cm.yml`
+
 ```
 apiVersion: v1
 kind: ConfigMap
@@ -52,10 +70,19 @@ data:
     slaveof redis-0.redis 6379
 ```
 
+apply
+
+```
+kubectl apply -f redis-svc.yml
+```
+
 ### Redis initContainers
+
 We have to deploy redis master/slave set up from one statefulset cluster. This requires two different redis cofigurations , which needs to be described in one Pod template. This complexity can be resolved by using init containers. These init containers copy the appropriate redis configuration by analysing the hostname of the pod. If the Pod's (host)name has `0` as **Ordinal number**, then it is choosen as the master and master.conf is copied to /etc/ directory. Other Pods will get slave.conf as configuration.
 
+
 `file: redis-sts.yml`
+
 ```
 [...]
       initContainers:
@@ -84,7 +111,11 @@ We have to deploy redis master/slave set up from one statefulset cluster. This r
 ```
 
 ### Redis Statefulsets
+
 These redis containers are started after initContainers are succefully ran. One thing to note here, these containers mount the same volume, `conf`, from the initContainers which has the proper Redis configuration.
+
+`file: redis-sts.yaml`
+
 ```
 [...]
       containers:
@@ -106,9 +137,23 @@ These redis containers are started after initContainers are succefully ran. One 
           subPath: redis.conf
 ```
 
-### Commands to apply
+To apply
+
 ```
-kubectl apply -f redis-cm.yml
-kubectl apply -f redis-svc.yml
 kubectl apply -f redis-sts.yml
 ```
+
+
+##### Reading List
+
+* [Redis Replication](https://redis.io/topics/replication)
+* [Run Replicated Statefulsets Applications](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/)
+* [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+
+
+
+**Search Keywords**
+
+  * init containers
+  * kubernetes statefulsets
+  * redis replication
