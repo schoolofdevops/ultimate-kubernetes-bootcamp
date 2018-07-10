@@ -48,7 +48,7 @@ Ansible needs python to be installed on all the machines.
 
 ```
 sudo apt update
-sudo apt install python3
+sudo apt install python3 python-minimal
 sudo apt install python3-pip
 ```
 
@@ -87,7 +87,7 @@ export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 sudo dpkg-reconfigure locales
 ```
-Do no select any other locale in the menu. Just press <OK> in the next two screens.
+Do no select any other locale in the menu. Just press (**OK**) in the next two screens.
 
 ### Setup passwordless SSH between ansible controller and kubernetes nodes
 
@@ -274,6 +274,18 @@ Option -i = Inventory file path
 Option -b = Become as root user  
 Option -v = Give verbose output  
 
+If you face this following error, while running `ansible-playbook` command, you can fix it by running following instructions
+`ERROR`:  
+```
+ERROR! Unexpected Exception, this is probably a bug: (cryptography 1.2.3 (/usr/lib/python3/dist-packages), Requirement.parse('cryptography>=1.5'), {'paramiko'})
+```
+`FIX`:  
+```
+sudo pip3 install --upgrade pip
+sudo pip3 uninstall cryptography
+sudo pip3 install cryptography
+ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
+```
 
 This Ansible run will take around 30 mins to complete.
 
