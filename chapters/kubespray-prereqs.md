@@ -141,7 +141,7 @@ First clone the Kubespray repository and change directory.
   ```
 Install the python dependencies. **This step installs Ansible as well. You do not need to install Ansible separately**.
   ```
-  sudo pip install -r requirements.txt
+  sudo pip3 install -r requirements.txt
   ```
 Copy the Sample Inventory.
   ```
