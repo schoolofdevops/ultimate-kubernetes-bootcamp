@@ -166,6 +166,13 @@ git clone https://github.com/kubernetes-incubator/kubespray.git
 cd kubespray
 ```
 
+### Install Prerequisites
+Install the python dependencies. **This step installs Ansible as well. You do not need to install Ansible separately**.
+
+```
+sudo pip3 install -r requirements.txt
+```
+
 ### Set Remote User for Ansible
 
 
