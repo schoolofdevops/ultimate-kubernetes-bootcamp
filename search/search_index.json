@@ -421,6 +421,316 @@
             "title": "To Validate:"
         }, 
         {
+            "location": "/kubespray-prereqs/", 
+            "text": "Prerequisites for Using Kubespray\n\n\nHardward Requirements:\n\n\nVirtual Machines\n\n\n\n\nNumber of VMs: 4\n\n\nMemory: 2 GB\n\n\nCPU: 2 Cores\n\n\nDisk: 50 GB\n\n\n\n\nVagrant Setup:\n\n\nThis tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements, the lessons learned in this tutorial can be applied to other platforms. Start from \nSet up Kubernetes Using Kubespray\n(or) Refer to this \nDocument\n, if you have VMs running elsewhere\n\n\nSoftware Requirements on Host Machine:\n\n\n\n\nVirtual Box (latest)\n\n\nVagrant (latest)\n\n\nGit Bash (Only for Windows)\n\n\nConemu (Only for Windows)\n\n\n\n\nSet up Learning Environment:\n\n\n\n\n\n\nMake a work directory and change to that directory\n\n\nmkdir advanced-kubernetes\n cd avanced-kubernetes\n\n\n\n\n\n\nDownload the Vagrant template\n\n\ncurl -O https://raw.githubusercontent.com/schoolofdevops/kubespray-1/master/Vagrantfile\n\n\n\n\n\n\nBring up the VMs\n\n\nvagrant up\n\n  * SSH into your first VM \nk8s-01\n by running,\n\n\nvagrant ssh k8s-01\n\n\n\n\n\n\nSoftware Requirements on Control Node:\n\n\nPrerequisite 1: Install Python\n\n\n\n\nSelect the first VM as your \nAnsible Controller\n.\n\n\n\n\nInstall Python Pip on your \nAnsible Controller\n machine. We don't need to install Python as it comes preinstalled on Ubuntu 16.04\n\n\n```\nsudo apt-get update\nsudo apt-get -y upgrade\nsudo apt-get install -y python3-pip\n\n\nCheck the installation\n\n\npython3 -V\npip3 -V\n```\n\n\n\n\n\n\nPrerequisite 2: Set up Passwordless SSH\n\n\nGenerating ssh keypair on control host\n\n\nNow on \nAnsible Controller\n host, execute the following command\n\n\nssh-keygen -t rsa\n\n\n\n\nNow press enter for the passphrase and other queries.\n\n\nGenerating public/private rsa key pair.\nEnter file in which to save the key (/root/.ssh/id_rsa):\nCreated directory '/root/.ssh'.\nEnter passphrase (empty for no passphrase):\nEnter same passphrase again:\nYour identification has been saved in /root/.ssh/id_rsa.\nYour public key has been saved in /root/.ssh/id_rsa.pub.\nThe key fingerprint is:\nc5:a5:6d:60:56:5a:7b:3c:60:23:b5:0f:1b:cf:f9:fd root@ansible\nThe key's randomart image is:\n+--[ RSA 2048]----+\n|          =oO    |\n|         + X *   |\n|          = B +  |\n|         . . O o |\n|        S   . =  |\n|               ..|\n|                o|\n|                .|\n|                E|\n+-----------------+\n\n\n\n\nCopying public key to inventory hosts\n\n\nOn Ansible Controller\n\nCopy public key of control node to other hosts.\nPassword for this command: \nvagrant\n\n\nssh-copy-id vagrant@10.10.1.101\n\nssh-copy-id vagrant@10.10.1.102\n\nssh-copy-id vagrant@10.10.1.103\n\nssh-copy-id vagrant@10.10.1.104\n\n\n\n\nSee this example output to verify with your output\n\n\nThe authenticity of host '10.10.1.101 (10.10.1.101)' can't be established.\nRSA key fingerprint is 32:7f:ad:d7:da:63:32:b6:a9:ff:59:af:09:1e:56:22.\nAre you sure you want to continue connecting (yes/no)? yes\nWarning: Permanently added '10.10.1.101' (RSA) to the list of known hosts.\n\n\n\n\nThe password for user \nvagrant\n is \nvagrant\n\n\nValidate the passwordless login\n\n\nOn Ansible Controller\n\nLet us check the connection of control node with other hosts\n\n\nssh vagrant@10.10.1.101\n\nssh vagrant@10.10.1.102\n\nssh vagrant@10.10.1.103\n\nssh vagrant@10.10.1.104\n\n\n\n\nSetting Up Kubernetes Using Kubespray\n\n\nOn Ansible Controller\n\nFirst clone the Kubespray repository and change directory.\n  \ngit clone https://github.com/schoolofdevops/kubespray-1.git\n  cd kubespray-1\n\nInstall the python dependencies. \nThis step installs Ansible as well. You do not need to install Ansible separately\n.\n  \nsudo pip install -r requirements.txt\n\nCopy the Sample Inventory.\n  \ncp -rfp inventory/sample inventory/mycluster\n\nUpdate Ansible inventory file with inventory builder. \nDo not forget to replace these IPs with the IPs of your VMs\n.\n  \ndeclare -a IPS=(10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104)\n\n  \nCONFIG_FILE=inventory/mycluster/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]}\n\nReview and Change Kubespray variables, \nonly if necessary\n.\n  \ncat inventory/mycluster/group_vars/all.yml\n  cat inventory/mycluster/group_vars/k8s-cluster.yml\n\nDeploy Kubespray with Ansible Playbook. This takes about 20-30 minutes depending on your infrastructure.\n  \nansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -b -v -c paramiko\n\n\nInstall Kubectl\n\n\nOn Ansible Controller\n\n\nBefore we proceed further, we will need to install \nkubectl\n binary in our control node. Read installation procedure from this \nlink\n.\n\n\nGetting the Kubernetes Configuration File\n\n\nOn Ansible Controller\n\n\nOnce the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.\n\n\nsudo su\ncp /etc/kubernetes/admin.conf /home/ubuntu\nchown ubuntu:ubuntu /home/ubuntu/admin.conf\nexit\nmkdir .kube\nmv admin.conf .kube/config\n\n\n\n\nCheck the State of the Cluster\n\n\nOn Ansible Controller\n\n\nLet us check the state of the cluster by running,\n\n\nkubectl cluster-info\n\nKubernetes master is running at https://10.10.1.101:6443\nKubeDNS is running at https://10.10.1.101:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nTo further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.\n\n\n\n\nkubectl get nodes\n\nNAME      STATUS    ROLES         AGE       VERSION\nnode1     Ready     master,node   21h       v1.9.0+coreos.0\nnode2     Ready     master,node   21h       v1.9.0+coreos.0\nnode3     Ready     node          21h       v1.9.0+coreos.0\nnode4     Ready     node          21h       v1.9.0+coreos.0\n\n\n\n\nIf you are able to see this, your cluster has been set up successfully.", 
+            "title": "Kubespray lab setup with Vagrant"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#prerequisites-for-using-kubespray", 
+            "text": "", 
+            "title": "Prerequisites for Using Kubespray"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#hardward-requirements", 
+            "text": "", 
+            "title": "Hardward Requirements:"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#virtual-machines", 
+            "text": "Number of VMs: 4  Memory: 2 GB  CPU: 2 Cores  Disk: 50 GB", 
+            "title": "Virtual Machines"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#vagrant-setup", 
+            "text": "This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements, the lessons learned in this tutorial can be applied to other platforms. Start from  Set up Kubernetes Using Kubespray (or) Refer to this  Document , if you have VMs running elsewhere", 
+            "title": "Vagrant Setup:"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#software-requirements-on-host-machine", 
+            "text": "Virtual Box (latest)  Vagrant (latest)  Git Bash (Only for Windows)  Conemu (Only for Windows)", 
+            "title": "Software Requirements on Host Machine:"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#set-up-learning-environment", 
+            "text": "Make a work directory and change to that directory  mkdir advanced-kubernetes\n cd avanced-kubernetes    Download the Vagrant template  curl -O https://raw.githubusercontent.com/schoolofdevops/kubespray-1/master/Vagrantfile    Bring up the VMs  vagrant up \n  * SSH into your first VM  k8s-01  by running,  vagrant ssh k8s-01", 
+            "title": "Set up Learning Environment:"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#software-requirements-on-control-node", 
+            "text": "", 
+            "title": "Software Requirements on Control Node:"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#prerequisite-1-install-python", 
+            "text": "Select the first VM as your  Ansible Controller .   Install Python Pip on your  Ansible Controller  machine. We don't need to install Python as it comes preinstalled on Ubuntu 16.04  ```\nsudo apt-get update\nsudo apt-get -y upgrade\nsudo apt-get install -y python3-pip", 
+            "title": "Prerequisite 1: Install Python"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#check-the-installation", 
+            "text": "python3 -V\npip3 -V\n```", 
+            "title": "Check the installation"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#prerequisite-2-set-up-passwordless-ssh", 
+            "text": "", 
+            "title": "Prerequisite 2: Set up Passwordless SSH"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#generating-ssh-keypair-on-control-host", 
+            "text": "Now on  Ansible Controller  host, execute the following command  ssh-keygen -t rsa  Now press enter for the passphrase and other queries.  Generating public/private rsa key pair.\nEnter file in which to save the key (/root/.ssh/id_rsa):\nCreated directory '/root/.ssh'.\nEnter passphrase (empty for no passphrase):\nEnter same passphrase again:\nYour identification has been saved in /root/.ssh/id_rsa.\nYour public key has been saved in /root/.ssh/id_rsa.pub.\nThe key fingerprint is:\nc5:a5:6d:60:56:5a:7b:3c:60:23:b5:0f:1b:cf:f9:fd root@ansible\nThe key's randomart image is:\n+--[ RSA 2048]----+\n|          =oO    |\n|         + X *   |\n|          = B +  |\n|         . . O o |\n|        S   . =  |\n|               ..|\n|                o|\n|                .|\n|                E|\n+-----------------+", 
+            "title": "Generating ssh keypair on control host"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#copying-public-key-to-inventory-hosts", 
+            "text": "On Ansible Controller \nCopy public key of control node to other hosts.\nPassword for this command:  vagrant  ssh-copy-id vagrant@10.10.1.101\n\nssh-copy-id vagrant@10.10.1.102\n\nssh-copy-id vagrant@10.10.1.103\n\nssh-copy-id vagrant@10.10.1.104  See this example output to verify with your output  The authenticity of host '10.10.1.101 (10.10.1.101)' can't be established.\nRSA key fingerprint is 32:7f:ad:d7:da:63:32:b6:a9:ff:59:af:09:1e:56:22.\nAre you sure you want to continue connecting (yes/no)? yes\nWarning: Permanently added '10.10.1.101' (RSA) to the list of known hosts.  The password for user  vagrant  is  vagrant", 
+            "title": "Copying public key to inventory hosts"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#validate-the-passwordless-login", 
+            "text": "On Ansible Controller \nLet us check the connection of control node with other hosts  ssh vagrant@10.10.1.101\n\nssh vagrant@10.10.1.102\n\nssh vagrant@10.10.1.103\n\nssh vagrant@10.10.1.104", 
+            "title": "Validate the passwordless login"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#setting-up-kubernetes-using-kubespray", 
+            "text": "On Ansible Controller \nFirst clone the Kubespray repository and change directory.\n   git clone https://github.com/schoolofdevops/kubespray-1.git\n  cd kubespray-1 \nInstall the python dependencies.  This step installs Ansible as well. You do not need to install Ansible separately .\n   sudo pip install -r requirements.txt \nCopy the Sample Inventory.\n   cp -rfp inventory/sample inventory/mycluster \nUpdate Ansible inventory file with inventory builder.  Do not forget to replace these IPs with the IPs of your VMs .\n   declare -a IPS=(10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104) \n   CONFIG_FILE=inventory/mycluster/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]} \nReview and Change Kubespray variables,  only if necessary .\n   cat inventory/mycluster/group_vars/all.yml\n  cat inventory/mycluster/group_vars/k8s-cluster.yml \nDeploy Kubespray with Ansible Playbook. This takes about 20-30 minutes depending on your infrastructure.\n   ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -b -v -c paramiko", 
+            "title": "Setting Up Kubernetes Using Kubespray"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#install-kubectl", 
+            "text": "On Ansible Controller  Before we proceed further, we will need to install  kubectl  binary in our control node. Read installation procedure from this  link .", 
+            "title": "Install Kubectl"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#getting-the-kubernetes-configuration-file", 
+            "text": "On Ansible Controller  Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.  sudo su\ncp /etc/kubernetes/admin.conf /home/ubuntu\nchown ubuntu:ubuntu /home/ubuntu/admin.conf\nexit\nmkdir .kube\nmv admin.conf .kube/config", 
+            "title": "Getting the Kubernetes Configuration File"
+        }, 
+        {
+            "location": "/kubespray-prereqs/#check-the-state-of-the-cluster", 
+            "text": "On Ansible Controller  Let us check the state of the cluster by running,  kubectl cluster-info\n\nKubernetes master is running at https://10.10.1.101:6443\nKubeDNS is running at https://10.10.1.101:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nTo further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.  kubectl get nodes\n\nNAME      STATUS    ROLES         AGE       VERSION\nnode1     Ready     master,node   21h       v1.9.0+coreos.0\nnode2     Ready     master,node   21h       v1.9.0+coreos.0\nnode3     Ready     node          21h       v1.9.0+coreos.0\nnode4     Ready     node          21h       v1.9.0+coreos.0  If you are able to see this, your cluster has been set up successfully.", 
+            "title": "Check the State of the Cluster"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/", 
+            "text": "Kubernetes - Cluster Setup using Kubespray\n\n\nKubespray is an \nAnsible\n based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.\n\n\nPrerequisites\n\n\nHardware Pre requisites\n\n\n\n\n4 Nodes: Virtual/Physical Machines  \n\n\nMemory: 2GB   \n\n\nCPU: 1 Core\n\n\nHard disk: 20GB available  \n\n\n\n\nSoftware Pre Requisites\n\n\nOn All Nodes\n\n\n\n\nUbuntu 16.04 OS  \n\n\nPython  \n\n\nSSH Server\n\n\nPrivileged user\n\n\n\n\nOn Ansible Control  Node\n    \n\n\n\n\nAnsible version  2.4 or greater  \n\n\nJinja  \n\n\n\n\nNetworking Pre Requisites\n\n\n\n\nInternet access to download docker images and install softwares\n\n\nIPv4 Forwarding should be enabled  \n\n\nFirewall should allow ssh access as well as ports required by Kubernetes. Internally open all the ports between node.\n\n\n\n\nArchitecture of a high available kubernetes cluster\n\n\nPreparing the nodes\n\n\nInstall Python\n\n\nOn all nodes\n\n\nAnsible needs python to be installed on all the machines.\n\n\nsudo apt update\nsudo apt install python3\n\n\n\n\nEnable IPv4 Forwarding\n\n\nOn all nodes\n\n\nssh ubuntu@10.40.1.26\nsudo su\n\nvim /etc/sysctl.conf\n\n\n\n\nEnalbe IPv4 forwarding by uncommenting the following line\n\n\nnet.ipv4.ip_forward=1\n\n\n\n\nStop and Disable Firewall (UFW Service)\n\n\nOn all nodes\n\n\nExecute the following commands to stop and disable ufw service.\n\n\nsystemctl stop ufw.service\nsystemctl disable ufw.service\n\n\n\n\nSet Locale\n\n\nexport LC_ALL=\nen_US.UTF-8\n\nexport LC_CTYPE=\nen_US.UTF-8\n\nsudo dpkg-reconfigure locales\n\n\n\n\nSetup passwordless SSH between ansible controller and kubernetes nodes\n\n\nOn control node\n\n\nAnsible uses passwordless ssh\n1\n to create the cluster. Let us see how to set it up from your \ncontrol node\n.\n\n\nGenerate ssh keypair if not present already using the following command.\n\n\nssh-keygen -t rsa\n\nGenerating public/private rsa key pair.\nEnter file in which to save the key (/home/ubuntu/.ssh/id_rsa):\nEnter passphrase (empty for no passphrase):\nEnter same passphrase again:\nYour identification has been saved in /home/ubuntu/.ssh/id_rsa.\nYour public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.\nThe key fingerprint is:\nSHA256:yC4Tl6RYc+saTPcLKFdGlTLOWOIuDgO1my/NrMBnRxA ubuntu@node1\nThe key's randomart image is:\n+---[RSA 2048]----+\n|   E    ..       |\n|  . o +..        |\n| . +o*+o         |\n|. .o+Bo+         |\n|. .++.X S        |\n|+ +ooX .         |\n|.=.OB.+ .        |\n| .=o*= . .       |\n|  .o.   .        |\n+----[SHA256]-----+\n\n\n\n\nJust leave the fields to defaults. This command will generate a public key and private key for you.\n\n\nCopy over the public key to all nodes.\n\n\nExample,  assuming \nubuntu\n as the user which has a privileged access on the node with ip address \n10.10.1.101\n,\n\n\nssh-copy-id ubuntu@10.10.1.101\n\n\n\n\nThis will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace \n10.40.1.26\n with your respective machine's IP.\n\n\ne.g.\n\n\nssh ubuntu@10.10.1.101\n\n\n\n\nMake sure to copy the public key to all kubernetes nodes. \nReplace username with the actual user on your system\n.\n\n\nSetup Ansible Control node and Kubespray\n\n\nOn control node\n\n\nKubespray is hosted on GitHub. Let us the clone the \nofficial repository\n.\n\n\ngit clone https://github.com/kubernetes-incubator/kubespray.git\ncd kubespray\n\n\n\n\nSet Remote User for Ansible\n\n\nAdd the following section in ansible.cfg file\n\n\nremote_user=ubuntu\n\n\n\n\nIf the user you are going to connect is differnt, use that instead.\n\n\nYour \nansible.cfg\n file should look like this.\n\n\n[ssh_connection]\npipelining=True\nssh_args = -o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100 -o UserKnownHostsFile=/dev/null\n#control_path = ~/.ssh/ansible-%%r@%%h:%%p\n[defaults]\nhost_key_checking=False\ngathering = smart\nfact_caching = jsonfile\nfact_caching_connection = /tmp\nstdout_callback = skippy\nlibrary = ./library\ncallback_whitelist = profile_tasks\nroles_path = roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles\ndeprecation_warnings=False\nremote_user=ubuntu\n\n\n\n\nCreate Inventory\n\n\ncp -rfp inventory/sample inventory/prod\n\n\n\n\nwhere \nprod\n is the custom configuration name. Replace is with whatever name you would like to assign to the current cluster.\n\n\nTo build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments\n\n\nCONFIG_FILE=inventory/prod/hosts.ini python3 contrib/inventory_builder/inventory.py 10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104\n\n\n\n\nWhere replace the IP addresses (e.g. 10.10.1.101) with the actual IPs of your nodes\n\n\nOnce its run, you should see an inventory file generated which may look similar to below\n\n\nfile: inventory/prod/hosts.ini\n\n\n[all]\nnode1    ansible_host=10.10.1.101 ip=10.10.1.101\nnode2    ansible_host=10.10.1.102 ip=10.10.1.102\nnode3    ansible_host=10.10.1.103 ip=10.10.1.103\nnode4    ansible_host=10.10.1.104 ip=10.10.1.104\n\n[kube-master]\nnode1\nnode2\n\n[kube-node]\nnode1\nnode2\nnode3\nnode4\n\n[etcd]\nnode1\nnode2\nnode3\n\n[k8s-cluster:children]\nkube-node\nkube-master\n\n[calico-rr]\n\n[vault]\nnode1\nnode2\nnode3\n\n\n\n\nProvisioning  kubernetes cluster with kubespray\n\n\nOn control node\n\n\nWe are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.\n\n\nansible-playbook -i inventory/inventory.cfg cluster.yml -b -v\n\n\n\n\nOption -i = Inventory file path\nOption -b = Become as root user\nOption -v = Give verbose output\n\n\nThis Ansible run will take around 30 mins to complete.\n\n\nInstall Kubectl\n\n\nOn any master node\n\n\nBefore we proceed further, we will need to install \nkubectl\n binary in our control node.\nTo install \nkubectl\n on Ubuntu\n\n\nsudo apt-get update \n sudo apt-get install -y apt-transport-https\ncurl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -\nsudo touch /etc/apt/sources.list.d/kubernetes.list\necho \ndeb http://apt.kubernetes.io/ kubernetes-xenial main\n | sudo tee -a /etc/apt/sources.list.d/kubernetes.list\nsudo apt-get update\nsudo apt-get install -y kubectl\n\n\n\n\nNote\n: You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,   \nrefer to the  procedure here\n.\n\n\nGetting the Kubernetes Configuration File\n\n\nOn same  master node as above\n\n\nOnce the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.\n\n\nmkdir -p $HOME/.kube\nsudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config\nsudo chown $(id -u):$(id -g) $HOME/.kube/config\n\n\n\n\nCheck the State of the Cluster\n\n\nOn the node where kubectl is setup\n\n\nLet us check the state of the cluster by running,\n\n\nkubectl cluster-info\n\nKubernetes master is running at https://10.40.1.26:6443\nKubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nTo further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.\n\n\n\n\nkubectl get nodes\n\nNAME      STATUS    ROLES         AGE       VERSION\nnode1     Ready     master,node   21h       v1.9.0+coreos.0\nnode2     Ready     master,node   21h       v1.9.0+coreos.0\nnode3     Ready     node          21h       v1.9.0+coreos.0\nnode4     Ready     node          21h       v1.9.0+coreos.0\n\n\n\n\nIf you are able to see this, your cluster has been set up successfully.\n\n\n\n\n1\n You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.\n\n\nReferences\n\n\n\n\nInstalling Kubernetes On Premises/On Cloud with Kubespray \n  \n\n\nKubespray on Github", 
+            "title": "Production grade setup with Kubespray"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#kubernetes-cluster-setup-using-kubespray", 
+            "text": "Kubespray is an  Ansible  based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.", 
+            "title": "Kubernetes - Cluster Setup using Kubespray"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#prerequisites", 
+            "text": "", 
+            "title": "Prerequisites"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#hardware-pre-requisites", 
+            "text": "4 Nodes: Virtual/Physical Machines    Memory: 2GB     CPU: 1 Core  Hard disk: 20GB available", 
+            "title": "Hardware Pre requisites"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#software-pre-requisites", 
+            "text": "On All Nodes   Ubuntu 16.04 OS    Python    SSH Server  Privileged user   On Ansible Control  Node        Ansible version  2.4 or greater    Jinja", 
+            "title": "Software Pre Requisites"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#networking-pre-requisites", 
+            "text": "Internet access to download docker images and install softwares  IPv4 Forwarding should be enabled    Firewall should allow ssh access as well as ports required by Kubernetes. Internally open all the ports between node.", 
+            "title": "Networking Pre Requisites"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#architecture-of-a-high-available-kubernetes-cluster", 
+            "text": "", 
+            "title": "Architecture of a high available kubernetes cluster"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#preparing-the-nodes", 
+            "text": "", 
+            "title": "Preparing the nodes"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#install-python", 
+            "text": "On all nodes  Ansible needs python to be installed on all the machines.  sudo apt update\nsudo apt install python3", 
+            "title": "Install Python"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#enable-ipv4-forwarding", 
+            "text": "On all nodes  ssh ubuntu@10.40.1.26\nsudo su\n\nvim /etc/sysctl.conf  Enalbe IPv4 forwarding by uncommenting the following line  net.ipv4.ip_forward=1", 
+            "title": "Enable IPv4 Forwarding"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#stop-and-disable-firewall-ufw-service", 
+            "text": "On all nodes  Execute the following commands to stop and disable ufw service.  systemctl stop ufw.service\nsystemctl disable ufw.service", 
+            "title": "Stop and Disable Firewall (UFW Service)"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#set-locale", 
+            "text": "export LC_ALL= en_US.UTF-8 \nexport LC_CTYPE= en_US.UTF-8 \nsudo dpkg-reconfigure locales", 
+            "title": "Set Locale"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#setup-passwordless-ssh-between-ansible-controller-and-kubernetes-nodes", 
+            "text": "On control node  Ansible uses passwordless ssh 1  to create the cluster. Let us see how to set it up from your  control node .  Generate ssh keypair if not present already using the following command.  ssh-keygen -t rsa\n\nGenerating public/private rsa key pair.\nEnter file in which to save the key (/home/ubuntu/.ssh/id_rsa):\nEnter passphrase (empty for no passphrase):\nEnter same passphrase again:\nYour identification has been saved in /home/ubuntu/.ssh/id_rsa.\nYour public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.\nThe key fingerprint is:\nSHA256:yC4Tl6RYc+saTPcLKFdGlTLOWOIuDgO1my/NrMBnRxA ubuntu@node1\nThe key's randomart image is:\n+---[RSA 2048]----+\n|   E    ..       |\n|  . o +..        |\n| . +o*+o         |\n|. .o+Bo+         |\n|. .++.X S        |\n|+ +ooX .         |\n|.=.OB.+ .        |\n| .=o*= . .       |\n|  .o.   .        |\n+----[SHA256]-----+  Just leave the fields to defaults. This command will generate a public key and private key for you.  Copy over the public key to all nodes.  Example,  assuming  ubuntu  as the user which has a privileged access on the node with ip address  10.10.1.101 ,  ssh-copy-id ubuntu@10.10.1.101  This will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace  10.40.1.26  with your respective machine's IP.  e.g.  ssh ubuntu@10.10.1.101  Make sure to copy the public key to all kubernetes nodes.  Replace username with the actual user on your system .", 
+            "title": "Setup passwordless SSH between ansible controller and kubernetes nodes"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#setup-ansible-control-node-and-kubespray", 
+            "text": "On control node  Kubespray is hosted on GitHub. Let us the clone the  official repository .  git clone https://github.com/kubernetes-incubator/kubespray.git\ncd kubespray", 
+            "title": "Setup Ansible Control node and Kubespray"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#set-remote-user-for-ansible", 
+            "text": "Add the following section in ansible.cfg file  remote_user=ubuntu  If the user you are going to connect is differnt, use that instead.  Your  ansible.cfg  file should look like this.  [ssh_connection]\npipelining=True\nssh_args = -o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100 -o UserKnownHostsFile=/dev/null\n#control_path = ~/.ssh/ansible-%%r@%%h:%%p\n[defaults]\nhost_key_checking=False\ngathering = smart\nfact_caching = jsonfile\nfact_caching_connection = /tmp\nstdout_callback = skippy\nlibrary = ./library\ncallback_whitelist = profile_tasks\nroles_path = roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles\ndeprecation_warnings=False\nremote_user=ubuntu", 
+            "title": "Set Remote User for Ansible"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#create-inventory", 
+            "text": "cp -rfp inventory/sample inventory/prod  where  prod  is the custom configuration name. Replace is with whatever name you would like to assign to the current cluster.  To build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments  CONFIG_FILE=inventory/prod/hosts.ini python3 contrib/inventory_builder/inventory.py 10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104  Where replace the IP addresses (e.g. 10.10.1.101) with the actual IPs of your nodes  Once its run, you should see an inventory file generated which may look similar to below  file: inventory/prod/hosts.ini  [all]\nnode1    ansible_host=10.10.1.101 ip=10.10.1.101\nnode2    ansible_host=10.10.1.102 ip=10.10.1.102\nnode3    ansible_host=10.10.1.103 ip=10.10.1.103\nnode4    ansible_host=10.10.1.104 ip=10.10.1.104\n\n[kube-master]\nnode1\nnode2\n\n[kube-node]\nnode1\nnode2\nnode3\nnode4\n\n[etcd]\nnode1\nnode2\nnode3\n\n[k8s-cluster:children]\nkube-node\nkube-master\n\n[calico-rr]\n\n[vault]\nnode1\nnode2\nnode3", 
+            "title": "Create Inventory"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#provisioning-kubernetes-cluster-with-kubespray", 
+            "text": "On control node  We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.  ansible-playbook -i inventory/inventory.cfg cluster.yml -b -v  Option -i = Inventory file path\nOption -b = Become as root user\nOption -v = Give verbose output  This Ansible run will take around 30 mins to complete.", 
+            "title": "Provisioning  kubernetes cluster with kubespray"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#install-kubectl", 
+            "text": "On any master node  Before we proceed further, we will need to install  kubectl  binary in our control node.\nTo install  kubectl  on Ubuntu  sudo apt-get update   sudo apt-get install -y apt-transport-https\ncurl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -\nsudo touch /etc/apt/sources.list.d/kubernetes.list\necho  deb http://apt.kubernetes.io/ kubernetes-xenial main  | sudo tee -a /etc/apt/sources.list.d/kubernetes.list\nsudo apt-get update\nsudo apt-get install -y kubectl  Note : You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,    refer to the  procedure here .", 
+            "title": "Install Kubectl"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#getting-the-kubernetes-configuration-file", 
+            "text": "On same  master node as above  Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.  mkdir -p $HOME/.kube\nsudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config\nsudo chown $(id -u):$(id -g) $HOME/.kube/config", 
+            "title": "Getting the Kubernetes Configuration File"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#check-the-state-of-the-cluster", 
+            "text": "On the node where kubectl is setup  Let us check the state of the cluster by running,  kubectl cluster-info\n\nKubernetes master is running at https://10.40.1.26:6443\nKubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nTo further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.  kubectl get nodes\n\nNAME      STATUS    ROLES         AGE       VERSION\nnode1     Ready     master,node   21h       v1.9.0+coreos.0\nnode2     Ready     master,node   21h       v1.9.0+coreos.0\nnode3     Ready     node          21h       v1.9.0+coreos.0\nnode4     Ready     node          21h       v1.9.0+coreos.0  If you are able to see this, your cluster has been set up successfully.   1  You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.", 
+            "title": "Check the State of the Cluster"
+        }, 
+        {
+            "location": "/cluster_setup_kubespray/#references", 
+            "text": "Installing Kubernetes On Premises/On Cloud with Kubespray      Kubespray on Github", 
+            "title": "References"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/", 
+            "text": "Configuring Authentication and Authorization\n\n\nLet us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.\n\n\nCreate namespace for a user(Optional)\n\n\nCreate the \ndev\n namespace if it has not been created already.\n\n\ndev-namespace.yml\n\n\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev\n\n\n\n\nkubectl apply -f dev-namespace.yml\n\n\n\n\nCreate the user credentials\n\n\nGenerate the user's private key\n\n\nopenssl genrsa -out john.key 2048\nopenssl req -new -key john.key -out john.csr -subj \n/CN=john/O=initcron\n\n\n\n\n\nSign the key using kubernetes CA\n\nBefore proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.\n\n\nopenssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500\n\n\n\n\nSave these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)\nExecute the following commands on the users system\n\n\nkubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context john-context --cluster=\nYOUR-CLUSTER-NAME\n --namespace=\nNAMESPACE-FOR-USER\n  --user=john\n# This step will throw an error\nkubectl --context=john-context get pods\n\n\n\n\nCreate role for the developers\n\n\nThese steps (3,4) has to be executed from kube-master or the controller machine\n\ndev-role.yml\n\n\nkind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [\n, \nextensions\n, \napps\n]\n  resources: [\ndeployments\n, \nreplicasets\n, \npods\n]\n  verbs: [\nget\n, \nlist\n, \nwatch\n, \ncreate\n, \nupdate\n, \npatch\n, \ndelete\n]\n\n\n\n\nkubectl create -f dev-role.yml\n\n\n\n\nCreate RoleBindings for the dev-role\n\n\ndev-rolebinding.yml\n\n\nkind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: john\n  apiGroup: \n\nroleRef:\n  kind: Role\n  name: developer\n  apiGroup: \n\n\n\n\n\nkubectl create -f dev-rolebinding.yaml\n\n\n\n\nKubernetes Access Control\n\n\nIn this chapter, we will see about how to use authentication and authorisation of Kubernetes.\n\n\nHow one can access the Kubernetes API?\n\n\nThe Kubernetes API can be accessed by three ways.\n  * Kubeclt - A command line utility of Kubernetes\n  * Client libraries - Go, Python, etc.,\n  * REST requests\n\n\nWho can access the Kubernetes API?\n\n\nKubernetes API can be accessed by,\n  * Human users\n  * Service Accounts\nEach of these topics will be discussed in detail in the later part of this chapter.\n\n\nStages of a Request\n\n\nWhen a request tries to contact the API , it goes through various stages as illustrated in the image given below.\n\n\n\n\nsource: official kubernetes site\n\n\nTLS in Kubernetes\n\n\nKubernetes API typically runs on two ports.\n  * 8080\n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).\n    * This port is insecure.\n  * 6443\n    * TLS Enabled.\n    * Available for kubectl and others.\n\n\nStage 1: Authentication\n\n\n\n\nAuthentication operation checks whether the \nuser/service account\n has the permission to talk to the api server or not.\n\n\nAuthentication is done by the authentication modules which are configured with the api server.\n\n\nCluster uses with one or more authentication modules enabled.\n\n\nIf the request fails to authenticate itself, it will be served with \n401 error\n.\n\n\n\n\nAuthentication for Normal User\n\n\n\n\nKubernetes uses \nusernames\n for access control.\n\n\nBut it neither has an api object nor stores information about users in its data store.\n\n\nUsers need to be managed externally by the cluster administrator.\n\n\n\n\nAuthentication for Service Accounts\n\n\n\n\nUnlike user accounts, service accounts are managed by Kubernetes.\n\n\nservice accounts\n are bound to specific namespaces.\n\n\nCredentials for \nservice Accounts\n are stored as \nsecrets\n.\n\n\nThese secrets are mounted to pods when a deployment starts using the Service Account.\n\n\n\n\nStage 2: Authorization\n\n\n\n\nAfter a request successfully authenticated, it goes through the authorization process.\n\n\nIn order for a request to be authorized, it must consist following attributes.\n\n\nUsername of the requester(User)\n\n\nRequested action(Verb)\n\n\nThe object affected(Resource)\n\n\n\n\n\n\nAuthorization is done by the following modules. Each of these modules has a special purpose.\n\n\nAttribute Based Access Control(ABAC)\n\n\nRole Based Access Control(RBAC)\n\n\nNode Authorizer\n\n\nWebhook module\n\n\n\n\n\n\nIf a request is failed to get authorized, it will be served with \n403 error\n.\n\n\nAmong these modules, RBAC is the most used authorizer while,\n\n\nABAC is used for,\n\n\nPolicy based, fine grained access control\n\n\nThe caveat is api server has to be restarted whenever we define a ABAC policy\n\n\nNode Authorizer is,\n\n\nEnabled in all the worker nodes\n\n\nGrants access to kubelet for some of the resources.\n\n\n\n\n\n\nWe have already talked about the user in detail. Now lets focus on \nverbs\n and \nresources\n\n\nWe will talk about RBAC in detail in the later part\n\n\n\n\nVerbs\n\n\n\n\nVerbs are the \naction\n to be taken on resources.\n\n\nSome of the verbs in Kubernetes are,\n\n\nget\n\n\nlist\n\n\ncreate\n\n\nupdate\n\n\npatch\n\n\nwatch\n\n\ndelete\n\n\n\n\n\n\n\n\nResources\n\n\n\n\nResources are the object being manipulated by the verb.\n\n\nEx: pods, deployments, service, namespaces, nodes, etc.,\n\n\n\n\nStage 3: Admission Control\n\n\n\n\nAdmission control part is taken care of by the software modules that can modify/reject requests.\n\n\nAdmission control is mainly used for fine-tuning access control.\n\n\nAdmission control can directly act on the object being modified.\n\n\n\n\nRole Based Access Control (RBAC)\n\n\n\n\nRBAC is the most used form of access control to \ngrant or revoke\n permissions to users.\n\n\nIt is used for dynamically configuring policies through API.\n\n\nRBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.\n\n\nObjects that are used to create policies,\n\n\nRoles,\n\n\nClusterRoles.\n\n\n\n\n\n\nObjects that are used to implement policies,\n\n\nRoleBindings,\n\n\nClusterRoleBindings.\n\n\n\n\n\n\n\n\nRoles\n\n\n\n\nRoles grant access to resources \nwithin a single namespace\n.\n\n\nRoles cannot grant permission for global(cluster-wide) resources.\n\n\n\n\nClusterRoles\n\n\n\n\nClusterRoles works similar to Roles, but for \ncluster-wide\n resources.\n\n\n\n\nRoleBindings\n\n\n\n\nRoleBidings are used to grant permission defined in a Role to \na user or a set of users\n.\n\n\nRoleBindings can also refer to \nClusterRoles\n.\n\n\n\n\nClusterRoleBindings\n\n\n\n\nClusterRoleBindings works same as RoleBindings, but cluster-wide.", 
+            "title": "Authentication and Authorization"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#configuring-authentication-and-authorization", 
+            "text": "Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.", 
+            "title": "Configuring Authentication and Authorization"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-namespace-for-a-useroptional", 
+            "text": "Create the  dev  namespace if it has not been created already.  dev-namespace.yml  apiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev  kubectl apply -f dev-namespace.yml", 
+            "title": "Create namespace for a user(Optional)"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-the-user-credentials", 
+            "text": "Generate the user's private key  openssl genrsa -out john.key 2048\nopenssl req -new -key john.key -out john.csr -subj  /CN=john/O=initcron   Sign the key using kubernetes CA Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.  openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500  Save these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)\nExecute the following commands on the users system  kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context john-context --cluster= YOUR-CLUSTER-NAME  --namespace= NAMESPACE-FOR-USER   --user=john\n# This step will throw an error\nkubectl --context=john-context get pods", 
+            "title": "Create the user credentials"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-role-for-the-developers", 
+            "text": "These steps (3,4) has to be executed from kube-master or the controller machine dev-role.yml  kind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [ ,  extensions ,  apps ]\n  resources: [ deployments ,  replicasets ,  pods ]\n  verbs: [ get ,  list ,  watch ,  create ,  update ,  patch ,  delete ]  kubectl create -f dev-role.yml", 
+            "title": "Create role for the developers"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#create-rolebindings-for-the-dev-role", 
+            "text": "dev-rolebinding.yml  kind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: john\n  apiGroup:  \nroleRef:\n  kind: Role\n  name: developer\n  apiGroup:    kubectl create -f dev-rolebinding.yaml", 
+            "title": "Create RoleBindings for the dev-role"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#kubernetes-access-control", 
+            "text": "In this chapter, we will see about how to use authentication and authorisation of Kubernetes.", 
+            "title": "Kubernetes Access Control"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#how-one-can-access-the-kubernetes-api", 
+            "text": "The Kubernetes API can be accessed by three ways.\n  * Kubeclt - A command line utility of Kubernetes\n  * Client libraries - Go, Python, etc.,\n  * REST requests", 
+            "title": "How one can access the Kubernetes API?"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#who-can-access-the-kubernetes-api", 
+            "text": "Kubernetes API can be accessed by,\n  * Human users\n  * Service Accounts\nEach of these topics will be discussed in detail in the later part of this chapter.", 
+            "title": "Who can access the Kubernetes API?"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stages-of-a-request", 
+            "text": "When a request tries to contact the API , it goes through various stages as illustrated in the image given below.   source: official kubernetes site", 
+            "title": "Stages of a Request"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#tls-in-kubernetes", 
+            "text": "Kubernetes API typically runs on two ports.\n  * 8080\n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).\n    * This port is insecure.\n  * 6443\n    * TLS Enabled.\n    * Available for kubectl and others.", 
+            "title": "TLS in Kubernetes"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stage-1-authentication", 
+            "text": "Authentication operation checks whether the  user/service account  has the permission to talk to the api server or not.  Authentication is done by the authentication modules which are configured with the api server.  Cluster uses with one or more authentication modules enabled.  If the request fails to authenticate itself, it will be served with  401 error .", 
+            "title": "Stage 1: Authentication"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#authentication-for-normal-user", 
+            "text": "Kubernetes uses  usernames  for access control.  But it neither has an api object nor stores information about users in its data store.  Users need to be managed externally by the cluster administrator.", 
+            "title": "Authentication for Normal User"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#authentication-for-service-accounts", 
+            "text": "Unlike user accounts, service accounts are managed by Kubernetes.  service accounts  are bound to specific namespaces.  Credentials for  service Accounts  are stored as  secrets .  These secrets are mounted to pods when a deployment starts using the Service Account.", 
+            "title": "Authentication for Service Accounts"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stage-2-authorization", 
+            "text": "After a request successfully authenticated, it goes through the authorization process.  In order for a request to be authorized, it must consist following attributes.  Username of the requester(User)  Requested action(Verb)  The object affected(Resource)    Authorization is done by the following modules. Each of these modules has a special purpose.  Attribute Based Access Control(ABAC)  Role Based Access Control(RBAC)  Node Authorizer  Webhook module    If a request is failed to get authorized, it will be served with  403 error .  Among these modules, RBAC is the most used authorizer while,  ABAC is used for,  Policy based, fine grained access control  The caveat is api server has to be restarted whenever we define a ABAC policy  Node Authorizer is,  Enabled in all the worker nodes  Grants access to kubelet for some of the resources.    We have already talked about the user in detail. Now lets focus on  verbs  and  resources  We will talk about RBAC in detail in the later part", 
+            "title": "Stage 2: Authorization"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#verbs", 
+            "text": "Verbs are the  action  to be taken on resources.  Some of the verbs in Kubernetes are,  get  list  create  update  patch  watch  delete", 
+            "title": "Verbs"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#resources", 
+            "text": "Resources are the object being manipulated by the verb.  Ex: pods, deployments, service, namespaces, nodes, etc.,", 
+            "title": "Resources"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#stage-3-admission-control", 
+            "text": "Admission control part is taken care of by the software modules that can modify/reject requests.  Admission control is mainly used for fine-tuning access control.  Admission control can directly act on the object being modified.", 
+            "title": "Stage 3: Admission Control"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#role-based-access-control-rbac", 
+            "text": "RBAC is the most used form of access control to  grant or revoke  permissions to users.  It is used for dynamically configuring policies through API.  RBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.  Objects that are used to create policies,  Roles,  ClusterRoles.    Objects that are used to implement policies,  RoleBindings,  ClusterRoleBindings.", 
+            "title": "Role Based Access Control (RBAC)"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#roles", 
+            "text": "Roles grant access to resources  within a single namespace .  Roles cannot grant permission for global(cluster-wide) resources.", 
+            "title": "Roles"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#clusterroles", 
+            "text": "ClusterRoles works similar to Roles, but for  cluster-wide  resources.", 
+            "title": "ClusterRoles"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#rolebindings", 
+            "text": "RoleBidings are used to grant permission defined in a Role to  a user or a set of users .  RoleBindings can also refer to  ClusterRoles .", 
+            "title": "RoleBindings"
+        }, 
+        {
+            "location": "/configuring_authentication_and_authorization/#clusterrolebindings", 
+            "text": "ClusterRoleBindings works same as RoleBindings, but cluster-wide.", 
+            "title": "ClusterRoleBindings"
+        }, 
+        {
             "location": "/vote-deployement_strategies/", 
             "text": "Release Strategies\n\n\nReleases with downtime using Recreate Strategy\n\n\nWhen the \nRecreate\n deployment strategy is used,\n  * The old pods will be deleted\n  * Then the new pods will be created.\n\n\nThis will create some downtime in our stack.\n\n\nLet us change the deployment strategy to \nrecreate\n and image tag to \nv4\n.\n\n\ncp vote-deploy.yaml vote-deploy-recreate.yaml\n\n\n\n\nAnd edit the specs with following changes\n\n\n\n\nUpdate strategy to \nRecreate\n\n\nRemove rolling update specs\n\n\n\n\nfile: vote-deploy-recreate.yaml\n\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: vote\nspec:\n  strategy:\n    type: Recreate\n  revisionHistoryLimit: 4\n  paused: false\n  replicas: 15\n  minReadySeconds: 20\n  selector:\n    matchLabels:\n      role: vote\n    matchExpressions:\n      - {key: version, operator: In, values: [v1, v2, v3, v4]}\n  template:\n    metadata:\n      name: vote\n      labels:\n        app: python\n        role: vote\n        version: v4\n    spec:\n      containers:\n        - name: app\n          image: schoolofdevops/vote:v4\n          ports:\n            - containerPort: 80\n              protocol: TCP\n\n\n\n\nand apply\n\n\nkubectl get pods,rs,deploy,svc\n\nkubectl apply -f vote-deploy-recreate.yaml\n\nkubectl rollout status deplloyment/vote\n\n\n\n\n\nWhile the deployment happens, use the monitoring/visualiser and observe the manner in which the deployment gets updated.\n\n\nYou would observe that\n\n\n\n\nAll pods wit the current version are deleted first\n\n\nOnly after all the existing pods are deleted, pods with new version are launched\n\n\n\n\nCanary  Releases\n\n\ncd k8s-code/projets/instavote/dev\nmkdir canary\ncp vote-deploy.yaml canary/vote-canary-deploy.yaml\n\n\n\n\n\nchange the following fields in \nvote-canary-deploy.yaml\n\n\n\n\nmetadata.name: vote-canary\n\n\nspec.replicas: 3\n\n\nspec.selector.matchExpressions: - {key: version, operator: In, values: [v1, v2, v3, v4]}\n\n\ntemplate.metadata.labels.version: v4\n\n\ntemplate.spec.containers.image: schoolofdevops/vote:v4\n\n\n\n\nFile: canary/frontend-canary-deploy.yml\n\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: vote-canary\nspec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 2\n      maxUnavailable: 1\n  revisionHistoryLimit: 4\n  paused: false\n  replicas: 3\n  selector:\n    matchLabels:\n      role: vote\n    matchExpressions:\n      - {key: version, operator: In, values: [v1, v2, v3, v4, v5]}\n  minReadySeconds: 40\n  template:\n    metadata:\n      name: vote\n      labels:\n        app: python\n        role: vote\n        version: v4\n    spec:\n      containers:\n        - name: app\n          image: schoolofdevops/vote:v4\n          ports:\n            - containerPort: 80\n              protocol: TCP\n\n\n\n\nBefore creating this deployment, find out how many endpoints the service has,\n\n\nkubectl describe service/vote\n\n\n\n\n[sample output ]\n\n\nEndpoints:                10.32.0.10:80,10.32.0.11:80,10.32.0.4:80 + 12 more...\n\n\n\n\nIn this example current endpoints are \n15\n\n\nNow create the  deployment for canary release\n\n\n\nkubectl apply -f canary/frontend-canary-deploy.yml\n\n\n\n\n\nAnd validate,\n\n\nkubectl get rs,deploy,svc\n\nkubectl describe service/vote\n\n\n\n\nWhen you describe vote service, observe the number of endpoints\n\n\n[sample output]\n\n\nEndpoints:                10.32.0.10:80,10.32.0.11:80,10.32.0.16:80 + 15 more...\n\n\n\n\nNow its \n18\n, which is 3 more than the previous number. Those are the pods created by the canary deployment. And the above output proves that its actually sending traffic to both versions.\n\n\nDelete Canary\n\n\nOnce validated, you could clean up canary release using\n\n\nkubectl delete -f canary/vote-canary-deploy.yaml\n\n\n\n\nBlue/Green  Releases\n\n\nBefore proceeding, lets clean up the existing deployment.\n\n\nkubectl delete deploy/vote\nkubectl delete svc/vote\nkubectl get pods,deploy,rs,svc\n\n\n\n\n\nAnd create the work directory for blue-green release definitions.\n\n\ncd k8s-code/projets/instavote/dev\nmkdir blue-green\n\n\n\n\n\nfile: blue-green/vote-blue-deploy.yaml\n\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: vote-blue\nspec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 2\n      maxUnavailable: 1\n  revisionHistoryLimit: 4\n  paused: false\n  replicas: 15\n  minReadySeconds: 20\n  selector:\n    matchLabels:\n      role: vote\n    matchExpressions:\n      - {key: version, operator: In, values: [v1, v2, v3]}\n  template:\n    metadata:\n      name: vote\n      labels:\n        app: python\n        role: vote\n        version: v3\n        release: bluegreen\n        code: blue\n    spec:\n      containers:\n        - name: app\n          image: schoolofdevops/vote:v3\n          ports:\n            - containerPort: 80\n              protocol: TCP\n\n\n\n\nfile: blue-green/vote-green-deploy.yaml\n\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: vote-green\nspec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 2\n      maxUnavailable: 1\n  revisionHistoryLimit: 4\n  paused: false\n  replicas: 15\n  minReadySeconds: 20\n  selector:\n    matchLabels:\n      role: vote\n    matchExpressions:\n      - {key: version, operator: In, values: [v1, v2, v3, v4]}\n  template:\n    metadata:\n      name: vote\n      labels:\n        app: python\n        role: vote\n        version: v3\n        release: bluegreen\n        code: green\n    spec:\n      containers:\n        - name: app\n          image: schoolofdevops/vote:v4\n          ports:\n            - containerPort: 80\n              protocol: TCP\n\n\n\n\n\nfile: blue-green/vote-bg-svc.yml\n\n\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: vote-bg\n  labels:\n    role: vote\n    release: bluegreen\nspec:\n  selector:\n    role: vote\n    release: bluegreen\n    code: green\n  ports:\n    - port: 80\n      targetPort: 80\n      nodePort: 30001\n  type: NodePort\n\n\n\n\n\nfile: vote-svc.yml\n\n\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: vote\n  labels:\n    role: vote\nspec:\n  selector:\n    role: vote\n    release: bluegreen\n    code: blue\n  ports:\n    - port: 80\n      targetPort: 80\n      nodePort: 30000\n  type: NodePort\n\n\n\n\nCreating  blue deployment\n\n\nNow create \nvote\n service and observe the endpoints\n\n\nkubectl apply -f vote-svc.yaml\nkubectl get svc\nkubectl describe svc/vote\n\n\n\n\n[sample output]\n\n\nName:                     vote\nNamespace:                instavote\nLabels:                   role=vote\nAnnotations:              kubectl.kubernetes.io/last-applied-configuration={\napiVersion\n:\nv1\n,\nkind\n:\nService\n,\nmetadata\n:{\nannotations\n:{},\nlabels\n:{\nrole\n:\nvote\n},\nname\n:\nvote\n,\nnamespace\n:\ninstavote\n},\nspec\n:{\nexternalIPs\n:...\nSelector:                 code=blue,release=bluegreen,role=vote\nType:                     NodePort\nIP:                       10.111.93.227\nExternal IPs:             206.189.150.190,159.65.8.227\nPort:                     \nunset\n  80/TCP\nTargetPort:               80/TCP\nNodePort:                 \nunset\n  30000/TCP\nEndpoints:                \nnone\n\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \nnone\n\n\n\n\n\nwhere,\n  * \nendpoints\n are \nNone\n\n  * its selecting pods with \ncode=blue\n\n\nNow lets create the deployment for \nblue\n release\n\n\nkubectl get pods,rs,deploy\nkubectl apply -f blue-green/vote-blue-deploy.yaml\nkubectl get pods,rs,deploy\nkubectl rollout status deploy/vote-blue\n\n\n\n\n[sample output]\n\n\nWaiting for rollout to finish: 2 of 15 updated replicas are available...\ndeployment \nvote-blue\n successfully rolled out\n\n\n\n\nNow if you check the service, it should have the pods launched with blue set as endpoints\n\n\nkubectl describe svc/vote\n\nName:                     vote\nNamespace:                instavote\nLabels:                   role=vote\nAnnotations:              kubectl.kubernetes.io/last-applied-configuration={\napiVersion\n:\nv1\n,\nkind\n:\nService\n,\nmetadata\n:{\nannotations\n:{},\nlabels\n:{\nrole\n:\nvote\n},\nname\n:\nvote\n,\nnamespace\n:\ninstavote\n},\nspec\n:{\nexternalIPs\n:...\nSelector:                 code=blue,release=bluegreen,role=vote\nType:                     NodePort\nIP:                       10.111.93.227\nExternal IPs:             206.189.150.190,159.65.8.227\nPort:                     \nunset\n  80/TCP\nTargetPort:               80/TCP\nNodePort:                 \nunset\n  30000/TCP\nEndpoints:                10.32.0.10:80,10.32.0.11:80,10.32.0.4:80 + 12 more...\nSession Affinity:         None\nExternal Traffic Policy:  Cluster\nEvents:                   \nnone\n\n\n\n\n\n\nYou could observe the \nEndpoints\n created and added to the service.  Browse to http://IPADDRESS:NODEPORT to see the application deployed.\n\n\n\n\nDeploying new version with green release\n\n\nWhile deploying a new version with blue-green strategy, we would\n\n\n\n\nCreate a new deployment in parallel\n\n\nTest it by creating another service\n\n\nCut over to new release by updating selector in the main service\n\n\n\n\nLets create the deployment with new version and a service to test it. Lets call it the \ngreen\n deployment  \n\n\nkubectl apply -f blue-green/vote-bg-svc.yaml\nkubectl apply -f blue-green/vote-bg-svc.yaml\nkubectl apply -f blue-green/vote-green-deploy.yaml\nkubectl rollout status deploy/vote-green\n\n\n\n\n\n[sample output]\n\n\nWaiting for rollout to finish: 0 of 15 updated replicas are available...\nWaiting for rollout to finish: 0 of 15 updated replicas are available...\nWaiting for rollout to finish: 0 of 15 updated replicas are available...\nWaiting for rollout to finish: 0 of 15 updated replicas are available...\nWaiting for rollout to finish: 7 of 15 updated replicas are available...\ndeployment \nvote-green\n successfully rolled out\n\n\n\n\nValidate\n\n\nkubectl get pods,rs,deploy,svc\n\n\n\n\nYou could also test it by going to the http://host:nodeport for service \nvote-bg\n\n\nSwitching to new version\n\n\nNow that you  have the new version running in parallel, you could quickly switch to it by updating selector for main \nvote\n service which is live. Please note, while switching there may be a momentory downtime.\n\n\nSteps\n\n\n\n\nvisit http://HOST:NODEPORT for \nvote\n service\n\n\nupdate \nvote\n service to select \ngreen\n release\n\n\napply service definition\n\n\nvisit http://HOST:NODEPORT for \nvote\n service again to validate\n\n\n\n\nfile: vote-svc.yml\n\n\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: vote\n  labels:\n    role: vote\nspec:\n  selector:\n    role: vote\n    release: bluegreen\n    code: green\n  ports:\n    - port: 80\n      targetPort: 80\n      nodePort: 30000\n  type: NodePort\n\n\n\n\n\nApply it with\n\n\nkubectl apply -f vote-svc.yaml\n\nkubectl describe svc/vote\n\n\n\n\nIf you visit http://HOST:NODEPORT for \nvote\n service, you should see the application version updated\n\n\n\n\nClean up the previous version\n\n\nkubectl delete deploy/vote-blue\n\n\n\n\n\nClean up blue-green configs\n\n\nNow that you are done testing blue green release, lets revert to our previous configurations.\n\n\nkubectl delete deploy/vote-green\nkubectl apply -f vote-deploy.yaml\n\n\n\n\n\nAlso update the service definition and remove following  selectors added for blue green release\n\n\n\n\nrelease: bluegreen\n\n\ncode: blue\n\n\n\n\nfile: vote-svc.yaml\n\n\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: vote\n  labels:\n    role: vote\nspec:\n  selector:\n    role: vote\n  ports:\n    - port: 80\n      targetPort: 80\n      nodePort: 30000\n  type: NodePort\n\n\n\n\nAnd apply\n\n\nkubectl apply -f vote-svc.yaml\n\n\n\n\nPause/Unpause\n\n\nWhen you are in the middle of a new update for your application and you found out that the application is behaving as intended. In those situations,\n  1. we can pause the update,\n  2. fix the issue,\n  3. resume the update.\n\n\nLet us change the image tag to V4 in pod spec.\n\n\nFile: vote-deploy.yaml\n\n\n    spec:\n       containers:\n         - name: app\n           image: schoolofdevops/vote:V4\n           ports:\n             - containerPort: 80\n               protocol: TCP\n\n\n\n\nApply the changes.\n\n\nkubectl apply -f vote-deploy.yaml\n\nkubectl get pods\n\n[Output]\nNAME                         READY     STATUS         RESTARTS   AGE\nvote-6c4f7b49d8-g5dgc   1/1       Running        0          16m\nvote-765554cc7-xsbhs    0/1       ErrImagePull   0          9s\n\n\n\n\nOur deployment is failing. From some debugging, we can conclude that we are using a wrong image tag.\n\n\nNow pause the update\n\n\nkubectl rollout pause deploy/vote\n\n\n\n\nSet the deployment to use \nv4\n version of the image.\n\n\nNow resume the update\n\n\nkubectl rollout resume deployment vote\nkubectl rollout status deployment vote\n\n[Ouput]\ndeployment \nvote\n successfully rolled out\n\n\n\n\nand validate\n\n\nkubectl get pods,rs,deploy\n\n[Output]\nNAME                         READY     STATUS    RESTARTS   AGE\nvote-6875c8df8f-k4hls   1/1       Running   0          1m\n\n\n\n\nWhen you do this, you skip the need of creating a new rolling update altogether.", 
             "title": "Building Deployment Strategies"
@@ -724,256 +1034,6 @@
             "location": "/12_troubleshooting/#checking-the-status-of-deployment", 
             "text": "For this example I have a sample deployment called nginx.  FILE: nginx-deployment.yml  apiVersion: apps/v1beta1\nkind: Deployment\nmetadata:\n  name: nginx\n  labels:\n    app: nginx\nspec:\n  replicas: 1\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n        - name: nginx\n          image: ngnix:latest\n          ports:\n            - containerPort: 80  List the deployment to check for the  availability of pods  kubectl get deployment nginx\n\nNAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE\nnginx         1         1         1            0           20h  It is clear that my pod is unavailable. Lets dig further.  Check the  events  of your deployment.  kubectl describe deployment nginx  List the pods to check for any  registry related error  kubectl get pods\n\nNAME                           READY     STATUS             RESTARTS   AGE\nnginx-57c88d7bb8-c6kpc         0/1       ImagePullBackOff   0          7m  As we can see, we are not able to pull the image( ImagePullBackOff ). Let's investigate further.  kubectl describe pod nginx-57c88d7bb8-c6kpc  Check the events of the pod's description.  Events:\n  Type     Reason                 Age               From                                               Message\n  ----     ------                 ----              ----                                               -------\n  Normal   Scheduled              9m                default-scheduler                                  Successfully assigned nginx-57c88d7bb8-c6kpc to ip-11-0-1-111.us-west-2.compute.internal\n  Normal   SuccessfulMountVolume  9m                kubelet, ip-11-0-1-111.us-west-2.compute.internal  MountVolume.SetUp succeeded for volume  default-token-8cwn4 \n  Normal   Pulling                8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  pulling image  ngnix \n  Warning  Failed                 8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Failed to pull image  ngnix : rpc error: code = Unknown desc = Error response from daemon: repository ngnix not found: does not exist or no pull access\n  Normal   BackOff                7m (x6 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Back-off pulling image  ngnix \n  Warning  FailedSync             4m (x24 over 9m)  kubelet, ip-11-0-1-111.us-west-2.compute.internal  Error syncing pod  Bingo! The name of the image is  ngnix  instead of  nginx . So  fix the typo in your deployment file and redo the deployment .  Sometimes, your application(pod) may fail to start because of some configuration issues. For those errors, we can follow the logs of the pod.  kubectl logs -f nginx-57c88d7bb8-c6kpc  If you have any errors it will get populated in your logs.", 
             "title": "Checking the status of Deployment"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/", 
-            "text": "Kubernetes - Cluster Setup using Kubespray\n\n\nKubespray is an \nAnsible\n based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.\n\n\nPrerequisites\n\n\nHardware Pre requisites\n  * 4 Nodes: Virtual/Physical Machines\n  * Memory: 2GB each\n  * CPU: 2 cores recommended\n  * Hard disk: 20GB available\n\n\nSoftware Pre Requisites\n  * Ubuntu 16.04 Operating System\n  * Python\n\n\nArchitecture of a high available kubernetes cluster\n\n\nPreparing the kubernetes nodes\n\n\nOn control node\n\n\nAnsible is the base provisioner in our cluster. But installing Ansible is out of the scope of this training. You can learn about installing and configuring Ansible from \nhere.\n\n\nSetup passwordless SSH between control and kubernetes nodes\n\n\nOn control node\n\n\nAnsible uses passwordless ssh\n1\n to create the cluster. Let us see how to set it up from your \ncontrol node\n.\n\n\nssh-keygen -t rsa\nGenerating public/private rsa key pair.\nEnter file in which to save the key (/home/ubuntu/.ssh/id_rsa):\nEnter passphrase (empty for no passphrase):\nEnter same passphrase again:\nYour identification has been saved in /home/ubuntu/.ssh/id_rsa.\nYour public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.\nThe key fingerprint is:\nSHA256:yC4Tl6RYc+saTPcLKFdGlTLOWOIuDgO1my/NrMBnRxA ubuntu@node1\nThe key's randomart image is:\n+---[RSA 2048]----+\n|   E    ..       |\n|  . o +..        |\n| . +o*+o         |\n|. .o+Bo+         |\n|. .++.X S        |\n|+ +ooX .         |\n|.=.OB.+ .        |\n| .=o*= . .       |\n|  .o.   .        |\n+----[SHA256]-----+\n\n\n\n\nJust leave the fields to defaults. This command will generate a public key and private key for you.\n\n\ncat ~/.ssh/id_rsa.pub | ssh ubuntu@10.40.1.26 'cat \n ~/.ssh/authorized_keys'\n\n\n\n\nThis will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace \n10.40.1.26\n with your respective machine's IP.\n\n\nEnable IPv4 Forwarding\n\n\nOn all nodes\n\n\nssh ubuntu@10.40.1.26\nsudo su\nvim /etc/sysctl.conf\n\n\n\n\nEnalbe IPv4 forwarding by uncommenting the following line\n\n\nnet.ipv4.ip_forward=1\n\n\n\n\nStop and Disable UFW Service\n\n\nOn all nodes\n\n\nExecute the following commands to stop and disable ufw service.\n\n\nsystemctl stop ufw.service\nsystemctl disable ufw.service\n\n\n\n\nInstall Python\n\n\nOn all nodes\n\n\nAnsible needs python to be installed on all the machines.\n\n\nsudo apt update\nsudo apt install python\n\n\n\n\nConfiguring Ansible Control node and Kubespray\n\n\nOn control node\n\n\nKubespray is hosted on GitHub. Let us the clone the \nofficial repository\n.\n\n\ngit clone https://github.com/kubernetes-incubator/kubespray.git\ncd kubespray\n\n\n\n\nSet Remote User for Ansible\n\n\nOn control node\n\n\nAdd the following section in ansible.cfg file\n\n\nremote_user=ubuntu\n\n\n\n\nYour \nansible.cfg\n file should look like this.\n\n\n[ssh_connection]\npipelining=True\nssh_args = -o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100 -o UserKnownHostsFile=/dev/null\n#control_path = ~/.ssh/ansible-%%r@%%h:%%p\n[defaults]\nhost_key_checking=False\ngathering = smart\nfact_caching = jsonfile\nfact_caching_connection = /tmp\nstdout_callback = skippy\nlibrary = ./library\ncallback_whitelist = profile_tasks\nroles_path = roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles\ndeprecation_warnings=False\nremote_user=ubuntu\n\n\n\n\nDownload Inventory Builder\n\n\nOn control node\n\n\nInventory builder (a python script) helps us to create inventory file. \nInventory\n file is something with which we specify the groups of masters and nodes of our cluster.\n\n\ncd inventory\nwget https://raw.githubusercontent.com/kubernetes-incubator/kubespray/master/contrib/inventory_builder/inventory.py\n\n\n\n\nTo build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments\n\n\npython inventory.py 10.40.1.26 10.40.1.25 10.40.1.20 10.40.1.11\n\n\n\n\nThese IPs are different for you. Please replace them with your corresponding IPs.\nThis step will result in the creation of a new file \ninventory.cfg\n. This is our inventory file.\n\n\ninventory.cfg\n\n\n[all]\nnode1    ansible_host=10.40.1.26 ip=10.40.1.26\nnode2    ansible_host=10.40.1.25 ip=10.40.1.25\nnode3    ansible_host=10.40.1.20 ip=10.40.1.20\nnode4    ansible_host=10.40.1.11 ip=10.40.1.11\n\n[kube-master]\nnode1\nnode2\n\n[kube-node]\nnode1\nnode2\nnode3\nnode4\n\n[etcd]\nnode1\nnode2\nnode3\n\n[k8s-cluster:children]\nkube-node\nkube-master\n\n[calico-rr]\n\n[vault]\nnode1\nnode2\nnode3\n\n\n\n\nProvisioning  kubernetes cluster with kubespray\n\n\nOn control node\n\n\nWe are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.\n\n\nansible-playbook -i inventory/inventory.cfg cluster.yml -b -v\n\n\n\n\nOption -i = Inventory file path\nOption -b = Become as root user\nOption -v = Give verbose output\n\n\nThis Ansible run will take around 30 mins to complete.\n\n\nInstall Kubectl\n\n\nOn control node\n\n\nBefore we proceed further, we will need to install \nkubectl\n binary in our control node. Read installation procedure from this \nlink\n.\n\n\nGetting the Kubernetes Configuration File\n\n\nOn control node\n\n\nOnce the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.\n\n\nssh ubuntu@10.40.1.26\nsudo su\ncp /etc/kubernetes/admin.conf /home/ubuntu\nchown ubuntu:ubuntu /home/ubuntu/admin.conf\nexit\nexit\nscp ubuntu@10.40.1.26:~/admin.conf .\ncd\nmkdir .kube\nmv admin.conf .kube/config\n\n\n\n\nCheck the State of the Cluster\n\n\nOn control node\n\n\nLet us check the state of the cluster by running,\n\n\nkubectl cluster-info\n\nKubernetes master is running at https://10.40.1.26:6443\nKubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nTo further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.\n\n\n\n\nkubectl get nodes\n\nNAME      STATUS    ROLES         AGE       VERSION\nnode1     Ready     master,node   21h       v1.9.0+coreos.0\nnode2     Ready     master,node   21h       v1.9.0+coreos.0\nnode3     Ready     node          21h       v1.9.0+coreos.0\nnode4     Ready     node          21h       v1.9.0+coreos.0\n\n\n\n\nIf you are able to see this, your cluster has been set up successfully.\n\n\n\n\n1\n You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.", 
-            "title": "Production grade setup with Kubespray"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#kubernetes-cluster-setup-using-kubespray", 
-            "text": "Kubespray is an  Ansible  based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.", 
-            "title": "Kubernetes - Cluster Setup using Kubespray"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#prerequisites", 
-            "text": "Hardware Pre requisites\n  * 4 Nodes: Virtual/Physical Machines\n  * Memory: 2GB each\n  * CPU: 2 cores recommended\n  * Hard disk: 20GB available  Software Pre Requisites\n  * Ubuntu 16.04 Operating System\n  * Python", 
-            "title": "Prerequisites"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#architecture-of-a-high-available-kubernetes-cluster", 
-            "text": "", 
-            "title": "Architecture of a high available kubernetes cluster"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#preparing-the-kubernetes-nodes", 
-            "text": "On control node  Ansible is the base provisioner in our cluster. But installing Ansible is out of the scope of this training. You can learn about installing and configuring Ansible from  here.", 
-            "title": "Preparing the kubernetes nodes"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#setup-passwordless-ssh-between-control-and-kubernetes-nodes", 
-            "text": "On control node  Ansible uses passwordless ssh 1  to create the cluster. Let us see how to set it up from your  control node .  ssh-keygen -t rsa\nGenerating public/private rsa key pair.\nEnter file in which to save the key (/home/ubuntu/.ssh/id_rsa):\nEnter passphrase (empty for no passphrase):\nEnter same passphrase again:\nYour identification has been saved in /home/ubuntu/.ssh/id_rsa.\nYour public key has been saved in /home/ubuntu/.ssh/id_rsa.pub.\nThe key fingerprint is:\nSHA256:yC4Tl6RYc+saTPcLKFdGlTLOWOIuDgO1my/NrMBnRxA ubuntu@node1\nThe key's randomart image is:\n+---[RSA 2048]----+\n|   E    ..       |\n|  . o +..        |\n| . +o*+o         |\n|. .o+Bo+         |\n|. .++.X S        |\n|+ +ooX .         |\n|.=.OB.+ .        |\n| .=o*= . .       |\n|  .o.   .        |\n+----[SHA256]-----+  Just leave the fields to defaults. This command will generate a public key and private key for you.  cat ~/.ssh/id_rsa.pub | ssh ubuntu@10.40.1.26 'cat   ~/.ssh/authorized_keys'  This will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace  10.40.1.26  with your respective machine's IP.", 
-            "title": "Setup passwordless SSH between control and kubernetes nodes"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#enable-ipv4-forwarding", 
-            "text": "On all nodes  ssh ubuntu@10.40.1.26\nsudo su\nvim /etc/sysctl.conf  Enalbe IPv4 forwarding by uncommenting the following line  net.ipv4.ip_forward=1", 
-            "title": "Enable IPv4 Forwarding"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#stop-and-disable-ufw-service", 
-            "text": "On all nodes  Execute the following commands to stop and disable ufw service.  systemctl stop ufw.service\nsystemctl disable ufw.service", 
-            "title": "Stop and Disable UFW Service"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#install-python", 
-            "text": "On all nodes  Ansible needs python to be installed on all the machines.  sudo apt update\nsudo apt install python", 
-            "title": "Install Python"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#configuring-ansible-control-node-and-kubespray", 
-            "text": "On control node  Kubespray is hosted on GitHub. Let us the clone the  official repository .  git clone https://github.com/kubernetes-incubator/kubespray.git\ncd kubespray", 
-            "title": "Configuring Ansible Control node and Kubespray"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#set-remote-user-for-ansible", 
-            "text": "On control node  Add the following section in ansible.cfg file  remote_user=ubuntu  Your  ansible.cfg  file should look like this.  [ssh_connection]\npipelining=True\nssh_args = -o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100 -o UserKnownHostsFile=/dev/null\n#control_path = ~/.ssh/ansible-%%r@%%h:%%p\n[defaults]\nhost_key_checking=False\ngathering = smart\nfact_caching = jsonfile\nfact_caching_connection = /tmp\nstdout_callback = skippy\nlibrary = ./library\ncallback_whitelist = profile_tasks\nroles_path = roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles\ndeprecation_warnings=False\nremote_user=ubuntu", 
-            "title": "Set Remote User for Ansible"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#download-inventory-builder", 
-            "text": "On control node  Inventory builder (a python script) helps us to create inventory file.  Inventory  file is something with which we specify the groups of masters and nodes of our cluster.  cd inventory\nwget https://raw.githubusercontent.com/kubernetes-incubator/kubespray/master/contrib/inventory_builder/inventory.py  To build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments  python inventory.py 10.40.1.26 10.40.1.25 10.40.1.20 10.40.1.11  These IPs are different for you. Please replace them with your corresponding IPs.\nThis step will result in the creation of a new file  inventory.cfg . This is our inventory file.  inventory.cfg  [all]\nnode1    ansible_host=10.40.1.26 ip=10.40.1.26\nnode2    ansible_host=10.40.1.25 ip=10.40.1.25\nnode3    ansible_host=10.40.1.20 ip=10.40.1.20\nnode4    ansible_host=10.40.1.11 ip=10.40.1.11\n\n[kube-master]\nnode1\nnode2\n\n[kube-node]\nnode1\nnode2\nnode3\nnode4\n\n[etcd]\nnode1\nnode2\nnode3\n\n[k8s-cluster:children]\nkube-node\nkube-master\n\n[calico-rr]\n\n[vault]\nnode1\nnode2\nnode3", 
-            "title": "Download Inventory Builder"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#provisioning-kubernetes-cluster-with-kubespray", 
-            "text": "On control node  We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.  ansible-playbook -i inventory/inventory.cfg cluster.yml -b -v  Option -i = Inventory file path\nOption -b = Become as root user\nOption -v = Give verbose output  This Ansible run will take around 30 mins to complete.", 
-            "title": "Provisioning  kubernetes cluster with kubespray"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#install-kubectl", 
-            "text": "On control node  Before we proceed further, we will need to install  kubectl  binary in our control node. Read installation procedure from this  link .", 
-            "title": "Install Kubectl"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#getting-the-kubernetes-configuration-file", 
-            "text": "On control node  Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.  ssh ubuntu@10.40.1.26\nsudo su\ncp /etc/kubernetes/admin.conf /home/ubuntu\nchown ubuntu:ubuntu /home/ubuntu/admin.conf\nexit\nexit\nscp ubuntu@10.40.1.26:~/admin.conf .\ncd\nmkdir .kube\nmv admin.conf .kube/config", 
-            "title": "Getting the Kubernetes Configuration File"
-        }, 
-        {
-            "location": "/cluster_setup_kubespray/#check-the-state-of-the-cluster", 
-            "text": "On control node  Let us check the state of the cluster by running,  kubectl cluster-info\n\nKubernetes master is running at https://10.40.1.26:6443\nKubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy\n\nTo further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.  kubectl get nodes\n\nNAME      STATUS    ROLES         AGE       VERSION\nnode1     Ready     master,node   21h       v1.9.0+coreos.0\nnode2     Ready     master,node   21h       v1.9.0+coreos.0\nnode3     Ready     node          21h       v1.9.0+coreos.0\nnode4     Ready     node          21h       v1.9.0+coreos.0  If you are able to see this, your cluster has been set up successfully.   1  You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.", 
-            "title": "Check the State of the Cluster"
-        }, 
-        {
-            "location": "/12_troubleshooting/", 
-            "text": "Troubleshooting the Kubernetes cluster\n\n\nIn this chapter we will learn about how to trouble shoot our Kubernetes cluster at \ncontrol plane\n level and at \napplication level\n.\n\n\nTroubleshooting the control plane\n\n\nListing the nodes in a cluster\n\n\nFirst thing to check if your cluster is working fine or not is to list the nodes associated with your cluster.\n\n\nkubectl get nodes\n\n\n\n\nMake sure that all nodes are in \nReady\n state.\n\n\nList the control plane pods\n\n\nIf your nodes are up and running, next thing to check is the status of Kubernetes components.\nRun,\n\n\nkubectl get pods -n kube-system\n\n\n\n\nIf any of the pod is \nrestarting or crashing\n, look in to the issue.\nThis can be done by getting the pod's description.\nFor example, in my cluster \nkube-dns\n is crashing. In order to fix this first check the deployment for errors.\n\n\nkubectl describe deployment -n kube-system kube-dns\n\n\n\n\nLog files\n\n\nMaster\n\n\nIf your deployment is good, the next thing to look for is log files.\nThe locations of log files are given below...\n\n\n/var/log/kube-apiserver.log - For API Server logs\n/var/log/kube-scheduler.log - For Scheduler logs\n/var/log/kube-controller-manager.log - For Replication Controller logs\n\n\n\n\nIf your Kubernetes components are running as pods, then you can get their logs by following the steps given below,\nKeep in mind that the \nactual pod's name may differ\n from cluster to cluster...\n\n\nkubectl logs -n kube-system -f kube-apiserver-node1\nkubectl logs -n kube-system -f kube-scheduler-node1\nkubectl logs -n kube-system -f kube-controller-manager-node1\n\n\n\n\nWorker Nodes\n\n\nIn your worker, you will need to check for errors in kubelet's log...\n\n\nsudo journalctl -u  kubelet\n\n\n\n\nTroubleshooting the application\n\n\nSometimes your application(pod) may fail to start because of various reasons. Let's see how to troubleshoot.\n\n\nGetting detailed status of an object (pods, deployments)\n\n\nobject.status\n shows a detailed information about whats the status of an object ( e.g. pod) and why its in that condition. This can be very useful to identify the issues.\n\n\nExample\n\n\nkubectl get pod vote -o yaml\n\n\n\n\n\nexample output snippet when a wrong image was used to create a pod. \n\n\nstatus:\n...\ncontainerStatuses:\n....\nstate:\n  waiting:\n    message: 'rpc error: code = Unknown desc = Error response from daemon: manifest\n      for schoolofdevops/vote:latst not found'\n    reason: ErrImagePull\nhostIP: 139.59.232.248\n\n\n\n\nChecking the status of Deployment\n\n\nFor this example I have a sample deployment called nginx.\n\n\nFILE: nginx-deployment.yml\n\n\napiVersion: apps/v1beta1\nkind: Deployment\nmetadata:\n  name: nginx\n  labels:\n    app: nginx\nspec:\n  replicas: 1\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n        - name: nginx\n          image: ngnix:latest\n          ports:\n            - containerPort: 80\n\n\n\n\nList the deployment to check for the \navailability of pods\n\n\nkubectl get deployment nginx\n\nNAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE\nnginx         1         1         1            0           20h\n\n\n\n\nIt is clear that my pod is unavailable. Lets dig further.\n\n\nCheck the \nevents\n of your deployment.\n\n\nkubectl describe deployment nginx\n\n\n\n\nList the pods to check for any \nregistry related error\n\n\nkubectl get pods\n\nNAME                           READY     STATUS             RESTARTS   AGE\nnginx-57c88d7bb8-c6kpc         0/1       ImagePullBackOff   0          7m\n\n\n\n\nAs we can see, we are not able to pull the image(\nImagePullBackOff\n). Let's investigate further.\n\n\nkubectl describe pod nginx-57c88d7bb8-c6kpc\n\n\n\n\nCheck the events of the pod's description.\n\n\nEvents:\n  Type     Reason                 Age               From                                               Message\n  ----     ------                 ----              ----                                               -------\n  Normal   Scheduled              9m                default-scheduler                                  Successfully assigned nginx-57c88d7bb8-c6kpc to ip-11-0-1-111.us-west-2.compute.internal\n  Normal   SuccessfulMountVolume  9m                kubelet, ip-11-0-1-111.us-west-2.compute.internal  MountVolume.SetUp succeeded for volume \ndefault-token-8cwn4\n\n  Normal   Pulling                8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  pulling image \nngnix\n\n  Warning  Failed                 8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Failed to pull image \nngnix\n: rpc error: code = Unknown desc = Error response from daemon: repository ngnix not found: does not exist or no pull access\n  Normal   BackOff                7m (x6 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Back-off pulling image \nngnix\n\n  Warning  FailedSync             4m (x24 over 9m)  kubelet, ip-11-0-1-111.us-west-2.compute.internal  Error syncing pod\n\n\n\n\nBingo! The name of the image is \nngnix\n instead of \nnginx\n. So \nfix the typo in your deployment file and redo the deployment\n.\n\n\nSometimes, your application(pod) may fail to start because of some configuration issues. For those errors, we can follow the logs of the pod.\n\n\nkubectl logs -f nginx-57c88d7bb8-c6kpc\n\n\n\n\nIf you have any errors it will get populated in your logs.", 
-            "title": "Troubleshooting Tips"
-        }, 
-        {
-            "location": "/12_troubleshooting/#troubleshooting-the-kubernetes-cluster", 
-            "text": "In this chapter we will learn about how to trouble shoot our Kubernetes cluster at  control plane  level and at  application level .", 
-            "title": "Troubleshooting the Kubernetes cluster"
-        }, 
-        {
-            "location": "/12_troubleshooting/#troubleshooting-the-control-plane", 
-            "text": "", 
-            "title": "Troubleshooting the control plane"
-        }, 
-        {
-            "location": "/12_troubleshooting/#listing-the-nodes-in-a-cluster", 
-            "text": "First thing to check if your cluster is working fine or not is to list the nodes associated with your cluster.  kubectl get nodes  Make sure that all nodes are in  Ready  state.", 
-            "title": "Listing the nodes in a cluster"
-        }, 
-        {
-            "location": "/12_troubleshooting/#list-the-control-plane-pods", 
-            "text": "If your nodes are up and running, next thing to check is the status of Kubernetes components.\nRun,  kubectl get pods -n kube-system  If any of the pod is  restarting or crashing , look in to the issue.\nThis can be done by getting the pod's description.\nFor example, in my cluster  kube-dns  is crashing. In order to fix this first check the deployment for errors.  kubectl describe deployment -n kube-system kube-dns", 
-            "title": "List the control plane pods"
-        }, 
-        {
-            "location": "/12_troubleshooting/#log-files", 
-            "text": "", 
-            "title": "Log files"
-        }, 
-        {
-            "location": "/12_troubleshooting/#master", 
-            "text": "If your deployment is good, the next thing to look for is log files.\nThe locations of log files are given below...  /var/log/kube-apiserver.log - For API Server logs\n/var/log/kube-scheduler.log - For Scheduler logs\n/var/log/kube-controller-manager.log - For Replication Controller logs  If your Kubernetes components are running as pods, then you can get their logs by following the steps given below,\nKeep in mind that the  actual pod's name may differ  from cluster to cluster...  kubectl logs -n kube-system -f kube-apiserver-node1\nkubectl logs -n kube-system -f kube-scheduler-node1\nkubectl logs -n kube-system -f kube-controller-manager-node1", 
-            "title": "Master"
-        }, 
-        {
-            "location": "/12_troubleshooting/#worker-nodes", 
-            "text": "In your worker, you will need to check for errors in kubelet's log...  sudo journalctl -u  kubelet", 
-            "title": "Worker Nodes"
-        }, 
-        {
-            "location": "/12_troubleshooting/#troubleshooting-the-application", 
-            "text": "Sometimes your application(pod) may fail to start because of various reasons. Let's see how to troubleshoot.", 
-            "title": "Troubleshooting the application"
-        }, 
-        {
-            "location": "/12_troubleshooting/#getting-detailed-status-of-an-object-pods-deployments", 
-            "text": "object.status  shows a detailed information about whats the status of an object ( e.g. pod) and why its in that condition. This can be very useful to identify the issues.  Example  kubectl get pod vote -o yaml  example output snippet when a wrong image was used to create a pod.   status:\n...\ncontainerStatuses:\n....\nstate:\n  waiting:\n    message: 'rpc error: code = Unknown desc = Error response from daemon: manifest\n      for schoolofdevops/vote:latst not found'\n    reason: ErrImagePull\nhostIP: 139.59.232.248", 
-            "title": "Getting detailed status of an object (pods, deployments)"
-        }, 
-        {
-            "location": "/12_troubleshooting/#checking-the-status-of-deployment", 
-            "text": "For this example I have a sample deployment called nginx.  FILE: nginx-deployment.yml  apiVersion: apps/v1beta1\nkind: Deployment\nmetadata:\n  name: nginx\n  labels:\n    app: nginx\nspec:\n  replicas: 1\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n        - name: nginx\n          image: ngnix:latest\n          ports:\n            - containerPort: 80  List the deployment to check for the  availability of pods  kubectl get deployment nginx\n\nNAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE\nnginx         1         1         1            0           20h  It is clear that my pod is unavailable. Lets dig further.  Check the  events  of your deployment.  kubectl describe deployment nginx  List the pods to check for any  registry related error  kubectl get pods\n\nNAME                           READY     STATUS             RESTARTS   AGE\nnginx-57c88d7bb8-c6kpc         0/1       ImagePullBackOff   0          7m  As we can see, we are not able to pull the image( ImagePullBackOff ). Let's investigate further.  kubectl describe pod nginx-57c88d7bb8-c6kpc  Check the events of the pod's description.  Events:\n  Type     Reason                 Age               From                                               Message\n  ----     ------                 ----              ----                                               -------\n  Normal   Scheduled              9m                default-scheduler                                  Successfully assigned nginx-57c88d7bb8-c6kpc to ip-11-0-1-111.us-west-2.compute.internal\n  Normal   SuccessfulMountVolume  9m                kubelet, ip-11-0-1-111.us-west-2.compute.internal  MountVolume.SetUp succeeded for volume  default-token-8cwn4 \n  Normal   Pulling                8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  pulling image  ngnix \n  Warning  Failed                 8m (x4 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Failed to pull image  ngnix : rpc error: code = Unknown desc = Error response from daemon: repository ngnix not found: does not exist or no pull access\n  Normal   BackOff                7m (x6 over 9m)   kubelet, ip-11-0-1-111.us-west-2.compute.internal  Back-off pulling image  ngnix \n  Warning  FailedSync             4m (x24 over 9m)  kubelet, ip-11-0-1-111.us-west-2.compute.internal  Error syncing pod  Bingo! The name of the image is  ngnix  instead of  nginx . So  fix the typo in your deployment file and redo the deployment .  Sometimes, your application(pod) may fail to start because of some configuration issues. For those errors, we can follow the logs of the pod.  kubectl logs -f nginx-57c88d7bb8-c6kpc  If you have any errors it will get populated in your logs.", 
-            "title": "Checking the status of Deployment"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/", 
-            "text": "Configuring Authentication and Authorization\n\n\nLet us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.\n\n\nCreate namespace for a user(Optional)\n\n\nCreate the \ndev\n namespace if it has not been created already.\n\n\ndev-namespace.yml\n\n\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev\n\n\n\n\nkubectl apply -f dev-namespace.yml\n\n\n\n\nCreate the user credentials\n\n\nGenerate the user's private key\n\n\nopenssl genrsa -out john.key 2048\nopenssl req -new -key john.key -out john.csr -subj \n/CN=john/O=initcron\n\n\n\n\n\nSign the key using kubernetes CA\n\nBefore proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.\n\n\nopenssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500\n\n\n\n\nSave these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)\nExecute the following commands on the users system\n\n\nkubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context john-context --cluster=\nYOUR-CLUSTER-NAME\n --namespace=\nNAMESPACE-FOR-USER\n  --user=john\n# This step will throw an error\nkubectl --context=john-context get pods\n\n\n\n\nCreate role for the developers\n\n\nThese steps (3,4) has to be executed from kube-master or the controller machine\n\ndev-role.yml\n\n\nkind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [\n, \nextensions\n, \napps\n]\n  resources: [\ndeployments\n, \nreplicasets\n, \npods\n]\n  verbs: [\nget\n, \nlist\n, \nwatch\n, \ncreate\n, \nupdate\n, \npatch\n, \ndelete\n]\n\n\n\n\nkubectl create -f dev-role.yml\n\n\n\n\nCreate RoleBindings for the dev-role\n\n\ndev-rolebinding.yml\n\n\nkind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: john\n  apiGroup: \n\nroleRef:\n  kind: Role\n  name: developer\n  apiGroup: \n\n\n\n\n\nkubectl create -f dev-rolebinding.yaml\n\n\n\n\nKubernetes Access Control\n\n\nIn this chapter, we will see about how to use authentication and authorisation of Kubernetes.\n\n\nHow one can access the Kubernetes API?\n\n\nThe Kubernetes API can be accessed by three ways.\n  * Kubeclt - A command line utility of Kubernetes\n  * Client libraries - Go, Python, etc.,\n  * REST requests\n\n\nWho can access the Kubernetes API?\n\n\nKubernetes API can be accessed by,\n  * Human users\n  * Service Accounts\nEach of these topics will be discussed in detail in the later part of this chapter.\n\n\nStages of a Request\n\n\nWhen a request tries to contact the API , it goes through various stages as illustrated in the image given below.\n\n\n\n\nsource: official kubernetes site\n\n\nTLS in Kubernetes\n\n\nKubernetes API typically runs on two ports.\n  * 8080\n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).\n    * This port is insecure.\n  * 6443\n    * TLS Enabled.\n    * Available for kubectl and others.\n\n\nStage 1: Authentication\n\n\n\n\nAuthentication operation checks whether the \nuser/service account\n has the permission to talk to the api server or not.\n\n\nAuthentication is done by the authentication modules which are configured with the api server.\n\n\nCluster uses with one or more authentication modules enabled.\n\n\nIf the request fails to authenticate itself, it will be served with \n401 error\n.\n\n\n\n\nAuthentication for Normal User\n\n\n\n\nKubernetes uses \nusernames\n for access control.\n\n\nBut it neither has an api object nor stores information about users in its data store.\n\n\nUsers need to be managed externally by the cluster administrator.\n\n\n\n\nAuthentication for Service Accounts\n\n\n\n\nUnlike user accounts, service accounts are managed by Kubernetes.\n\n\nservice accounts\n are bound to specific namespaces.\n\n\nCredentials for \nservice Accounts\n are stored as \nsecrets\n.\n\n\nThese secrets are mounted to pods when a deployment starts using the Service Account.\n\n\n\n\nStage 2: Authorization\n\n\n\n\nAfter a request successfully authenticated, it goes through the authorization process.\n\n\nIn order for a request to be authorized, it must consist following attributes.\n\n\nUsername of the requester(User)\n\n\nRequested action(Verb)\n\n\nThe object affected(Resource)\n\n\n\n\n\n\nAuthorization is done by the following modules. Each of these modules has a special purpose.\n\n\nAttribute Based Access Control(ABAC)\n\n\nRole Based Access Control(RBAC)\n\n\nNode Authorizer\n\n\nWebhook module\n\n\n\n\n\n\nIf a request is failed to get authorized, it will be served with \n403 error\n.\n\n\nAmong these modules, RBAC is the most used authorizer while,\n\n\nABAC is used for,\n\n\nPolicy based, fine grained access control\n\n\nThe caveat is api server has to be restarted whenever we define a ABAC policy\n\n\nNode Authorizer is,\n\n\nEnabled in all the worker nodes\n\n\nGrants access to kubelet for some of the resources.\n\n\n\n\n\n\nWe have already talked about the user in detail. Now lets focus on \nverbs\n and \nresources\n\n\nWe will talk about RBAC in detail in the later part\n\n\n\n\nVerbs\n\n\n\n\nVerbs are the \naction\n to be taken on resources.\n\n\nSome of the verbs in Kubernetes are,\n\n\nget\n\n\nlist\n\n\ncreate\n\n\nupdate\n\n\npatch\n\n\nwatch\n\n\ndelete\n\n\n\n\n\n\n\n\nResources\n\n\n\n\nResources are the object being manipulated by the verb.\n\n\nEx: pods, deployments, service, namespaces, nodes, etc.,\n\n\n\n\nStage 3: Admission Control\n\n\n\n\nAdmission control part is taken care of by the software modules that can modify/reject requests.\n\n\nAdmission control is mainly used for fine-tuning access control.\n\n\nAdmission control can directly act on the object being modified.\n\n\n\n\nRole Based Access Control (RBAC)\n\n\n\n\nRBAC is the most used form of access control to \ngrant or revoke\n permissions to users.\n\n\nIt is used for dynamically configuring policies through API.\n\n\nRBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.\n\n\nObjects that are used to create policies,\n\n\nRoles,\n\n\nClusterRoles.\n\n\n\n\n\n\nObjects that are used to implement policies,\n\n\nRoleBindings,\n\n\nClusterRoleBindings.\n\n\n\n\n\n\n\n\nRoles\n\n\n\n\nRoles grant access to resources \nwithin a single namespace\n.\n\n\nRoles cannot grant permission for global(cluster-wide) resources.\n\n\n\n\nClusterRoles\n\n\n\n\nClusterRoles works similar to Roles, but for \ncluster-wide\n resources.\n\n\n\n\nRoleBindings\n\n\n\n\nRoleBidings are used to grant permission defined in a Role to \na user or a set of users\n.\n\n\nRoleBindings can also refer to \nClusterRoles\n.\n\n\n\n\nClusterRoleBindings\n\n\n\n\nClusterRoleBindings works same as RoleBindings, but cluster-wide.", 
-            "title": "Authentication and Authorization"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#configuring-authentication-and-authorization", 
-            "text": "Let us assume a scenario, where a cluster admin was asked to add a newly joined developer, John, to the cluster. He needs to create a configuration file for John and restrict him from accessing resources from other environments.", 
-            "title": "Configuring Authentication and Authorization"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-namespace-for-a-useroptional", 
-            "text": "Create the  dev  namespace if it has not been created already.  dev-namespace.yml  apiVersion: v1\nkind: Namespace\nmetadata:\n  name: dev\n  labels:\n    name: dev  kubectl apply -f dev-namespace.yml", 
-            "title": "Create namespace for a user(Optional)"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-the-user-credentials", 
-            "text": "Generate the user's private key  openssl genrsa -out john.key 2048\nopenssl req -new -key john.key -out john.csr -subj  /CN=john/O=initcron   Sign the key using kubernetes CA Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.  openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500  Save these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)\nExecute the following commands on the users system  kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key\nkubectl config set-context john-context --cluster= YOUR-CLUSTER-NAME  --namespace= NAMESPACE-FOR-USER   --user=john\n# This step will throw an error\nkubectl --context=john-context get pods", 
-            "title": "Create the user credentials"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-role-for-the-developers", 
-            "text": "These steps (3,4) has to be executed from kube-master or the controller machine dev-role.yml  kind: Role\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  namespace: dev\n  name: developer\nrules:\n- apiGroups: [ ,  extensions ,  apps ]\n  resources: [ deployments ,  replicasets ,  pods ]\n  verbs: [ get ,  list ,  watch ,  create ,  update ,  patch ,  delete ]  kubectl create -f dev-role.yml", 
-            "title": "Create role for the developers"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#create-rolebindings-for-the-dev-role", 
-            "text": "dev-rolebinding.yml  kind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1beta1\nmetadata:\n  name: developer\n  namespace: developer\nsubjects:\n- kind: User\n  name: john\n  apiGroup:  \nroleRef:\n  kind: Role\n  name: developer\n  apiGroup:    kubectl create -f dev-rolebinding.yaml", 
-            "title": "Create RoleBindings for the dev-role"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#kubernetes-access-control", 
-            "text": "In this chapter, we will see about how to use authentication and authorisation of Kubernetes.", 
-            "title": "Kubernetes Access Control"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#how-one-can-access-the-kubernetes-api", 
-            "text": "The Kubernetes API can be accessed by three ways.\n  * Kubeclt - A command line utility of Kubernetes\n  * Client libraries - Go, Python, etc.,\n  * REST requests", 
-            "title": "How one can access the Kubernetes API?"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#who-can-access-the-kubernetes-api", 
-            "text": "Kubernetes API can be accessed by,\n  * Human users\n  * Service Accounts\nEach of these topics will be discussed in detail in the later part of this chapter.", 
-            "title": "Who can access the Kubernetes API?"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stages-of-a-request", 
-            "text": "When a request tries to contact the API , it goes through various stages as illustrated in the image given below.   source: official kubernetes site", 
-            "title": "Stages of a Request"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#tls-in-kubernetes", 
-            "text": "Kubernetes API typically runs on two ports.\n  * 8080\n    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).\n    * This port is insecure.\n  * 6443\n    * TLS Enabled.\n    * Available for kubectl and others.", 
-            "title": "TLS in Kubernetes"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stage-1-authentication", 
-            "text": "Authentication operation checks whether the  user/service account  has the permission to talk to the api server or not.  Authentication is done by the authentication modules which are configured with the api server.  Cluster uses with one or more authentication modules enabled.  If the request fails to authenticate itself, it will be served with  401 error .", 
-            "title": "Stage 1: Authentication"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#authentication-for-normal-user", 
-            "text": "Kubernetes uses  usernames  for access control.  But it neither has an api object nor stores information about users in its data store.  Users need to be managed externally by the cluster administrator.", 
-            "title": "Authentication for Normal User"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#authentication-for-service-accounts", 
-            "text": "Unlike user accounts, service accounts are managed by Kubernetes.  service accounts  are bound to specific namespaces.  Credentials for  service Accounts  are stored as  secrets .  These secrets are mounted to pods when a deployment starts using the Service Account.", 
-            "title": "Authentication for Service Accounts"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stage-2-authorization", 
-            "text": "After a request successfully authenticated, it goes through the authorization process.  In order for a request to be authorized, it must consist following attributes.  Username of the requester(User)  Requested action(Verb)  The object affected(Resource)    Authorization is done by the following modules. Each of these modules has a special purpose.  Attribute Based Access Control(ABAC)  Role Based Access Control(RBAC)  Node Authorizer  Webhook module    If a request is failed to get authorized, it will be served with  403 error .  Among these modules, RBAC is the most used authorizer while,  ABAC is used for,  Policy based, fine grained access control  The caveat is api server has to be restarted whenever we define a ABAC policy  Node Authorizer is,  Enabled in all the worker nodes  Grants access to kubelet for some of the resources.    We have already talked about the user in detail. Now lets focus on  verbs  and  resources  We will talk about RBAC in detail in the later part", 
-            "title": "Stage 2: Authorization"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#verbs", 
-            "text": "Verbs are the  action  to be taken on resources.  Some of the verbs in Kubernetes are,  get  list  create  update  patch  watch  delete", 
-            "title": "Verbs"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#resources", 
-            "text": "Resources are the object being manipulated by the verb.  Ex: pods, deployments, service, namespaces, nodes, etc.,", 
-            "title": "Resources"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#stage-3-admission-control", 
-            "text": "Admission control part is taken care of by the software modules that can modify/reject requests.  Admission control is mainly used for fine-tuning access control.  Admission control can directly act on the object being modified.", 
-            "title": "Stage 3: Admission Control"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#role-based-access-control-rbac", 
-            "text": "RBAC is the most used form of access control to  grant or revoke  permissions to users.  It is used for dynamically configuring policies through API.  RBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.  Objects that are used to create policies,  Roles,  ClusterRoles.    Objects that are used to implement policies,  RoleBindings,  ClusterRoleBindings.", 
-            "title": "Role Based Access Control (RBAC)"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#roles", 
-            "text": "Roles grant access to resources  within a single namespace .  Roles cannot grant permission for global(cluster-wide) resources.", 
-            "title": "Roles"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#clusterroles", 
-            "text": "ClusterRoles works similar to Roles, but for  cluster-wide  resources.", 
-            "title": "ClusterRoles"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#rolebindings", 
-            "text": "RoleBidings are used to grant permission defined in a Role to  a user or a set of users .  RoleBindings can also refer to  ClusterRoles .", 
-            "title": "RoleBindings"
-        }, 
-        {
-            "location": "/configuring_authentication_and_authorization/#clusterrolebindings", 
-            "text": "ClusterRoleBindings works same as RoleBindings, but cluster-wide.", 
-            "title": "ClusterRoleBindings"
         }
     ]
 }

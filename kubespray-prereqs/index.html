@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Kubespray lab setup with Vagrant - Ultimate Kubernetes Bootcamp</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Kubespray lab setup with Vagrant";
+    var mkdocs_page_input_path = "kubespray-prereqs.md";
+    var mkdocs_page_url = "/kubespray-prereqs/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Ultimate Kubernetes Bootcamp</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Setup</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../minikube/">Using minikube to setup single node environment</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../3_install_kubernetes/">Setup Kubernetes Cluster</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Kubernetes Fundamentals</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../5-vote-deploying_pods/">Launching Pods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../replication/">Making application highly available</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Advanced Kubernetes</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Kubespray lab setup with Vagrant</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#prerequisites-for-using-kubespray">Prerequisites for Using Kubespray</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#hardward-requirements">Hardward Requirements:</a></li>
+        
+            <li><a class="toctree-l4" href="#vagrant-setup">Vagrant Setup:</a></li>
+        
+            <li><a class="toctree-l4" href="#software-requirements-on-control-node">Software Requirements on Control Node:</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#check-the-installation">Check the installation</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#prerequisite-2-set-up-passwordless-ssh">Prerequisite 2: Set up Passwordless SSH</a></li>
+        
+            <li><a class="toctree-l4" href="#setting-up-kubernetes-using-kubespray">Setting Up Kubernetes Using Kubespray</a></li>
+        
+            <li><a class="toctree-l4" href="#install-kubectl">Install Kubectl</a></li>
+        
+            <li><a class="toctree-l4" href="#getting-the-kubernetes-configuration-file">Getting the Kubernetes Configuration File</a></li>
+        
+            <li><a class="toctree-l4" href="#check-the-state-of-the-cluster">Check the State of the Cluster</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cluster_setup_kubespray/">Production grade setup with Kubespray</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Cluster Setup for Redis</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../ingress/">Ingress Controllers</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Additional Topics</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Ultimate Kubernetes Bootcamp</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Advanced Kubernetes &raquo;</li>
+        
+      
+    
+    <li>Kubespray lab setup with Vagrant</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="prerequisites-for-using-kubespray">Prerequisites for Using Kubespray</h1>
+<h2 id="hardward-requirements">Hardward Requirements:</h2>
+<h3 id="virtual-machines">Virtual Machines</h3>
+<ul>
+<li>Number of VMs: 4</li>
+<li>Memory: 2 GB</li>
+<li>CPU: 2 Cores</li>
+<li>Disk: 50 GB</li>
+</ul>
+<h2 id="vagrant-setup">Vagrant Setup:</h2>
+<p>This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements, the lessons learned in this tutorial can be applied to other platforms. Start from <a href="#Settin-Up-Kubernetes-Using-Kubespray">Set up Kubernetes Using Kubespray</a>(or) Refer to this <a href="https://github.com/schoolofdevops/ultimate-kubernetes-bootcamp/blob/master/chapters/cluster_setup_kubespray.md">Document</a>, if you have VMs running elsewhere</p>
+<h3 id="software-requirements-on-host-machine">Software Requirements on Host Machine:</h3>
+<ul>
+<li>Virtual Box (latest)</li>
+<li>Vagrant (latest)</li>
+<li>Git Bash (Only for Windows)</li>
+<li>Conemu (Only for Windows)</li>
+</ul>
+<h3 id="set-up-learning-environment">Set up Learning Environment:</h3>
+<ul>
+<li>
+<p>Make a work directory and change to that directory</p>
+<p><code>mkdir advanced-kubernetes
+ cd avanced-kubernetes</code></p>
+</li>
+<li>
+<p>Download the Vagrant template</p>
+<p><code>curl -O https://raw.githubusercontent.com/schoolofdevops/kubespray-1/master/Vagrantfile</code></p>
+</li>
+<li>
+<p>Bring up the VMs</p>
+<p><code>vagrant up</code>
+  * SSH into your first VM <code>k8s-01</code> by running,</p>
+<p><code>vagrant ssh k8s-01</code></p>
+</li>
+</ul>
+<h2 id="software-requirements-on-control-node">Software Requirements on Control Node:</h2>
+<h3 id="prerequisite-1-install-python">Prerequisite 1: Install Python</h3>
+<ul>
+<li>Select the first VM as your <code>Ansible Controller</code>.</li>
+<li>
+<p>Install Python Pip on your <code>Ansible Controller</code> machine. We don't need to install Python as it comes preinstalled on Ubuntu 16.04</p>
+<p>```
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install -y python3-pip</p>
+<h1 id="check-the-installation">Check the installation</h1>
+<p>python3 -V
+pip3 -V
+```</p>
+</li>
+</ul>
+<h3 id="prerequisite-2-set-up-passwordless-ssh">Prerequisite 2: Set up Passwordless SSH</h3>
+<h4 id="generating-ssh-keypair-on-control-host">Generating ssh keypair on control host</h4>
+<p>Now on <code>Ansible Controller</code> host, execute the following command</p>
+<pre><code>ssh-keygen -t rsa
+</code></pre>
+
+<p>Now press enter for the passphrase and other queries.</p>
+<pre><code>Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Created directory '/root/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+c5:a5:6d:60:56:5a:7b:3c:60:23:b5:0f:1b:cf:f9:fd root@ansible
+The key's randomart image is:
++--[ RSA 2048]----+
+|          =oO    |
+|         + X *   |
+|          = B +  |
+|         . . O o |
+|        S   . =  |
+|               ..|
+|                o|
+|                .|
+|                E|
++-----------------+
+</code></pre>
+
+<h4 id="copying-public-key-to-inventory-hosts">Copying public key to inventory hosts</h4>
+<p><code>On Ansible Controller</code><br />
+Copy public key of control node to other hosts.
+Password for this command: <em>vagrant</em></p>
+<pre><code>ssh-copy-id vagrant@10.10.1.101
+
+ssh-copy-id vagrant@10.10.1.102
+
+ssh-copy-id vagrant@10.10.1.103
+
+ssh-copy-id vagrant@10.10.1.104
+</code></pre>
+
+<p>See this example output to verify with your output</p>
+<pre><code>The authenticity of host '10.10.1.101 (10.10.1.101)' can't be established.
+RSA key fingerprint is 32:7f:ad:d7:da:63:32:b6:a9:ff:59:af:09:1e:56:22.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.10.1.101' (RSA) to the list of known hosts.
+</code></pre>
+
+<p>The password for user <em>vagrant</em> is <em>vagrant</em></p>
+<h4 id="validate-the-passwordless-login">Validate the passwordless login</h4>
+<p><code>On Ansible Controller</code><br />
+Let us check the connection of control node with other hosts</p>
+<pre><code>ssh vagrant@10.10.1.101
+
+ssh vagrant@10.10.1.102
+
+ssh vagrant@10.10.1.103
+
+ssh vagrant@10.10.1.104
+</code></pre>
+
+<h2 id="setting-up-kubernetes-using-kubespray">Setting Up Kubernetes Using Kubespray</h2>
+<p><code>On Ansible Controller</code><br />
+First clone the Kubespray repository and change directory.
+  <code>git clone https://github.com/schoolofdevops/kubespray-1.git
+  cd kubespray-1</code>
+Install the python dependencies. <strong>This step installs Ansible as well. You do not need to install Ansible separately</strong>.
+  <code>sudo pip install -r requirements.txt</code>
+Copy the Sample Inventory.
+  <code>cp -rfp inventory/sample inventory/mycluster</code>
+Update Ansible inventory file with inventory builder. <strong>Do not forget to replace these IPs with the IPs of your VMs</strong>.
+  <code>declare -a IPS=(10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104)</code>
+  <code>CONFIG_FILE=inventory/mycluster/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]}</code>
+Review and Change Kubespray variables, <em>only if necessary</em>.
+  <code>cat inventory/mycluster/group_vars/all.yml
+  cat inventory/mycluster/group_vars/k8s-cluster.yml</code>
+Deploy Kubespray with Ansible Playbook. This takes about 20-30 minutes depending on your infrastructure.
+  <code>ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -b -v -c paramiko</code></p>
+<h2 id="install-kubectl">Install Kubectl</h2>
+<p><code>On Ansible Controller</code></p>
+<p>Before we proceed further, we will need to install <strong>kubectl</strong> binary in our control node. Read installation procedure from this <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">link</a>.</p>
+<h2 id="getting-the-kubernetes-configuration-file">Getting the Kubernetes Configuration File</h2>
+<p><code>On Ansible Controller</code></p>
+<p>Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.</p>
+<pre><code>sudo su
+cp /etc/kubernetes/admin.conf /home/ubuntu
+chown ubuntu:ubuntu /home/ubuntu/admin.conf
+exit
+mkdir .kube
+mv admin.conf .kube/config
+</code></pre>
+
+<h2 id="check-the-state-of-the-cluster">Check the State of the Cluster</h2>
+<p><code>On Ansible Controller</code></p>
+<p>Let us check the state of the cluster by running,</p>
+<pre><code>kubectl cluster-info
+
+Kubernetes master is running at https://10.10.1.101:6443
+KubeDNS is running at https://10.10.1.101:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+</code></pre>
+
+<pre><code>kubectl get nodes
+
+NAME      STATUS    ROLES         AGE       VERSION
+node1     Ready     master,node   21h       v1.9.0+coreos.0
+node2     Ready     master,node   21h       v1.9.0+coreos.0
+node3     Ready     node          21h       v1.9.0+coreos.0
+node4     Ready     node          21h       v1.9.0+coreos.0
+</code></pre>
+
+<p>If you are able to see this, your cluster has been set up successfully.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../cluster_setup_kubespray/" class="btn btn-neutral float-right" title="Production grade setup with Kubespray">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../11_deploying_sample_app/" class="btn btn-neutral" title="Mini Project"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../11_deploying_sample_app/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../cluster_setup_kubespray/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

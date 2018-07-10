@@ -77,7 +77,7 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Bootcamp</span>
+    <span class="caption-text">Kubernetes Fundamentals</span>
     <ul class="subnav">
                 <li class="">
                     
@@ -106,6 +106,51 @@
                 <li class="">
                     
     <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Advanced Kubernetes</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../kubespray-prereqs/">Kubespray lab setup with Vagrant</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Production grade setup with Kubespray</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#kubernetes-cluster-setup-using-kubespray">Kubernetes - Cluster Setup using Kubespray</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#prerequisites">Prerequisites</a></li>
+        
+            <li><a class="toctree-l4" href="#architecture-of-a-high-available-kubernetes-cluster">Architecture of a high available kubernetes cluster</a></li>
+        
+            <li><a class="toctree-l4" href="#preparing-the-nodes">Preparing the nodes</a></li>
+        
+            <li><a class="toctree-l4" href="#setup-ansible-control-node-and-kubespray">Setup Ansible Control node and Kubespray</a></li>
+        
+            <li><a class="toctree-l4" href="#provisioning-kubernetes-cluster-with-kubespray">Provisioning  kubernetes cluster with kubespray</a></li>
+        
+            <li><a class="toctree-l4" href="#install-kubectl">Install Kubectl</a></li>
+        
+            <li><a class="toctree-l4" href="#getting-the-kubernetes-configuration-file">Getting the Kubernetes Configuration File</a></li>
+        
+            <li><a class="toctree-l4" href="#check-the-state-of-the-cluster">Check the State of the Cluster</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
                 </li>
                 <li class="">
                     
@@ -136,63 +181,11 @@
           
             <li class="toctree-l1">
 		
-    <span class="caption-text">Being Edited</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Additional Topics</span>
     <ul class="subnav">
-                <li class=" current">
-                    
-    <a class="current" href="./">Production grade setup with Kubespray</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#kubernetes-cluster-setup-using-kubespray">Kubernetes - Cluster Setup using Kubespray</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#prerequisites">Prerequisites</a></li>
-        
-            <li><a class="toctree-l4" href="#architecture-of-a-high-available-kubernetes-cluster">Architecture of a high available kubernetes cluster</a></li>
-        
-            <li><a class="toctree-l4" href="#preparing-the-kubernetes-nodes">Preparing the kubernetes nodes</a></li>
-        
-            <li><a class="toctree-l4" href="#configuring-ansible-control-node-and-kubespray">Configuring Ansible Control node and Kubespray</a></li>
-        
-            <li><a class="toctree-l4" href="#provisioning-kubernetes-cluster-with-kubespray">Provisioning  kubernetes cluster with kubespray</a></li>
-        
-            <li><a class="toctree-l4" href="#install-kubectl">Install Kubectl</a></li>
-        
-            <li><a class="toctree-l4" href="#getting-the-kubernetes-configuration-file">Getting the Kubernetes Configuration File</a></li>
-        
-            <li><a class="toctree-l4" href="#check-the-state-of-the-cluster">Check the State of the Cluster</a></li>
-        
-        </ul>
-    
-
-    </ul>
-                </li>
                 <li class="">
                     
     <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Securing Kubernetes</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
                 </li>
     </ul>
 	    </li>
@@ -219,7 +212,7 @@
     
       
         
-          <li>Additional Topics &raquo;</li>
+          <li>Advanced Kubernetes &raquo;</li>
         
       
     
@@ -236,22 +229,72 @@
                 <h1 id="kubernetes-cluster-setup-using-kubespray">Kubernetes - Cluster Setup using Kubespray</h1>
 <p>Kubespray is an <em>Ansible</em> based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.</p>
 <h2 id="prerequisites">Prerequisites</h2>
-<p>Hardware Pre requisites
-  * 4 Nodes: Virtual/Physical Machines
-  * Memory: 2GB each
-  * CPU: 2 cores recommended
-  * Hard disk: 20GB available</p>
-<p>Software Pre Requisites
-  * Ubuntu 16.04 Operating System
-  * Python</p>
+<h3 id="hardware-pre-requisites">Hardware Pre requisites</h3>
+<ul>
+<li>4 Nodes: Virtual/Physical Machines  </li>
+<li>Memory: 2GB   </li>
+<li>CPU: 1 Core</li>
+<li>Hard disk: 20GB available  </li>
+</ul>
+<h3 id="software-pre-requisites">Software Pre Requisites</h3>
+<p><code>On All Nodes</code></p>
+<ul>
+<li>Ubuntu 16.04 OS  </li>
+<li>Python  </li>
+<li>SSH Server</li>
+<li>Privileged user</li>
+</ul>
+<p><code>On Ansible Control  Node</code>    </p>
+<ul>
+<li>Ansible version  2.4 or greater  </li>
+<li>Jinja  </li>
+</ul>
+<h3 id="networking-pre-requisites">Networking Pre Requisites</h3>
+<ul>
+<li>Internet access to download docker images and install softwares</li>
+<li>IPv4 Forwarding should be enabled  </li>
+<li>Firewall should allow ssh access as well as ports required by Kubernetes. Internally open all the ports between node.</li>
+</ul>
 <h2 id="architecture-of-a-high-available-kubernetes-cluster">Architecture of a high available kubernetes cluster</h2>
-<h2 id="preparing-the-kubernetes-nodes">Preparing the kubernetes nodes</h2>
-<p><code>On control node</code></p>
-<p>Ansible is the base provisioner in our cluster. But installing Ansible is out of the scope of this training. You can learn about installing and configuring Ansible from <a href="http://docs.ansible.com/ansible/latest/intro_installation.html">here.</a></p>
-<h3 id="setup-passwordless-ssh-between-control-and-kubernetes-nodes">Setup passwordless SSH between control and kubernetes nodes</h3>
+<h2 id="preparing-the-nodes">Preparing the nodes</h2>
+<h3 id="install-python">Install Python</h3>
+<p><code>On all nodes</code></p>
+<p>Ansible needs python to be installed on all the machines.</p>
+<pre><code>sudo apt update
+sudo apt install python3
+</code></pre>
+
+<h3 id="enable-ipv4-forwarding">Enable IPv4 Forwarding</h3>
+<p><code>On all nodes</code></p>
+<pre><code>ssh ubuntu@10.40.1.26
+sudo su
+
+vim /etc/sysctl.conf
+</code></pre>
+
+<p>Enalbe IPv4 forwarding by uncommenting the following line</p>
+<pre><code>net.ipv4.ip_forward=1
+</code></pre>
+
+<h3 id="stop-and-disable-firewall-ufw-service">Stop and Disable Firewall (UFW Service)</h3>
+<p><code>On all nodes</code></p>
+<p>Execute the following commands to stop and disable ufw service.</p>
+<pre><code>systemctl stop ufw.service
+systemctl disable ufw.service
+</code></pre>
+
+<h3 id="set-locale">Set Locale</h3>
+<pre><code>export LC_ALL=&quot;en_US.UTF-8&quot;
+export LC_CTYPE=&quot;en_US.UTF-8&quot;
+sudo dpkg-reconfigure locales
+</code></pre>
+
+<h3 id="setup-passwordless-ssh-between-ansible-controller-and-kubernetes-nodes">Setup passwordless SSH between ansible controller and kubernetes nodes</h3>
 <p><code>On control node</code></p>
 <p>Ansible uses passwordless ssh<sup>1</sup> to create the cluster. Let us see how to set it up from your <em>control node</em>.</p>
+<p>Generate ssh keypair if not present already using the following command.</p>
 <pre><code>ssh-keygen -t rsa
+
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa):
 Enter passphrase (empty for no passphrase):
@@ -275,36 +318,18 @@ The key's randomart image is:
 </code></pre>
 
 <p>Just leave the fields to defaults. This command will generate a public key and private key for you.</p>
-<pre><code>cat ~/.ssh/id_rsa.pub | ssh ubuntu@10.40.1.26 'cat &gt;&gt; ~/.ssh/authorized_keys'
+<p>Copy over the public key to all nodes.</p>
+<p>Example,  assuming <strong>ubuntu</strong> as the user which has a privileged access on the node with ip address <strong>10.10.1.101</strong>,</p>
+<pre><code>ssh-copy-id ubuntu@10.10.1.101
 </code></pre>
 
 <p>This will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace <em>10.40.1.26</em> with your respective machine's IP.</p>
-<h3 id="enable-ipv4-forwarding">Enable IPv4 Forwarding</h3>
-<p><code>On all nodes</code></p>
-<pre><code>ssh ubuntu@10.40.1.26
-sudo su
-vim /etc/sysctl.conf
+<p>e.g.</p>
+<pre><code>ssh ubuntu@10.10.1.101
 </code></pre>
 
-<p>Enalbe IPv4 forwarding by uncommenting the following line</p>
-<pre><code>net.ipv4.ip_forward=1
-</code></pre>
-
-<h3 id="stop-and-disable-ufw-service">Stop and Disable UFW Service</h3>
-<p><code>On all nodes</code></p>
-<p>Execute the following commands to stop and disable ufw service.</p>
-<pre><code>systemctl stop ufw.service
-systemctl disable ufw.service
-</code></pre>
-
-<h3 id="install-python">Install Python</h3>
-<p><code>On all nodes</code></p>
-<p>Ansible needs python to be installed on all the machines.</p>
-<pre><code>sudo apt update
-sudo apt install python
-</code></pre>
-
-<h2 id="configuring-ansible-control-node-and-kubespray">Configuring Ansible Control node and Kubespray</h2>
+<p>Make sure to copy the public key to all kubernetes nodes. <code>Replace username with the actual user on your system</code>.</p>
+<h2 id="setup-ansible-control-node-and-kubespray">Setup Ansible Control node and Kubespray</h2>
 <p><code>On control node</code></p>
 <p>Kubespray is hosted on GitHub. Let us the clone the <a href="https://github.com/kubernetes-incubator/kubespray.git">official repository</a>.</p>
 <pre><code>git clone https://github.com/kubernetes-incubator/kubespray.git
@@ -312,11 +337,11 @@ cd kubespray
 </code></pre>
 
 <h3 id="set-remote-user-for-ansible">Set Remote User for Ansible</h3>
-<p><code>On control node</code></p>
 <p>Add the following section in ansible.cfg file</p>
 <pre><code>remote_user=ubuntu
 </code></pre>
 
+<p>If the user you are going to connect is differnt, use that instead.</p>
 <p>Your <em>ansible.cfg</em> file should look like this.</p>
 <pre><code>[ssh_connection]
 pipelining=True
@@ -335,25 +360,23 @@ deprecation_warnings=False
 remote_user=ubuntu
 </code></pre>
 
-<h3 id="download-inventory-builder">Download Inventory Builder</h3>
-<p><code>On control node</code></p>
-<p>Inventory builder (a python script) helps us to create inventory file. <strong>Inventory</strong> file is something with which we specify the groups of masters and nodes of our cluster.</p>
-<pre><code>cd inventory
-wget https://raw.githubusercontent.com/kubernetes-incubator/kubespray/master/contrib/inventory_builder/inventory.py
+<h3 id="create-inventory">Create Inventory</h3>
+<pre><code>cp -rfp inventory/sample inventory/prod
 </code></pre>
 
+<p>where <strong>prod</strong> is the custom configuration name. Replace is with whatever name you would like to assign to the current cluster.</p>
 <p>To build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments</p>
-<pre><code>python inventory.py 10.40.1.26 10.40.1.25 10.40.1.20 10.40.1.11
+<pre><code>CONFIG_FILE=inventory/prod/hosts.ini python3 contrib/inventory_builder/inventory.py 10.10.1.101 10.10.1.102 10.10.1.103 10.10.1.104
 </code></pre>
 
-<p>These IPs are different for you. Please replace them with your corresponding IPs.
-This step will result in the creation of a new file <strong>inventory.cfg</strong>. This is our inventory file.</p>
-<p><code>inventory.cfg</code></p>
+<p>Where replace the IP addresses (e.g. 10.10.1.101) with the actual IPs of your nodes</p>
+<p>Once its run, you should see an inventory file generated which may look similar to below</p>
+<p><code>file: inventory/prod/hosts.ini</code></p>
 <pre><code>[all]
-node1    ansible_host=10.40.1.26 ip=10.40.1.26
-node2    ansible_host=10.40.1.25 ip=10.40.1.25
-node3    ansible_host=10.40.1.20 ip=10.40.1.20
-node4    ansible_host=10.40.1.11 ip=10.40.1.11
+node1    ansible_host=10.10.1.101 ip=10.10.1.101
+node2    ansible_host=10.10.1.102 ip=10.10.1.102
+node3    ansible_host=10.10.1.103 ip=10.10.1.103
+node4    ansible_host=10.10.1.104 ip=10.10.1.104
 
 [kube-master]
 node1
@@ -393,25 +416,28 @@ Option -b = Become as root user
 Option -v = Give verbose output</p>
 <p>This Ansible run will take around 30 mins to complete.</p>
 <h2 id="install-kubectl">Install Kubectl</h2>
-<p><code>On control node</code></p>
-<p>Before we proceed further, we will need to install <strong>kubectl</strong> binary in our control node. Read installation procedure from this <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">link</a>.</p>
+<p><code>On any master node</code></p>
+<p>Before we proceed further, we will need to install <strong>kubectl</strong> binary in our control node.
+To install <strong>kubectl</strong> on Ubuntu</p>
+<pre><code>sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo touch /etc/apt/sources.list.d/kubernetes.list
+echo &quot;deb http://apt.kubernetes.io/ kubernetes-xenial main&quot; | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+</code></pre>
+
+<p><strong>Note</strong>: You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,   <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">refer to the  procedure here</a>.</p>
 <h2 id="getting-the-kubernetes-configuration-file">Getting the Kubernetes Configuration File</h2>
-<p><code>On control node</code></p>
+<p><code>On same  master node as above</code></p>
 <p>Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.</p>
-<pre><code>ssh ubuntu@10.40.1.26
-sudo su
-cp /etc/kubernetes/admin.conf /home/ubuntu
-chown ubuntu:ubuntu /home/ubuntu/admin.conf
-exit
-exit
-scp ubuntu@10.40.1.26:~/admin.conf .
-cd
-mkdir .kube
-mv admin.conf .kube/config
+<pre><code>mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 </code></pre>
 
 <h2 id="check-the-state-of-the-cluster">Check the State of the Cluster</h2>
-<p><code>On control node</code></p>
+<p><code>On the node where kubectl is setup</code></p>
 <p>Let us check the state of the cluster by running,</p>
 <pre><code>kubectl cluster-info
 
@@ -433,6 +459,11 @@ node4     Ready     node          21h       v1.9.0+coreos.0
 <p>If you are able to see this, your cluster has been set up successfully.</p>
 <hr />
 <p><sup>1</sup> You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.</p>
+<h5 id="references">References</h5>
+<ul>
+<li><a href="https://kubernetes.io/docs/setup/custom-cloud/kubespray/">Installing Kubernetes On Premises/On Cloud with Kubespray </a>  </li>
+<li><a href="https://github.com/kubernetes-incubator/kubespray">Kubespray on Github</a>  </li>
+</ul>
               
             </div>
           </div>
@@ -440,10 +471,10 @@ node4     Ready     node          21h       v1.9.0+coreos.0
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../12_troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting Tips">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../configuring_authentication_and_authorization/" class="btn btn-neutral float-right" title="Authentication and Authorization">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../12_troubleshooting/" class="btn btn-neutral" title="Troubleshooting Tips"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kubespray-prereqs/" class="btn btn-neutral" title="Kubespray lab setup with Vagrant"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -469,10 +500,10 @@ node4     Ready     node          21h       v1.9.0+coreos.0
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../12_troubleshooting/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../kubespray-prereqs/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../12_troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../configuring_authentication_and_authorization/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
