@@ -251,12 +251,13 @@ node3
 We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.
 
 ```
-ansible-playbook -i inventory/inventory.cfg cluster.yml -b -v
+ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
 ```
 
-Option -i = Inventory file path
-Option -b = Become as root user
-Option -v = Give verbose output
+Option -i = Inventory file path  
+Option -b = Become as root user  
+Option -v = Give verbose output  
+
 
 This Ansible run will take around 30 mins to complete.
 
@@ -301,8 +302,8 @@ Let us check the state of the cluster by running,
 ```
 kubectl cluster-info
 
-Kubernetes master is running at https://10.40.1.26:6443
-KubeDNS is running at https://10.40.1.26:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+Kubernetes master is running at https://10.10.1.101:6443
+KubeDNS is running at https://10.10.1.101:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
