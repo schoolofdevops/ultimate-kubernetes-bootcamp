@@ -142,6 +142,15 @@ ssh ubuntu@10.10.1.101
 
 
 Make sure to copy the public key to all kubernetes nodes. `Replace username with the actual user on your system`.
+If the above mentioned command fails, then copy your public key and paste it in the remote machine's `~/.ssh/authorized_keys` file.
+
+e.g. (Only if ssh-copy-id fails)
+```
+cat ~/.ssh/id_rsa.pub
+ssh ubunut@10.10.1.101
+vim ~/.ssh/authorized_keys
+# Paste the public key
+```
 
 
 ## Setup Ansible Control node and Kubespray
@@ -206,7 +215,6 @@ CONFIG_FILE=inventory/prod/hosts.ini python3 contrib/inventory_builder/inventory
 Where replace the IP addresses (e.g. 10.10.1.101) with the actual IPs of your nodes
 
 Once its run, you should see an inventory file generated which may look similar to below
-
 
 
 `file: inventory/prod/hosts.ini`
