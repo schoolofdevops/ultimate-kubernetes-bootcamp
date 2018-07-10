@@ -27,3 +27,10 @@ NUMBER OF NODE-SIZE |INSTANCE TYPE   |CPU|MEMORY
 | apiGroup     | Resources     |
 | :------------- | :------------- |
 | apps      |   daemonsets, deployments, deployments/rollback, deployments/scale, replicasets, replicasets/scale, statefulsets, statefulsets/scale     |
+|core|configmaps, endpoints, persistentvolumeclaims, replicationcontrollers, replicationcontrollers/scale, secrets, serviceaccounts, services,services/proxy
+|autoscaling|horizontalpodautoscalers
+| batch|cronjobs, jobs
+|policy| poddisruptionbudgets
+|networking.k8s.io|networkpolicies
+|authorization.k8s.io|localsubjectaccessreviews
+|rbac.authorization.k8s.io|rolebindings,roles
