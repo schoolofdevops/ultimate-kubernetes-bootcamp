@@ -289,30 +289,9 @@ ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
 
 This Ansible run will take around 30 mins to complete.
 
-## Install Kubectl
-
-`On any master node`
-
-Before we proceed further, we will need to install **kubectl** binary in our control node.
-To install **kubectl** on Ubuntu
-
-```
-sudo apt-get update && sudo apt-get install -y apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo touch /etc/apt/sources.list.d/kubernetes.list
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-sudo apt-get update
-sudo apt-get install -y kubectl
-```
-
-
-**Note**: You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,   [refer to the  procedure here](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
-
-
 ## Getting the Kubernetes Configuration File
 
-`On same  master node as above`
-
+`On kube master node`
 Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.
 
 ```
