@@ -4,32 +4,100 @@ Kubespray is an *Ansible* based kubernetes provisioner. It helps us to setup a p
 
 ## Prerequisites
 
-Hardware Pre requisites
-  * 4 Nodes: Virtual/Physical Machines
-  * Memory: 2GB each
-  * CPU: 2 cores recommended
-  * Hard disk: 20GB available
+### Hardware Pre requisites  
 
-Software Pre Requisites
-  * Ubuntu 16.04 Operating System
-  * Python
+  * 4 Nodes: Virtual/Physical Machines  
+  * Memory: 2GB   
+  * CPU: 1 Core
+  * Hard disk: 20GB available  
+
+
+### Software Pre Requisites  
+
+`On All Nodes`
+
+  * Ubuntu 16.04 OS  
+  * Python  
+  * SSH Server
+  * Privileged user
+
+`On Ansible Control  Node`   
+  * Ansible >= 2.4
+  * Jinja
+
+### Networking Pre Requisites
+
+  * Internet access to download docker images and install softwares
+  * IPv4 Forwarding should be enabled  
+  * Firewall should allow ssh access as well as ports required by Kubernetes. Internally open all the ports between node.
+
+
+
 
 ## Architecture of a high available kubernetes cluster
 
 
-## Preparing the kubernetes nodes
+## Preparing the nodes
 
-`On control node`
+### Install Python
 
-Ansible is the base provisioner in our cluster. But installing Ansible is out of the scope of this training. You can learn about installing and configuring Ansible from [here.](http://docs.ansible.com/ansible/latest/intro_installation.html)
+`On all nodes`
 
-### Setup passwordless SSH between control and kubernetes nodes
+Ansible needs python to be installed on all the machines.
+
+```
+sudo apt update
+sudo apt install python
+```
+
+
+### Enable IPv4 Forwarding
+
+`On all nodes`
+
+```
+ssh ubuntu@10.40.1.26
+sudo su
+
+vim /etc/sysctl.conf
+```
+Enalbe IPv4 forwarding by uncommenting the following line
+
+```
+net.ipv4.ip_forward=1
+```
+
+### Stop and Disable Firewall (UFW Service)
+
+`On all nodes`
+
+Execute the following commands to stop and disable ufw service.
+
+```
+systemctl stop ufw.service
+systemctl disable ufw.service
+```
+
+### Set Locale
+
+```
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+sudo dpkg-reconfigure locales
+```
+
+
+### Setup passwordless SSH between ansible controller and kubernetes nodes
 
 `On control node`
 
 Ansible uses passwordless ssh<sup>1</sup> to create the cluster. Let us see how to set it up from your *control node*.
+
+Generate ssh keypair if not present already using the following command.
+
 ```
 ssh-keygen -t rsa
+
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa):
 Enter passphrase (empty for no passphrase):
@@ -54,50 +122,29 @@ The key's randomart image is:
 
 Just leave the fields to defaults. This command will generate a public key and private key for you.
 
+Copy over the public key to all nodes.
+
+Example,  assuming **ubuntu** as the user which has a privileged access on the node with ip address **10.10.1.101**,
+
 ```
-cat ~/.ssh/id_rsa.pub | ssh ubuntu@10.40.1.26 'cat >> ~/.ssh/authorized_keys'
+ssh-copy-id ubuntu@10.10.1.101
 ```
+
 
 This will copy our newly generated public key to the remote machine. After running this command you will be able to SSH into the machine directly without using a password. Replace *10.40.1.26* with your respective machine's IP.
 
-### Enable IPv4 Forwarding
-
-`On all nodes`
+e.g.
 
 ```
-ssh ubuntu@10.40.1.26
-sudo su
-vim /etc/sysctl.conf
-```
-Enalbe IPv4 forwarding by uncommenting the following line
-
-```
-net.ipv4.ip_forward=1
+ssh ubuntu@10.10.1.101
 ```
 
-### Stop and Disable UFW Service
 
-`On all nodes`
+Make sure to copy the public key to all kubernetes nodes. `Replace username with the actual user on your system`.
 
-Execute the following commands to stop and disable ufw service.
 
-```
-systemctl stop ufw.service
-systemctl disable ufw.service
-```
+## Setup Ansible Control node and Kubespray
 
-### Install Python
-
-`On all nodes`
-
-Ansible needs python to be installed on all the machines.
-
-```
-sudo apt update
-sudo apt install python
-```
-
-## Configuring Ansible Control node and Kubespray
 
 
 `On control node`
@@ -111,13 +158,14 @@ cd kubespray
 
 ### Set Remote User for Ansible
 
-`On control node`
 
 Add the following section in ansible.cfg file
 
 ```
 remote_user=ubuntu
 ```
+
+If the user you are going to connect is differnt, use that instead.
 
 Your *ansible.cfg* file should look like this.
 
@@ -139,16 +187,14 @@ deprecation_warnings=False
 remote_user=ubuntu
 ```
 
-### Download Inventory Builder
+### Create Inventory
 
-`On control node`
-
-Inventory builder (a python script) helps us to create inventory file. **Inventory** file is something with which we specify the groups of masters and nodes of our cluster.
 
 ```
-cd inventory
-wget https://raw.githubusercontent.com/kubernetes-incubator/kubespray/master/contrib/inventory_builder/inventory.py
+cp -rfp inventory/sample inventory/mycluster
 ```
+
+where mycluster is the custom configuration name. Replace is with whatever name you would like to assign to the current cluster. 
 
 To build the inventory file, execute the inventory script along with the IP addresses of our cluster as arguments
 
@@ -264,3 +310,9 @@ If you are able to see this, your cluster has been set up successfully.
 
 ---
 <sup>1</sup> You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.
+
+
+##### References  
+
+  * [Installing Kubernetes On Premises/On Cloud with Kubespray ](https://kubernetes.io/docs/setup/custom-cloud/kubespray/)  
+  * [Kubespray on Github](https://github.com/kubernetes-incubator/kubespray)  
