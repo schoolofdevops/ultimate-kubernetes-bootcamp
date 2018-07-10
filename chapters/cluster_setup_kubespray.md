@@ -85,7 +85,7 @@ export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 sudo dpkg-reconfigure locales
 ```
-
+Do no select any other locale in the menu. Just press <OK> in the next two screens.
 
 ### Setup passwordless SSH between ansible controller and kubernetes nodes
 
