@@ -136,7 +136,15 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
+    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization (RBAC)</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../advanced_pod_scheduling/">Advanced Pod Scheduling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pods-health-probes/">Adding health checks with Probes</a>
                 </li>
                 <li class="">
                     
@@ -226,19 +234,14 @@
                 <h2 id="kubernetes-visualizer">Kubernetes Visualizer</h2>
 <p>In this chapter we will see how to set up kubernetes visualizer that will show us the changes in our cluster in real time.</p>
 <h3 id="set-up">Set up</h3>
-<p>Fork the repository</p>
-<pre><code>yum install -y git #only if you use play-with-k8s
+<p>Fork the repository and deploy the visualizer on kubernetes</p>
+<pre><code>git clone  https://github.com/schoolofdevops/kube-ops-view
+kubectl apply -f kube-ops-view/deploy/
 
-git clone  https://github.com/schoolofdevops/kube-ops-view
-
-cd  kube-ops-view
 </code></pre>
 
-<p>Deploy the visualizer on kubernetes</p>
-<pre><code>kubectl apply -f deploy/
-
-[ouput]
-serviceaccount &quot;kube-ops-view&quot; created
+<p>[Sample Output]</p>
+<pre><code>serviceaccount &quot;kube-ops-view&quot; created
 clusterrole &quot;kube-ops-view&quot; created
 clusterrolebinding &quot;kube-ops-view&quot; created
 deployment &quot;kube-ops-view&quot; created
@@ -259,7 +262,7 @@ kubernetes            ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   
 </code></pre>
 
 <p>In my case, port <strong>30073</strong> is the nodeport.</p>
-<p>Visit the port from the browser. You could add /#scale=2.0 or similar option where 2.0 = 200% the scale. </p>
+<p>Visit the port from the browser. You could add /#scale=2.0 or similar option where 2.0 = 200% the scale.</p>
 <pre><code>http://&lt;NODE_IP:NODE_PORT&gt;/#scale=2.0
 </code></pre>
 

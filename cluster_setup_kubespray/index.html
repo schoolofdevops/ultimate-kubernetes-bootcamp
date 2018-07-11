@@ -135,6 +135,8 @@
         
             <li><a class="toctree-l4" href="#setup-ansible-control-node-and-kubespray">Setup Ansible Control node and Kubespray</a></li>
         
+            <li><a class="toctree-l4" href="#customise-kubernetes-cluster-configs">Customise Kubernetes Cluster Configs</a></li>
+        
             <li><a class="toctree-l4" href="#provisioning-kubernetes-cluster-with-kubespray">Provisioning  kubernetes cluster with kubespray</a></li>
         
             <li><a class="toctree-l4" href="#getting-the-kubernetes-configuration-file">Getting the Kubernetes Configuration File</a></li>
@@ -143,6 +145,8 @@
         
             <li><a class="toctree-l4" href="#access-kubernetes-cluster-remotelyoptional">Access Kubernetes Cluster Remotely(Optional)</a></li>
         
+            <li><a class="toctree-l4" href="#deploy-kubernetes-objects">Deploy Kubernetes Objects</a></li>
+        
         </ul>
     
 
@@ -150,7 +154,15 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization</a>
+    <a class="" href="../configuring_authentication_and_authorization/">Authentication and Authorization (RBAC)</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../advanced_pod_scheduling/">Advanced Pod Scheduling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pods-health-probes/">Adding health checks with Probes</a>
                 </li>
                 <li class="">
                     
@@ -431,6 +443,20 @@ node2
 node3
 </code></pre>
 
+<h2 id="customise-kubernetes-cluster-configs">Customise Kubernetes Cluster Configs</h2>
+<p>There are two configs files in your inventroy directory's group_vars (e.g. inventory/prod/group_vars) viz.</p>
+<ul>
+<li>all.yml  </li>
+<li>k8s-cluster.yml</li>
+</ul>
+<p>Ansible is data driven, and most of the configurations of the cluster can be tweaked by changing the variable values from the above files.</p>
+<p>Few of the configurations you may want to modify</p>
+<p><code>file: inventory/prod/group_vars/k8s-cluster.yml</code></p>
+<pre><code>kube_network_plugin: calico
+cluster_name: prod
+helm_enabled: true
+</code></pre>
+
 <h2 id="provisioning-kubernetes-cluster-with-kubespray">Provisioning  kubernetes cluster with kubespray</h2>
 <p><code>On control node</code></p>
 <p>We are set to provision the cluster. Run the following ansible-playbook command to provision our Kubernetes cluster.</p>
@@ -504,6 +530,56 @@ scp -r ubuntu@10.10.1.101:~/.kube/config ~/.kube
 kubectl cluster-info
 </code></pre>
 
+<h2 id="deploy-kubernetes-objects">Deploy Kubernetes Objects</h2>
+<p>Since its a new cluster, which is differnt than what you have created with kubeadm earlier, or if this is the first time you are creating a  kubernetes cluster with kubespray as part of <strong>Advanced Workshop</strong>, you need to deploy services which have been covered as part of the previous topics.  </p>
+<p>In order to do that, use the following commands on the node where you have configured kubectl</p>
+<pre><code>git clone https://github.com/schoolofdevops/k8s-code.git
+
+cd k8s-code/projects/instavote
+
+kubectl apply -f instavote-ns.yaml
+kubectl apply -f prod/
+</code></pre>
+
+<p>Switch context and  validate,</p>
+<pre><code>kubectl config set-context $(kubectl config current-context) --cluster=prod  --user=admin-prod --namespace=instavote
+
+kubectl get pods,deploy,svc
+</code></pre>
+
+<p>where,</p>
+<ul>
+<li>--cluster=prod : prod is the cluter name you created earlier. If not, use the correct name of the cluster ( kubectl config view)</li>
+<li>--user=admin-prod: is the admin user created by default while installing with kubespray</li>
+<li>--namespace=instavote : the namespace you just created to deploy instavote app stack</li>
+</ul>
+<p>[sample output]</p>
+<pre><code>$ kubectl get pods,deploy,svc
+
+NAME                          READY     STATUS    RESTARTS   AGE
+pod/db-66496667c9-qggzd       1/1       Running   0          7m
+pod/redis-6555998885-4k5cr    1/1       Running   0          7m
+pod/redis-6555998885-fb8rk    1/1       Running   0          7m
+pod/result-5c7569bcb7-4fptr   1/1       Running   0          7m
+pod/result-5c7569bcb7-s4rdx   1/1       Running   0          7m
+pod/vote-5d88d47fc8-gbzbq     1/1       Running   0          7m
+pod/vote-5d88d47fc8-q4vj6     1/1       Running   0          7m
+pod/worker-7c98c96fb4-7tzzw   1/1       Running   0          7m
+
+NAME                           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/db       1         1         1            1           7m
+deployment.extensions/redis    2         2         2            2           7m
+deployment.extensions/result   2         2         2            2           7m
+deployment.extensions/vote     2         2         2            2           7m
+deployment.extensions/worker   1         1         1            1           7m
+
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/db       ClusterIP   10.233.16.207   &lt;none&gt;        5432/TCP       7m
+service/redis    ClusterIP   10.233.14.61    &lt;none&gt;        6379/TCP       7m
+service/result   NodePort    10.233.22.10    &lt;none&gt;        80:30100/TCP   7m
+service/vote     NodePort    10.233.19.111   &lt;none&gt;        80:30000/TCP   7m
+</code></pre>
+
 <h5 id="references">References</h5>
 <ul>
 <li><a href="https://kubernetes.io/docs/setup/custom-cloud/kubespray/">Installing Kubernetes On Premises/On Cloud with Kubespray </a>  </li>
@@ -516,7 +592,7 @@ kubectl cluster-info
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../configuring_authentication_and_authorization/" class="btn btn-neutral float-right" title="Authentication and Authorization">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../configuring_authentication_and_authorization/" class="btn btn-neutral float-right" title="Authentication and Authorization (RBAC)">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../kubespray-prereqs/" class="btn btn-neutral" title="Kubespray lab setup with Vagrant"><span class="icon icon-circle-arrow-left"></span> Previous</a>

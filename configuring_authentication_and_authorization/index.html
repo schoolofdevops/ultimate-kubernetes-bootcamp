@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Authentication and Authorization - Ultimate Kubernetes Bootcamp</title>
+  <title>Authentication and Authorization (RBAC) - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Authentication and Authorization";
+    var mkdocs_page_name = "Authentication and Authorization (RBAC)";
     var mkdocs_page_input_path = "configuring_authentication_and_authorization.md";
     var mkdocs_page_url = "/configuring_authentication_and_authorization/";
   </script>
@@ -124,7 +124,7 @@
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Authentication and Authorization</a>
+    <a class="current" href="./">Authentication and Authorization (RBAC)</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#kubernetes-access-control-authentication-and-authorization">Kubernetes Access Control:  Authentication and Authorization</a></li>
@@ -139,16 +139,20 @@
         
             <li><a class="toctree-l4" href="#role-based-access-control-rbac">Role Based Access Control (RBAC)</a></li>
         
-            <li><a class="toctree-l4" href="#create-role-for-the-developers">Create role for the developers</a></li>
-        
-            <li><a class="toctree-l4" href="#create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</a></li>
-        
-            <li><a class="toctree-l4" href="#role-based-access-control-rbac_1">Role Based Access Control (RBAC)</a></li>
+            <li><a class="toctree-l4" href="#define-authorisation-rules-with-roles-and-clusterroles">Define authorisation rules with Roles and ClusterRoles</a></li>
         
         </ul>
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../advanced_pod_scheduling/">Advanced Pod Scheduling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pods-health-probes/">Adding health checks with Probes</a>
                 </li>
                 <li class="">
                     
@@ -225,7 +229,7 @@
         
       
     
-    <li>Authentication and Authorization</li>
+    <li>Authentication and Authorization (RBAC)</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -369,122 +373,222 @@
 </tr>
 </tbody>
 </table>
+<h3 id="creating-kubernetes-users-and-groups">Creating Kubernetes Users and Groups</h3>
 <p>Generate the user's private key</p>
-<pre><code>openssl genrsa -out john.key 2048
-openssl req -new -key john.key -out john.csr -subj &quot;/CN=john/O=initcron&quot;
+<pre><code>mkdir -p  ~/.kube/users
+cd ~/.kube/users
+
+openssl genrsa -out maya.key 2048
+openssl genrsa -out kim.key 2048
+openssl genrsa -out yono.key 2048
+
 </code></pre>
 
-<p>Sign the key using kubernetes CA
-<code>Before proceeding further, please note that, you will need the server's ca certificate and ca key in your local machine.</code></p>
-<pre><code>openssl x509 -req -in john.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out john.crt -days 500
+<p>[sample Output]</p>
+<pre><code>openssl genrsa -out maya.key 2048
+Generating RSA private key, 2048 bit long modulus
+.............................................................+++
+.........................+++
+e is 65537 (0x10001)
+
 </code></pre>
 
-<p>Save these newly generated keys in a secure directory of the user's system (Ex: /home/john/.kube-certs)
-Execute the following commands on the users system</p>
-<pre><code>kubectl config set-credentials john --client-certificate=/home/john/.kube-certs/john.crt --client-key=/home/john/.kube-certs/john.key
-kubectl config set-context john-context --cluster=&lt;YOUR-CLUSTER-NAME&gt; --namespace=&lt;NAMESPACE-FOR-USER&gt;  --user=john
-# This step will throw an error
-kubectl --context=john-context get pods
+<p>Lets now create a <strong>Certification Signing Request (CSR)</strong> for each of the users. When you generate the csr make sure you also provide</p>
+<ul>
+<li>CN: This will be set as username</li>
+<li>O: Org name. This is actually used as a <strong>group</strong> by kubernetes while authenticating/authorizing users.  You could add as many as you need</li>
+</ul>
+<p>e.g.</p>
+<pre><code>openssl req -new -key maya.key -out maya.csr -subj &quot;/CN=maya/O=ops/O=example.org&quot;
+openssl req -new -key kim.key -out kim.csr -subj &quot;/CN=kim/O=dev/O=example.org&quot;
+openssl req -new -key yono.key -out yono.csr -subj &quot;/CN=yono/O=intern/O=example.org&quot;
+
 </code></pre>
 
-<h2 id="create-role-for-the-developers">Create role for the developers</h2>
-<p>These steps (3,4) has to be executed from kube-master or the controller machine
-<code>dev-role.yml</code></p>
-<pre><code>kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+<p>In order to be deemed authentic, these CSRs need to be signed by the <strong>Certification Authority (CA)</strong> which in this case is Kubernetes Master.   You need access to the folllwing files on  kubernetes master.</p>
+<ul>
+<li>Certificate : ca.crt (kubeadm) or ca.key (kubespray)</li>
+<li>Pricate Key : ca.key (kubeadm) or ca-key.pem  (kubespray)</li>
+</ul>
+<p>You would typically find it at one of the following paths</p>
+<ul>
+<li>/etc/kubernetes/pki (kubeadm)</li>
+<li>/etc/kubernetes/ssl (kubespray)</li>
+</ul>
+<p>To verify which one is your cert and which one is key, use the following command,</p>
+<pre><code>$ file ca.pem
+ca.pem: PEM certificate
+
+
+$ file ca-key.pem
+ca-key.pem: PEM RSA private key
+</code></pre>
+
+<p>Once signed, .csr files with added signatures become the certificates that could be used to authenticate.</p>
+<p>You could either</p>
+<ul>
+<li>move the crt files to k8s master, sign and download  </li>
+<li>copy over the CA certs and keys to your management node and use it to sign. Make sure to keep your CA related files secure.</li>
+</ul>
+<p>In the example here, I have already downloaded <strong>ca.pem</strong> and <strong>ca-key.pem</strong> to my management workstation, which are used to sign the CSRs.  </p>
+<p>Assuming all the files are in the same directory, sign the CSR as,</p>
+<pre><code>openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in maya.csr -out maya.crt
+openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in kim.csr -out kim.crt
+openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in yono.csr -out yono.crt
+</code></pre>
+
+<h3 id="setting-up-uuer-configs-with-kubectl">Setting up Uuer configs with kubectl</h3>
+<p>In order to configure the users that you created above, following steps need to be performed with kubectl</p>
+<ul>
+<li>Add credentials in the configurations</li>
+<li>Set context to login as a user to a cluster</li>
+<li>Switch context in order to assume the user's identity while working with the cluster</li>
+</ul>
+<p>to add credentials,</p>
+<pre><code>kubectl config set-credentials maya --client-certificate=~/.kube/users/maya.crt --client-key=~/.kube/users/maya.key
+kubectl config set-credentials maya --client-certificate=~/.kube/users/kim.crt --client-key=~/.kube/users/kim.key
+kubectl config set-credentials maya --client-certificate=~/.kube/users/yono.crt --client-key=~/.kube/users/yono.key
+
+</code></pre>
+
+<p>and to define context (user@cluster)</p>
+<pre><code>kubectl config set-context maya-prod --cluster=prod  --user=maya
+kubectl config set-context kim-prod --cluster=prod  --user=kim
+kubectl config set-context yono-prod --cluster=prod  --user=yono
+
+</code></pre>
+
+<p>Where,</p>
+<ul>
+<li>maya-prod : name of the context  </li>
+<li>prod  : name of the kubernetes cluster you set while creating it  </li>
+<li>maya : user you created and configured above to connect to the cluster  </li>
+</ul>
+<p>You could verify the configs with</p>
+<pre><code>kubectl config get-contexts
+
+CURRENT   NAME         CLUSTER   AUTHINFO     NAMESPACE
+*         admin-prod   prod      admin-prod
+          kim-prod     prod      kim
+          maya-prod    prod      maya
+          yono-prod    prod      yono
+</code></pre>
+
+<p>and</p>
+<pre><code>kubectl config view
+
+apiVersion: v1
+clusters:
+- cluster:
+   certificate-authority-data: REDACTED
+   server: https://128.199.248.240:6443
+ name: prod
+contexts:
+- context:
+   cluster: prod
+   user: admin-prod
+ name: admin-prod
+- context:
+   cluster: prod
+   user: kim
+ name: kim-prod
+- context:
+   cluster: prod
+   user: maya
+ name: maya-prod
+- context:
+   cluster: prod
+   user: yono
+ name: yono-prod
+current-context: admin-prod
+kind: Config
+preferences: {}
+users:
+- name: admin-prod
+ user:
+   client-certificate-data: REDACTED
+   client-key-data: REDACTED
+- name: maya
+ user:
+   client-certificate: users/~/.kube/users/maya.crt
+   client-key: users/~/.kube/users/maya.key
+</code></pre>
+
+<p>You could assume the identity of user <strong>maya</strong> and connect  to the <strong>prod</strong> cluster as,</p>
+<pre><code>kubectl config use-context maya-prod
+
+kubectl config get-contexts
+
+CURRENT   NAME         CLUSTER   AUTHINFO     NAMESPACE
+          admin-prod   prod      admin-prod
+          kim-prod     prod      kim
+*         maya-prod    prod      maya
+          yono-prod    prod      yono
+</code></pre>
+
+<p>And then try running any command as,</p>
+<pre><code>kubectl get nodes
+</code></pre>
+
+<p>Alternately, if you are a admin user, you could impersonate a user and run a command with that literally using  --as option</p>
+<pre><code>kubectl config use-context admin-prod
+kubectl get nodes --as maya
+</code></pre>
+
+<p>[Sample Output]</p>
+<pre><code>No resources found.
+Error from server (Forbidden): nodes is forbidden: User &quot;maya&quot; cannot list nodes at the cluster scope
+</code></pre>
+
+<p>Either ways, since there are authorization rules set, the user can not make any api calls. Thats when you would create some roles and bind it to the users in the next sectin.</p>
+<h2 id="define-authorisation-rules-with-roles-and-clusterroles">Define authorisation rules with Roles and ClusterRoles</h2>
+<p>Whats the difference between Roles and ClusterRoles ??</p>
+<ul>
+<li>Role is  limited to a namespace (Projects/Orgs/Env)</li>
+<li>ClusterRole is Global</li>
+</ul>
+<p>Lets say you want to provide read only access to <strong>instavote</strong>, a project specific namespace to all users in the <strong>example.org</strong></p>
+<p><code>file: readonly-role.yaml</code></p>
+<pre><code>apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
 metadata:
-  namespace: dev
-  name: developer
+  namespace: instavote
+  name: readonly
 rules:
-- apiGroups: [&quot;&quot;, &quot;extensions&quot;, &quot;apps&quot;]
-  resources: [&quot;deployments&quot;, &quot;replicasets&quot;, &quot;pods&quot;]
-  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;, &quot;delete&quot;]
+- apiGroups: [&quot;*&quot;]
+  resources: [&quot;*&quot;]
+  verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
 </code></pre>
 
-<pre><code>kubectl create -f dev-role.yml
-</code></pre>
-
-<h2 id="create-rolebindings-for-the-dev-role">Create RoleBindings for the dev-role</h2>
-<p><code>dev-rolebinding.yml</code></p>
+<p>In order to map it to all users in <strong>example.org</strong>, create a RoleBinding as</p>
+<p><code>readonly-rolebinding.yml</code></p>
 <pre><code>kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: developer
-  namespace: developer
+  name: readonly
+  namespace: instavote
 subjects:
-- kind: User
-  name: john
+- kind: Group
+  name: example.org
   apiGroup: &quot;&quot;
 roleRef:
   kind: Role
-  name: developer
+  name: readonly
   apiGroup: &quot;&quot;
 </code></pre>
 
-<pre><code>kubectl create -f dev-rolebinding.yaml
+<pre><code>kubectl create -f readonly-role.yml
+
+kubectl create -f readonly-rolebinding.yml
 </code></pre>
 
-<h3 id="tls-in-kubernetes">TLS in Kubernetes</h3>
-<p>Kubernetes API typically runs on two ports.
-  * 8080
-    * This port is available only for processes running on master machine (kube-scheduler, kube-controller-manager).
-    * This port is insecure.
-  * 6443
-    * TLS Enabled.
-    * Available for kubectl and others.</p>
-<h4 id="verbs">Verbs</h4>
-<ul>
-<li>Verbs are the <strong>action</strong> to be taken on resources.</li>
-<li>Some of the verbs in Kubernetes are,<ul>
-<li>get</li>
-<li>list</li>
-<li>create</li>
-<li>update</li>
-<li>patch</li>
-<li>watch</li>
-<li>delete</li>
-</ul>
-</li>
-</ul>
-<h4 id="resources">Resources</h4>
-<ul>
-<li>Resources are the object being manipulated by the verb.</li>
-<li>Ex: pods, deployments, service, namespaces, nodes, etc.,</li>
-</ul>
-<h2 id="role-based-access-control-rbac_1">Role Based Access Control (RBAC)</h2>
-<ul>
-<li>RBAC is the most used form of access control to <strong>grant or revoke</strong> permissions to users.</li>
-<li>It is used for dynamically configuring policies through API.</li>
-<li>RBAC has two objects that are used for creating polices and another two objects that are used for implementing those policies.</li>
-<li>Objects that are used to create policies,<ul>
-<li>Roles,</li>
-<li>ClusterRoles.</li>
-</ul>
-</li>
-<li>Objects that are used to implement policies,<ul>
-<li>RoleBindings,</li>
-<li>ClusterRoleBindings.</li>
-</ul>
-</li>
-</ul>
-<h3 id="roles">Roles</h3>
-<ul>
-<li>Roles grant access to resources <strong>within a single namespace</strong>.</li>
-<li>Roles cannot grant permission for global(cluster-wide) resources.</li>
-</ul>
-<h3 id="clusterroles">ClusterRoles</h3>
-<ul>
-<li>ClusterRoles works similar to Roles, but for <strong>cluster-wide</strong> resources.</li>
-</ul>
-<h3 id="rolebindings">RoleBindings</h3>
-<ul>
-<li>RoleBidings are used to grant permission defined in a Role to <strong>a user or a set of users</strong>.</li>
-<li>RoleBindings can also refer to <em>ClusterRoles</em>.</li>
-</ul>
-<h3 id="clusterrolebindings">ClusterRoleBindings</h3>
-<ul>
-<li>ClusterRoleBindings works same as RoleBindings, but cluster-wide.</li>
-</ul>
+<p>And validate</p>
+<pre><code>kubectl get roles -n instavote
+kubectl get roles,rolebindings -n instavote
+
+kubectl get pods  -n instavote --as-group=example.org --as=yono
+
+</code></pre>
               
             </div>
           </div>
@@ -492,7 +596,7 @@ roleRef:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../vote-deployement_strategies/" class="btn btn-neutral float-right" title="Building Deployment Strategies">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../advanced_pod_scheduling/" class="btn btn-neutral float-right" title="Advanced Pod Scheduling">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../cluster_setup_kubespray/" class="btn btn-neutral" title="Production grade setup with Kubespray"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -524,7 +628,7 @@ roleRef:
         <span><a href="../cluster_setup_kubespray/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../vote-deployement_strategies/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../advanced_pod_scheduling/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
