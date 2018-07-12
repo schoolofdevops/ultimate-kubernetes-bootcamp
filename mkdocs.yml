@@ -17,15 +17,19 @@ pages:
   - Advanced Kubernetes:
      - Kubespray lab setup with Vagrant: "kubespray-prereqs.md"
      - Production grade setup with Kubespray: "cluster_setup_kubespray.md"
-     - Authentication and Authorization: "configuring_authentication_and_authorization.md"
-     - Building Deployment Strategies: "vote-deployement_strategies.md"
-     - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
+     - Authentication and Authorization (RBAC): "configuring_authentication_and_authorization.md"
+     - Advanced Pod Scheduling: "advanced_pod_scheduling.md"
+     - Pod Resource and Security Specs: "pod-adv-specs.md"
+     - Adding health checks with Probes: "pods-health-probes.md"
      - Application Routing with Ingress Controllers : "ingress.md"
-     - Creating Replicated Cluster Setup for Redis: "13_redis_statefulset.md"
+     - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
+     - Creating Replicated Redis Cluster with Statefulsets: "13_redis_statefulset.md"
      - Access Control with Network Policies: "network_policies.md"
-     - Ingress Controllers: "ingress.md"
+     - Cluster Administration: "cluster-administration.md"
   - Additional Topics:
+     - Building Deployment Strategies: "vote-deployement_strategies.md"
      - Troubleshooting Tips: "12_troubleshooting.md"
+     - Logging: "logging.md"
   - References:
      - RBAC apiGroups to Resource Mapping: "rbac-resource-group-mapping.md"
 docs_dir: chapters

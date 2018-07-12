@@ -260,6 +260,26 @@ node2
 node3
 ```
 
+## Customise Kubernetes Cluster Configs
+
+
+There are two configs files in your inventroy directory's group_vars (e.g. inventory/prod/group_vars) viz.
+
+  * all.yml  
+  * k8s-cluster.yml
+
+Ansible is data driven, and most of the configurations of the cluster can be tweaked by changing the variable values from the above files.
+
+Few of the configurations you may want to modify
+
+`file: inventory/prod/group_vars/k8s-cluster.yml`
+
+```
+kube_network_plugin: calico
+cluster_name: prod
+helm_enabled: true
+```
+
 ## Provisioning  kubernetes cluster with kubespray
 
 `On control node`
@@ -353,6 +373,77 @@ scp -r ubuntu@10.10.1.101:~/.kube/config ~/.kube
 # Check the status
 kubectl cluster-info
 ```
+
+## Deploy Kubernetes Objects
+
+Since its a new cluster, which is differnt than what you have created with kubeadm earlier, or if this is the first time you are creating a  kubernetes cluster with kubespray as part of **Advanced Workshop**, you need to deploy services which have been covered as part of the previous topics.  
+
+In order to do that, use the following commands on the node where you have configured kubectl
+
+```
+git clone https://github.com/schoolofdevops/k8s-code.git
+
+cd k8s-code/projects/instavote
+
+kubectl apply -f instavote-ns.yaml
+kubectl apply -f prod/
+```
+
+Set configurations
+
+```
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl config get-contexts
+```
+
+
+Switch context and  validate,
+
+```
+
+kubectl config set-context $(kubectl config current-context)  --namespace=instavote
+
+kubectl get pods,deploy,svc
+```
+
+where,
+
+  * --cluster=prod : prod is the cluter name you created earlier. If not, use the correct name of the cluster ( kubectl config view)
+  * --user=admin-prod: is the admin user created by default while installing with kubespray
+  * --namespace=instavote : the namespace you just created to deploy instavote app stack
+
+
+[sample output]
+
+```
+$ kubectl get pods,deploy,svc
+
+NAME                          READY     STATUS    RESTARTS   AGE
+pod/db-66496667c9-qggzd       1/1       Running   0          7m
+pod/redis-6555998885-4k5cr    1/1       Running   0          7m
+pod/redis-6555998885-fb8rk    1/1       Running   0          7m
+pod/result-5c7569bcb7-4fptr   1/1       Running   0          7m
+pod/result-5c7569bcb7-s4rdx   1/1       Running   0          7m
+pod/vote-5d88d47fc8-gbzbq     1/1       Running   0          7m
+pod/vote-5d88d47fc8-q4vj6     1/1       Running   0          7m
+pod/worker-7c98c96fb4-7tzzw   1/1       Running   0          7m
+
+NAME                           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.extensions/db       1         1         1            1           7m
+deployment.extensions/redis    2         2         2            2           7m
+deployment.extensions/result   2         2         2            2           7m
+deployment.extensions/vote     2         2         2            2           7m
+deployment.extensions/worker   1         1         1            1           7m
+
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/db       ClusterIP   10.233.16.207   <none>        5432/TCP       7m
+service/redis    ClusterIP   10.233.14.61    <none>        6379/TCP       7m
+service/result   NodePort    10.233.22.10    <none>        80:30100/TCP   7m
+service/vote     NodePort    10.233.19.111   <none>        80:30000/TCP   7m
+```
+
 
 
 ##### References  

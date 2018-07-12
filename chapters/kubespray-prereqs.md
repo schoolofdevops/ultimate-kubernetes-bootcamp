@@ -18,12 +18,14 @@ This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used f
 ### Set up Learning Environment:
    * Make a work directory and change to that directory
 
+
      ```
      mkdir advanced-kubernetes
      cd avanced-kubernetes
      ```
 
    * Download the Vagrant template
+
 
      ```
      curl -O https://raw.githubusercontent.com/schoolofdevops/kubespray-1/master/Vagrantfile
@@ -34,11 +36,15 @@ This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used f
      ```
      vagrant up
      ```
+     
+
   * SSH into your first VM `k8s-01` by running,
+
 
     ```
     vagrant ssh k8s-01
     ```
+
 
 ## Software Requirements on Control Node:
 
