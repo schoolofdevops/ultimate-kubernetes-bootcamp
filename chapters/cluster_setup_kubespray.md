@@ -40,16 +40,16 @@ Kubespray is an *Ansible* based kubernetes provisioner. It helps us to setup a p
 
 ## Preparing the nodes
 
+Run instructions in the section `On all nodes` in the cluster. This includes Ansible controller too.
+
 ### Install Python
 
-`On all nodes`
 
 Ansible needs python to be installed on all the machines.
 
 ```
 sudo apt update
-sudo apt install python3 python-minimal
-sudo apt install python3-pip
+sudo apt install python
 ```
 
 
@@ -57,42 +57,17 @@ sudo apt install python3-pip
 
 `On all nodes`
 
-```
-ssh ubuntu@10.40.1.26
-sudo su
 
-vim /etc/sysctl.conf
-```
 Enalbe IPv4 forwarding by uncommenting the following line
 
 ```
-net.ipv4.ip_forward=1
+echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 ```
 
 Disable Swap
 ```
 swapoff -a
 ```
-
-### Stop and Disable Firewall (UFW Service)
-
-`On all nodes`
-
-Execute the following commands to stop and disable ufw service.
-
-```
-systemctl stop ufw.service
-systemctl disable ufw.service
-```
-
-### Set Locale
-
-```
-export LC_ALL="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
-sudo dpkg-reconfigure locales
-```
-Do no select any other locale in the menu. Just press (**OK**) in the next two screens.
 
 ### Setup passwordless SSH between ansible controller and kubernetes nodes
 
@@ -161,9 +136,19 @@ vim ~/.ssh/authorized_keys
 
 ## Setup Ansible Control node and Kubespray
 
-
-
 `On control node`
+
+### Set Locale
+
+```
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+sudo dpkg-reconfigure locales
+```
+Do no select any other locale in the menu. Just press (**OK**) in the next two screens.
+
+### Setup kubespray
+
 
 Kubespray is hosted on GitHub. Let us the clone the [official repository](https://github.com/kubernetes-incubator/kubespray.git).
 
@@ -176,7 +161,8 @@ cd kubespray
 Install the python dependencies. **This step installs Ansible as well. You do not need to install Ansible separately**.
 
 ```
-sudo pip3 install -r requirements.txt
+sudo apt install python-pip -y
+sudo pip install -r requirements.txt
 ```
 
 ### Set Remote User for Ansible
@@ -280,7 +266,7 @@ Few of the configurations you may want to modify
 `file: inventory/prod/group_vars/k8s-cluster.yml`
 
 ```
-kube_network_plugin: calico
+kubelet_max_pods: 100
 cluster_name: prod
 helm_enabled: true
 ```
@@ -300,7 +286,9 @@ Option -b = Become as root user
 Option -v = Give verbose output  
 
 If you face this following error, while running `ansible-playbook` command, you can fix it by running following instructions
+
 `ERROR`:  
+
 ```
 ERROR! Unexpected Exception, this is probably a bug: (cryptography 1.2.3 (/usr/lib/python3/dist-packages), Requirement.parse('cryptography>=1.5'), {'paramiko'})
 ```
@@ -314,10 +302,11 @@ ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
 
 This Ansible run will take around 30 mins to complete.
 
-## Getting the Kubernetes Configuration File
+## Kubectl Configs
 
 `On kube master node`
-Once the cluster setup is done, we have to copy over the cluster config file from the master machine. We will discuss about this file extensively in the next chapter.
+
+Once the cluster setup is done, copy the configuration and setup the permissions.
 
 ```
 mkdir -p $HOME/.kube
@@ -355,28 +344,40 @@ If you are able to see this, your cluster has been set up successfully.
 ---
 <sup>1</sup> You can use private key / password instead of passwordless ssh. But it requires additional knowledge in using Ansible.
 
-## Access Kubernetes Cluster Remotely(Optional)
+## Access Kubernetes Cluster Remotely (Optional)
 
 `On your local machine`
+
 You could also install kubectl on your laptop/workstation. To learn how to install it for your OS,   [refer to the  procedure here](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+
+e.g.
 To install **kubectl** on Ubuntu,
 
 ```
 sudo apt-get update && sudo apt-get install -y apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo
+
+apt-key add -
+
 sudo touch /etc/apt/sources.list.d/kubernetes.list
+
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+
 sudo apt-get update
+
 sudo apt-get install -y kubectl
 ```
 
 ### Copy kubernetes config to your local machine
+
 Copy `kubeconfig` file to your local machine
+
 ```
 mkdir ~/.kube
-scp -r ubuntu@10.10.1.101:~/.kube/config ~/.kube
-# Check the status
-kubectl cluster-info
+scp -r ubuntu@MASTER_HOST_IP:/etc/kubernetes/admin.conf  ~/.kube/config
+
+kubectl get nodes
+
 ```
 
 ## Deploy Kubernetes Objects
@@ -394,17 +395,8 @@ kubectl apply -f instavote-ns.yaml
 kubectl apply -f prod/
 ```
 
-Set configurations
 
-```
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-kubectl config get-contexts
-```
-
-
-Switch context and  validate,
+Switch to **instavote** namespace  and  validate,
 
 ```
 
