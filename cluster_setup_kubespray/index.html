@@ -549,8 +549,16 @@ kubectl apply -f instavote-ns.yaml
 kubectl apply -f prod/
 </code></pre>
 
+<p>Set configurations</p>
+<pre><code>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl config get-contexts
+</code></pre>
+
 <p>Switch context and  validate,</p>
-<pre><code>kubectl config set-context $(kubectl config current-context) --cluster=prod  --user=admin-prod --namespace=instavote
+<pre><code>
+kubectl config set-context $(kubectl config current-context)  --namespace=instavote
 
 kubectl get pods,deploy,svc
 </code></pre>
