@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,25 +13,25 @@
         
     <url>
      <loc>/minikube/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/2_kube_cluster_vagrant/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/3_install_kubernetes/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/kube_visualizer/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -41,43 +41,43 @@
         
     <url>
      <loc>/5-vote-deploying_pods/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/replication/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/7-vote-exposing_app_with_service/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/6-vote-kubernetes_deployment/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/9-vote-configmaps_and_secrets/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/vote-persistent-volumes/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/11_deploying_sample_app/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -87,67 +87,67 @@
         
     <url>
      <loc>/kubespray-prereqs/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/cluster_setup_kubespray/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/configuring_authentication_and_authorization/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/advanced_pod_scheduling/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/pod-adv-specs/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/pods-health-probes/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/ingress/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/10_kubernetes_autoscaling/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/13_redis_statefulset/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/network_policies/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/cluster-administration/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -157,19 +157,19 @@
         
     <url>
      <loc>/vote-deployement_strategies/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/12_troubleshooting/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/logging/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -179,7 +179,7 @@
         
     <url>
      <loc>/rbac-resource-group-mapping/</loc>
-     <lastmod>2018-07-12</lastmod>
+     <lastmod>2018-07-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

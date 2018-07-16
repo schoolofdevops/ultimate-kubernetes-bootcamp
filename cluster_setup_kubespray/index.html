@@ -472,9 +472,9 @@ Option -v = Give verbose output  </p>
 </code></pre>
 
 <p><code>FIX</code>:  </p>
-<pre><code>sudo pip3 install --upgrade pip
-sudo pip3 uninstall cryptography
-sudo pip3 install cryptography
+<pre><code>sudo pip install --upgrade pip
+sudo pip uninstall cryptography
+sudo pip install cryptography
 ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
 </code></pre>
 
