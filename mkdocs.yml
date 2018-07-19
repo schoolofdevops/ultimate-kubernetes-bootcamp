@@ -11,9 +11,9 @@ pages:
      - Making application highly available: "replication.md"
      - Publishing appliaction and Service Discovery: "7-vote-exposing_app_with_service.md"
      - Defining Update Strategy: "6-vote-kubernetes_deployment.md"
+     - Mini Project: "11_deploying_sample_app.md"
      - Managing Configurations and Secrets: "9-vote-configmaps_and_secrets.md"
      - Making Data Persist: "vote-persistent-volumes.md"
-     - Mini Project: "11_deploying_sample_app.md"
   - Advanced Kubernetes:
      - Kubespray lab setup with Vagrant: "kubespray-prereqs.md"
      - Production grade setup with Kubespray: "cluster_setup_kubespray.md"

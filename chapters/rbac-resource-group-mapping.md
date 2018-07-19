@@ -34,3 +34,9 @@ NUMBER OF NODE-SIZE |INSTANCE TYPE   |CPU|MEMORY
 |networking.k8s.io|networkpolicies
 |authorization.k8s.io|localsubjectaccessreviews
 |rbac.authorization.k8s.io|rolebindings,roles
+|extensions | deprecated (read notes) |
+
+
+##### Notes
+
+In addition to the above apiGroups, you may see **extensions** being used in some example code snippets. Please note that **extensions** was initially created as a experiement and is been deprecated, by moving most of the matured apis to one of the groups mentioned above.  [You could read this comment and the thread](https://github.com/kubernetes/kubernetes/issues/43214#issuecomment-287143011) to get clarity on this.  

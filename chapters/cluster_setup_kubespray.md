@@ -294,9 +294,9 @@ ERROR! Unexpected Exception, this is probably a bug: (cryptography 1.2.3 (/usr/l
 ```
 `FIX`:  
 ```
-sudo pip3 install --upgrade pip
-sudo pip3 uninstall cryptography
-sudo pip3 install cryptography
+sudo pip install --upgrade pip
+sudo pip uninstall cryptography
+sudo pip install cryptography
 ansible-playbook -b -v -i inventory/prod/hosts.ini cluster.yml
 ```
 

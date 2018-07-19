@@ -61,11 +61,15 @@ And switch to it
 ```
 kubectl config --help
 
+kubectl config get-contexts
+
 kubectl config current-context
 
 kubectl config set-context $(kubectl config current-context) --namespace=instavote
 
 kubectl config view
+
+kubectl config get-contexts
 
 ```
 

@@ -76,6 +76,25 @@ When a request tries to contact the API , it goes through various stages as illu
   * We have already talked about the user in detail. Now lets focus on **verbs** and **resources**
   * We will talk about RBAC in detail in the later part
 
+## api groups and resources
+
+  | apiGroup     | Resources     |
+  | :------------- | :------------- |
+  | apps      |   daemonsets, deployments, deployments/rollback, deployments/scale, replicasets, replicasets/scale, statefulsets, statefulsets/scale     |
+  |core|configmaps, endpoints, persistentvolumeclaims, replicationcontrollers, replicationcontrollers/scale, secrets, serviceaccounts, services,services/proxy
+  |autoscaling|horizontalpodautoscalers
+  | batch|cronjobs, jobs
+  |policy| poddisruptionbudgets
+  |networking.k8s.io|networkpolicies
+  |authorization.k8s.io|localsubjectaccessreviews
+  |rbac.authorization.k8s.io|rolebindings,roles
+  |extensions | deprecated (read notes) |
+
+
+##### Notes
+
+  In addition to the above apiGroups, you may see **extensions** being used in some example code snippets. Please note that **extensions** was initially created as a experiement and is been deprecated, by moving most of the matured apis to one of the groups mentioned above.  [You could read this comment and the thread](https://github.com/kubernetes/kubernetes/issues/43214#issuecomment-287143011) to get clarity on this.  
+
 ### Stage 3: Admission Control
   * Admission control part is taken care of by the software modules that can modify/reject requests.
   * Admission control is mainly used for fine-tuning access control.
@@ -84,17 +103,18 @@ When a request tries to contact the API , it goes through various stages as illu
 
 ## Role Based Access Control (RBAC)
 
-| Group     | User     |  Namespace     |  Resources     |  Access Type (verbs) |
+| Group     | User     |  Namespaces     |  Resources     |  Access Type (verbs) |
 | :------------- | :------------- |  :------------- | :------------- |    :------------- |
-| ops       | maya       | all | all | all |
-| dev       | kim       | instavote | all in **apps** group  | all |
-| interns       |  yono  | all | readonly | readonly |
+| ops       | maya       | all | all | get, list, watch, update, patch, create, delete, deletecollection |
+| dev       | kim       | instavote | deployments, statefulsets, services, pods, configmaps, secrets, replicasets, ingresses, endpoints, cronjobs, jobs, persistentvolumeclaims  | get, list , watch, update, patch, create |
+| interns       |  yono  | instavote | readonly | get, list, watch |
 
 
 
 | Service Accounts     |  Namespace     |  Resources     |  Access Type (verbs) |
 |  :------------- |  :------------- | :------------- |    :------------- |
 | monitoring              | all | all | readonly |
+
 
 
 
@@ -134,7 +154,7 @@ e.g.
 ```
 openssl req -new -key maya.key -out maya.csr -subj "/CN=maya/O=ops/O=example.org"
 openssl req -new -key kim.key -out kim.csr -subj "/CN=kim/O=dev/O=example.org"
-openssl req -new -key yono.key -out yono.csr -subj "/CN=yono/O=intern/O=example.org"
+openssl req -new -key yono.key -out yono.csr -subj "/CN=yono/O=interns/O=example.org"
 
 ```
 
@@ -179,7 +199,7 @@ openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in yon
 ```
 
 
-### Setting up Uuer configs with kubectl
+### Setting up User configs with kubectl
 
 
 In order to configure the users that you created above, following steps need to be performed with kubectl
@@ -193,12 +213,31 @@ to add credentials,
 
 ```
 kubectl config set-credentials maya --client-certificate=~/.kube/users/maya.crt --client-key=~/.kube/users/maya.key
-kubectl config set-credentials maya --client-certificate=~/.kube/users/kim.crt --client-key=~/.kube/users/kim.key
-kubectl config set-credentials maya --client-certificate=~/.kube/users/yono.crt --client-key=~/.kube/users/yono.key
+
+kubectl config set-credentials kim --client-certificate=~/.kube/users/kim.crt --client-key=~/.kube/users/kim.key
+
+kubectl config set-credentials yono --client-certificate=~/.kube/users/yono.crt --client-key=~/.kube/users/yono.key
 
 ```
 
-and to define context (user@cluster)
+and to define context (user@cluster). If you are not sure whats the cluster name, use the following command to find,
+
+```
+kubectl config get-contexts
+
+```
+[sample output]
+
+```
+CURRENT   NAME                          CLUSTER         AUTHINFO              NAMESPACE
+          admin-prod           prod   admin-cluster.local   instavote
+          admin-cluster4                cluster4        admin-cluster4        instavote
+*         kubernetes-admin@kubernetes   kubernetes      kubernetes-admin      instavote
+```
+
+where,  **prod**, **cluster4** and **kubernetes** are cluster names.
+
+To set context for **prod** cluster,
 
 ```
 kubectl config set-context maya-prod --cluster=prod  --user=maya
@@ -273,24 +312,24 @@ users:
 
 
 
-You could assume the identity of user **maya** and connect  to the **prod** cluster as,
+You could assume the identity of user **yono** and connect  to the **prod** cluster as,
 
 ```
-kubectl config use-context maya-prod
+kubectl config use-context yono-prod
 
 kubectl config get-contexts
 
 CURRENT   NAME         CLUSTER   AUTHINFO     NAMESPACE
           admin-prod   prod      admin-prod
           kim-prod     prod      kim
-*         maya-prod    prod      maya
-          yono-prod    prod      yono
+          maya-prod    prod      maya
+*         yono-prod    prod      yono
 ```
 
 And then try running any command as,
 
 ```
-kubectl get nodes
+kubectl get pods
 ```
 
 
@@ -298,18 +337,19 @@ Alternately, if you are a admin user, you could impersonate a user and run a com
 
 ```
 kubectl config use-context admin-prod
-kubectl get nodes --as maya
+kubectl get pods --as yono
 ```
 
 [Sample Output]
 ```
 No resources found.
-Error from server (Forbidden): nodes is forbidden: User "maya" cannot list nodes at the cluster scope
+Error from server (Forbidden): pods is forbidden: User "yono" cannot list pods in the namespace "instavote"
+
 ```
 
 
 
-Either ways, since there are authorization rules set, the user can not make any api calls. Thats when you would create some roles and bind it to the users in the next sectin.
+Either ways, since there are authorization rules set, the user can not make any api calls. Thats when you would create some roles and bind it to the users in the next section.
 
 
 ## Define authorisation rules with Roles and ClusterRoles
@@ -321,13 +361,13 @@ Whats the difference between Roles and ClusterRoles ??
 
 Lets say you want to provide read only access to **instavote**, a project specific namespace to all users in the **example.org**
 
-`file: readonly-role.yaml`
+`file: interns-role.yaml`
 ```
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   namespace: instavote
-  name: readonly
+  name: interns
 rules:
 - apiGroups: ["*"]
   resources: ["*"]
@@ -337,22 +377,22 @@ rules:
 In order to map it to all users in **example.org**, create a RoleBinding as
 
 
-`readonly-rolebinding.yml`
+`interns-rolebinding.yml`
 
 ```
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: readonly
+  name: interns
   namespace: instavote
 subjects:
 - kind: Group
-  name: example.org
-  apiGroup: ""
+  name: interns
+  apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: readonly
-  apiGroup: ""
+  name: interns
+  apiGroup: rbac.authorization.k8s.io
 ```
 
 
