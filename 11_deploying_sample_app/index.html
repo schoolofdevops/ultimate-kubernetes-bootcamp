@@ -95,14 +95,6 @@
                     
     <a class="" href="../6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
-                <li class="">
-                    
-    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
-                </li>
                 <li class=" current">
                     
     <a class="current" href="./">Mini Project</a>
@@ -118,6 +110,14 @@
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-persistent-volumes/">Making Data Persist</a>
                 </li>
     </ul>
 	    </li>
@@ -294,12 +294,13 @@
 <p><strong>Specs:</strong></p>
 <ul>
 <li>worker<ul>
-<li>image: schoolofdevops/worker:v1</li>
+<li>image: schoolofdevops/worker:latest</li>
 </ul>
 </li>
 <li>results<ul>
 <li>image: schoolofdevops/vote-result</li>
 <li>port: 80</li>
+<li>service type: NodePort</li>
 </ul>
 </li>
 </ul>
@@ -359,10 +360,10 @@ result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../kubespray-prereqs/" class="btn btn-neutral float-right" title="Kubespray lab setup with Vagrant">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral float-right" title="Managing Configurations and Secrets">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../vote-persistent-volumes/" class="btn btn-neutral" title="Making Data Persist"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral" title="Defining Update Strategy"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -388,10 +389,10 @@ result    10.101.112.16   &lt;pending&gt;     80:32511/TCP   1h
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../vote-persistent-volumes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../6-vote-kubernetes_deployment/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../kubespray-prereqs/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../9-vote-configmaps_and_secrets/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
