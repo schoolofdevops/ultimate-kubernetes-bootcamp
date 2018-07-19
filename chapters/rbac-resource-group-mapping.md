@@ -3,8 +3,8 @@
 ### kubernetes Instances Configuration
 ## GCP
 
-NUMBER OF NODE-SIZE |INSTANCE TYPE   |CPU|MEMORY   
--------------------- | ------------- | ----- | -----------  
+|NUMBER OF NODE-SIZE |INSTANCE TYPE   |CPU|MEMORY   
+|--------------------   
 | 1-5                | n1-standard-1  | 1 |3.75  |  
 |6-10                | n1-standard-2  | 2 |7.50  |  
 |11-100              | n1-standard-4  | 4 |15    |
@@ -27,10 +27,21 @@ NUMBER OF NODE-SIZE |INSTANCE TYPE   |CPU|MEMORY
 | apiGroup     | Resources     |
 | :------------- | :------------- |
 | apps      |   daemonsets, deployments, deployments/rollback, deployments/scale, replicasets, replicasets/scale, statefulsets, statefulsets/scale     |
-|core|configmaps, endpoints, persistentvolumeclaims, replicationcontrollers, replicationcontrollers/scale, secrets, serviceaccounts, services,services/proxy
+|core|configmaps, endpoints, persistentvolumeclaims, replicationcontrollers, replicationcontrollers/scale, secrets, serviceaccounts, services,services/proxy, namespace, volume, resourceQuota
 |autoscaling|horizontalpodautoscalers
 | batch|cronjobs, jobs
 |policy| poddisruptionbudgets
 |networking.k8s.io|networkpolicies
 |authorization.k8s.io|localsubjectaccessreviews
-|rbac.authorization.k8s.io|rolebindings,roles
+|rbac.authorization.k8s.io|rolebindings,roles, clusterRole, clusterRoleBinding
+|storage.k8s.io|volumeAttachment, stroageClass
+|extensions|podSecurityPolicy, 	Ingress
+
+## verbs
+||
+|---
+|GET| get
+|MODIFY| update, patch
+|READ| watch, list, get
+|DELETE| delete, deletecollection
+|CREATE| create
