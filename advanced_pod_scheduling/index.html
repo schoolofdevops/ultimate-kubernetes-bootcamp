@@ -570,7 +570,7 @@ worker-7c98c96fb4-7tzzw   1/1       Running   1          4h        10.233.75.8  
 </code></pre>
 
 <p>Lets taint a node.</p>
-<pre><code>kubectl taint node node2 dedicate=worker:NoExecute
+<pre><code>kubectl taint node node2 dedicated=worker:NoExecute
 </code></pre>
 
 <p>after taining the node</p>
@@ -601,7 +601,7 @@ worker-7c98c96fb4-46ltl   1/1       Running   0          2m        10.233.102.14
           image: schoolofdevops/vote-worker:latest
 
       tolerations:
-        - key: &quot;dedicate&quot;
+        - key: &quot;dedicated&quot;
           operator: &quot;Equal&quot;
           value: &quot;worker&quot;
           effect: &quot;NoExecute&quot;
