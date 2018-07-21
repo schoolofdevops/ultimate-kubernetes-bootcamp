@@ -542,14 +542,18 @@ vote-56bf599b9c-xw7zc    1/1       Running   0          19s       10.233.74.81  
 <li>Taints are defined for nodes</li>
 </ul>
 <p>You could add the taints with criteria and effects. Effetcs can be</p>
-<p><strong>Taint Specs</strong>: <br />
-  * effect
-    * NoSchedule
-    * PreferNoSchedule
-    * NoExecute
-  * key
-  * value
-  * timeAdded (only written for NoExecute taints)</p>
+<p><strong>Taint Specs</strong>:   </p>
+<ul>
+<li>effect  <ul>
+<li>NoSchedule  </li>
+<li>PreferNoSchedule  </li>
+<li>NoExecute  </li>
+</ul>
+</li>
+<li>key  </li>
+<li>value  </li>
+<li>timeAdded (only written for NoExecute taints)  </li>
+</ul>
 <p>Observe the pods distribution</p>
 <pre><code>$ kubectl get pods -o wide
 NAME                      READY     STATUS    RESTARTS   AGE       IP             NODE
