@@ -71,6 +71,91 @@ For more information on securing your installation see: https://docs.helm.sh/usi
 Happy Helming!
 ```
 
+### Install Wordpress with Helm
+Search Helm repository for Wordpress chart
+```
+helm search wordpress
+```
+
+Fetch the chart to your local environment and change directory.
+```
+helm fetch --untar stable/wordpress
+cd wordpress
+```
+
+Create a copy of default vaules file and edit it.
+```
+cp values.yaml my-values.yaml
+vim my-values.yaml
+```
+
+Run it as a dry run to check for errors.
+```
+helm install --name blog --values my-values.yaml . --dry-run
+```
+
+Deploy the Wordpress stack.
+```
+helm install --name blog --values my-values.yaml .
+```
+
+### Install Prometheus with Helm
+Official Prometheus Helm Chart repository.
+```
+https://github.com/helm/charts/tree/master/stable/prometheus
+```
+
+Official Grafana Helm Chart repository.
+```
+https://github.com/helm/charts/tree/master/stable/grafana
+```
+#### Grafana Deployment
+
+Download Grafana charts to your local machine and change directory.
+```
+helm fetch --untar stable/grafana
+cd grafana
+```
+
+Create a copy of default vaules file and edit it.
+```
+cp values.yaml myvalues.yaml
+vim myvalues.yaml
+```
+
+Make sure your charts doesn't have any error.
+```
+helm install --name grafana --values myvalues.yaml --namespace instavote . --dry-run
+```
+
+Deploy Grafana on your K8s Cluster.
+```
+helm install --name grafana --values myvalues.yaml --namespace instavote .
+```
+
+#### Prometheus Deployment
+Download Prometheus charts to your local machine and change directory.
+```
+helm fetch --untar stable/prometheus
+cd prometheus
+```
+
+Create a copy of default vaules file and edit it.
+```
+cp values.yaml myvalues.yaml
+vim myvalues.yaml
+```
+
+Make sure your charts doesn't have any error.
+```
+helm install --name prometheus --values myvalues.yaml --namespace instavote . --dry-run
+```
+
+Deploy Prometheus on your K8s Cluster.
+```
+helm install --name prometheus --values myvalues.yaml --namespace instavote .
+```
+
 ### Install heapster with helm
 
 ```
