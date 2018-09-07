@@ -29,10 +29,11 @@ Following table depicts the state of readiness of the above services.
 **Specs:**
 
   * worker
-    * image: schoolofdevops/worker:v1
+    * image: schoolofdevops/worker:latest
   * results
     * image: schoolofdevops/vote-result
     * port: 80
+    * service type: NodePort
 
 
 ### Deploying the sample application

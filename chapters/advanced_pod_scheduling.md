@@ -3,7 +3,16 @@
 In the Kubernetes bootcamp training, we have seen how to create a pod and and some basic pod configurations to go with it. But this chapter explains some advanced topics related to pod scheduling.
 
 
-## Selecting A Node to run on
+From the [api document for version 1.11](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#pod-v1-core) following are the pod specs which are relevant from scheduling perspective.
+
+  * nodeSelector
+  * nodeName
+  * affinity
+  * schedulerName
+  * tolerations
+
+
+## Using Node Selectors
 
 ```
 kubectl get nodes --show-labels
@@ -14,672 +23,453 @@ kubectl get nodes --show-labels
 
 ```
 
-Update pod definition with nodeSelector
+e.g.
+```
+kubectl label nodes node1 zone=bbb
+kubectl label nodes node2 zone=bbb
+kubectl label nodes node3 zone=aaa
+kubectl label nodes node4 zone=aaa
+kubectl get nodes --show-labels
+```
 
-`file: k8s-code/pods/frontend-pod.yml`
+
+[sample output]
 
 ```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: front-end
-  labels:
-    app: front-end
-    role: ui
-    tier: front
-spec:
-  containers:
-    - name: front-end
-      image: schoolofdevops/frontend:latest
-      ports:
-        - containerPort: 8079
-  nodeSelector:
-    zone: 'aaa'
+NAME      STATUS    ROLES         AGE       VERSION   LABELS
+node1     Ready     master,node   22h       v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node1,node-role.kubernetes.io/master=true,node-role.kubernetes.io/node=true,zone=bbb
+node2     Ready     master,node   22h       v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node2,node-role.kubernetes.io/master=true,node-role.kubernetes.io/node=true,zone=bbb
+node3     Ready     node          22h       v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node3,node-role.kubernetes.io/node=true,zone=aaa
+node4     Ready     node          21h       v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node4,node-role.kubernetes.io/node=true,zone=aaa
+```
+
+Check how the pods are distributed on the nodes using the following command,
+
+```
+kubectl get pods -o wide --selector="role=vote"
+NAME                    READY     STATUS    RESTARTS   AGE       IP               NODE
+vote-5d88d47fc8-6rflg   1/1       Running   0          1m        10.233.75.9      node2
+vote-5d88d47fc8-gbzbq   1/1       Running   0          1h        10.233.74.76     node4
+vote-5d88d47fc8-q4vj6   1/1       Running   0          1h        10.233.102.133   node1
+vote-5d88d47fc8-znd2z   1/1       Running   0          1m        10.233.71.20     node3
+```
+
+From the above output, you could see that the pods running **vote** app are currently equally distributed.
+Now, update pod definition to make it schedule only on nodes in zone **bbb**
+
+`file: k8s-code/pods/vote-pod.yml`
+
+```
+
+....
+
+template:
+...
+  spec:
+    containers:
+      - name: app
+        image: schoolofdevops/vote:v1
+        ports:
+          - containerPort: 80
+            protocol: TCP
+    nodeSelector:
+      zone: 'bbb'
 ```
 
 For this change, pod needs to be re created.
 
 ```
-kubectl apply -f frontend-pod.yml
+kubectl apply -f vote-pod.yml
 ```
 
+You would notice that, the moment you make that change, a new rollout kicks off, which will start redistributing the pods, now following the **nodeSelector** constraint that you added.
 
-## Adding health checks
-
-Health checks in Kubernetes work the same way as traditional health checks of applications. They make sure that our application is ready to receive and process user requests. In Kubernetes we have two types of health checks,
-  * Liveness Probe
-  * Readiness Probe
-Probes are simply a *diagnostic action* performed by the kubelet. There are three types actions a kubelet perfomes on a pod, which are namely,
-  * `ExecAction`: Executes a command inside the pod. Assumed successful when the command **returns 0** as exit code.
-  * `TCPSocketAction`: Checks for a state of a particular port on the pod. Considered successful when the state of **the port is open**.
-  * `HTTPGetAction`: Performs a GET request on pod's IP. Assumed successful when the status code is **greater than 200 and less than 400**
-
-In cases of any failure during the diagnostic action, kubelet will report back to the API server. Let us study about how these health checks work in practice.
-
-### Liveness Probe
-Liveness probe checks the status of the pod(whether it is running or not). If livenessProbe fails, then the pod is subjected to its restart policy. The default state of livenessProbe is *Success*.
-
-Let us add liveness probe to our *frontend* deployment. The following probe will check whether it is able to *access the port or not*.
-
-`File: code/frontend-deploy.yml`
+Watch the output of the following command
 
 ```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
-    spec:
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-```
 
-`Expected output:`
+watch kubectl get pods -o wide --selector="role=vote"
 
 ```
-kubectl apply -f front-end/frontend-deploy.yml
-kubectl get pods
-kubectl describe pod front-end-757db58546-fkgdw
 
-[...]
-Events:
-  Type    Reason                 Age   From               Message
-  ----    ------                 ----  ----               -------
-  Normal  Scheduled              22s   default-scheduler  Successfully assigned front-end-757db58546-fkgdw to node4
-  Normal  SuccessfulMountVolume  22s   kubelet, node4     MountVolume.SetUp succeeded for volume "default-token-w4279"
-  Normal  Pulling                20s   kubelet, node4     pulling image "schoolofdevops/frontend"
-  Normal  Pulled                 17s   kubelet, node4     Successfully pulled image "schoolofdevops/frontend"
-  Normal  Created                17s   kubelet, node4     Created container
-  Normal  Started                17s   kubelet, node4     Started container
-```
-
-Let us change the livenessProbe check port to 8080.
+You will see the following while it transitions
 
 ```
-          livenessProbe:
-            tcpSocket:
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 5
-```
 
-Apply this deployment file and check the description of the pod
-
-`Expected output:`
-```
-kubectl apply -f frontend-deploy.yml
-kubectl get pods
-kubectl describe pod front-end-bf86ffd8b-bjb7p
-
-[...]
-Events:
-  Type     Reason                 Age               From               Message
-  ----     ------                 ----              ----               -------
-  Normal   Scheduled              1m                default-scheduler  Successfully assigned front-end-bf86ffd8b-bjb7p to node3
-  Normal   SuccessfulMountVolume  1m                kubelet, node3     MountVolume.SetUp succeeded for volume "default-token-w4279"
-  Normal   Pulling                38s (x2 over 1m)  kubelet, node3     pulling image "schoolofdevops/frontend"
-  Normal   Killing                38s               kubelet, node3     Killing container with id docker://front-end:Container failed liveness probe.. Container will be killed and recreated.
-  Normal   Pulled                 35s (x2 over 1m)  kubelet, node3     Successfully pulled image "schoolofdevops/frontend"
-  Normal   Created                35s (x2 over 1m)  kubelet, node3     Created container
-  Normal   Started                35s (x2 over 1m)  kubelet, node3     Started container
-  Warning  Unhealthy              27s (x5 over 1m)  kubelet, node3     Liveness probe failed: Get http://10.233.71.50:8080/: dial tcp 10.233.71.50:8080: getsockopt: connection refused
-```
-
-### Readiness Probe
-Readiness probe checks whether your application is ready to serve the requests. When the readiness probe fails, the pod's IP is removed from the end point list of the service. The default state of readinessProbe is *Success*.
-
-Readiness probe is configured just like liveness probe. But this time we will use *httpGet request*.
-
-`File: code/frontend-deploy.yml`
+NAME                        READY     STATUS              RESTARTS   AGE       IP               NODE
+pod/vote-5d88d47fc8-6rflg   0/1       Terminating         0          5m        10.233.75.9      node2
+pod/vote-5d88d47fc8-gbzbq   0/1       Terminating         0          1h        10.233.74.76     node4
+pod/vote-5d88d47fc8-q4vj6   0/1       Terminating         0          1h        10.233.102.133   node1
+pod/vote-67d7dd8f89-2w5wl   1/1       Running             0          44s       10.233.75.10     node2
+pod/vote-67d7dd8f89-gm6bq   0/1       ContainerCreating   0          2s        <none>           node2
+pod/vote-67d7dd8f89-w87n9   1/1       Running             0          44s       10.233.102.134   node1
+pod/vote-67d7dd8f89-xccl8   1/1       Running             0          44s       10.233.102.135   node1
 
 ```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
-    spec:
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 3
-```
 
-`Expected output:`
+and after the rollout completes,
 
 ```
-kubectl apply -f front-end/frontend-deploy.yml
-kubectl get pods
-kubectl describe pod front-end-c5bc89b57-g42nc
 
-[...]
-Events:
-  Type    Reason                 Age   From               Message
-  ----    ------                 ----  ----               -------
-  Normal  Scheduled              11s   default-scheduler  Successfully assigned front-end-c5bc89b57-g42nc to node4
-  Normal  SuccessfulMountVolume  10s   kubelet, node4     MountVolume.SetUp succeeded for volume "default-token-w4279"
-  Normal  Pulling                8s    kubelet, node4     pulling image "schoolofdevops/frontend"
-  Normal  Pulled                 6s    kubelet, node4     Successfully pulled image "schoolofdevops/frontend"
-  Normal  Created                5s    kubelet, node4     Created container
-  Normal  Started                5s    kubelet, node4     Started container
-```
-
-**Task**: Change the readinessProbe port to 8080 and check what happens to the pod.
-
-## Resource requests and limits
-
-We can control the amount of resource requested and used by all the pods. This can be done by adding following data the deployment template.
-
-### Resource Request
-`File: code/frontend-deploy.yml`
+NAME                    READY     STATUS    RESTARTS   AGE       IP               NODE
+vote-67d7dd8f89-2w5wl   1/1       Running   0          2m        10.233.75.10     node2
+vote-67d7dd8f89-gm6bq   1/1       Running   0          1m        10.233.75.11     node2
+vote-67d7dd8f89-w87n9   1/1       Running   0          2m        10.233.102.134   node1
+vote-67d7dd8f89-xccl8   1/1       Running   0          2m        10.233.102.135   node1
 
 ```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
-    spec:
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 3
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-```
-This ensures that pod always get the minimum cpu and memory specified. But this does not restrict the pod from accessing additional resources if needed. Thats why we have to use **resource limit** to limit the resource usage by a pod.
 
-`Expected output:`
+#### Exercise
 
-```
-kubectl describe pod front-end-5c64b7c5cc-cwgr5
+Just like **nodeSelector** above, you could enforce a pod to run on a specific node using **nodeName**. Try using that property to run all pods for results application on **node3**
 
-[...]
-Containers:
-  front-end:
-    Container ID:
-    Image:          schoolofdevops/frontend
-    Image ID:
-    Port:           8079/TCP
-    State:          Waiting
-      Reason:       ContainerCreating
-    Ready:          False
-    Restart Count:  0
-    Requests:
-      cpu:        250m
-      memory:     128Mi
-```
 
-### Resource limit
 
-`File: code/frontend-deploy.yml`
-
-```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
-    spec:
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 3
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-```
-
-`Expected output:`
-
-```
-kubectl describe pod front-end-5b877b4dff-5twdd
-
-[...]
-Containers:
-  front-end:
-    Container ID:   docker://d49a08c18fd9651af2f3dd28772da977b238a4010f14372e72e0ca24dcec8554
-    Image:          schoolofdevops/frontend
-    Image ID:       docker-pullable://schoolofdevops/frontend@sha256:94b7a0843f99223a8a1d284fdeeb3fd5a731c03aea57a52751c6ebde40be1f50
-    Port:           8079/TCP
-    State:          Running
-      Started:      Thu, 08 Feb 2018 17:14:54 +0530
-    Ready:          True
-    Restart Count:  0
-    Limits:
-      cpu:     500m
-      memory:  256Mi
-    Requests:
-      cpu:        250m
-      memory:     128Mi
-```
-
-## Defining node/pod affinity and anti-affinity
+## Defining  affinity and anti-affinity
 
 We have discussed about scheduling a pod on a particular node using **NodeSelector**, but using node selector is a hard condition. If the condition is not met, the pod cannot be scheduled. Node/Pod affinity and anti-affinity solves this issue by introducing soft and hard conditions.
 
+  * required
+  * preferred
+
+  * DuringScheduling
+  * DuringExecution
+
+
+Operators
+
+  * In
+  * NotIn
+  * Exists
+  * DoesNotExist
+  * Gt
+  * Lt
+
 ### Node Affinity
 
-Let us label our node1 to **fruit=apple**.
+
+Examine  the current pod distribution  
+
 
 ```
-kubectl label node node1 fruit=apple
+kubectl get pods -o wide --selector="role=vote"
 
 ```
 
-Let us modify our deployment file to take advantage of this newly labeled node.
-
-`File: code/frontend-deploy.yml`
 
 ```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
+NAME                    READY     STATUS    RESTARTS   AGE       IP               NODE
+vote-8546bbd84d-22d6x   1/1       Running   0          35s       10.233.102.137   node1
+vote-8546bbd84d-8f9bc   1/1       Running   0          1m        10.233.102.136   node1
+vote-8546bbd84d-bpg8f   1/1       Running   0          1m        10.233.75.12     node2
+vote-8546bbd84d-d8j9g   1/1       Running   0          1m        10.233.75.13     node2
+```
+
+
+and node labels
+```
+kubectl get nodes --show-labels
+
+```
+
+```
+NAME      STATUS    ROLES         AGE       VERSION   LABELS
+node1     Ready     master,node   1d        v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node1,node-role.kubernetes.io/master=true,node-role.kubernetes.io/node=true,zone=bbb
+node2     Ready     master,node   1d        v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node2,node-role.kubernetes.io/master=true,node-role.kubernetes.io/node=true,zone=bbb
+node3     Ready     node          1d        v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node3,node-role.kubernetes.io/node=true,zone=aaa
+node4     Ready     node          1d        v1.10.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/hostname=node4,node-role.kubernetes.io/node=true,zone=aaa
+```
+
+
+Lets create node affinity criteria as
+
+  * Pods for vote app **must** not run on the master nodes
+  * Pods for vote app **preferably** run on a node in zone **bbb**
+
+First is a **hard** affinity versus second being **soft** affinity.
+
+`file: vote-deploy.yaml`
+
+```
+....
   template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
+....
     spec:
+      containers:
+        - name: app
+          image: schoolofdevops/vote:v1
+          ports:
+            - containerPort: 80
+              protocol: TCP
+
       affinity:
         nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: DoesNotExist
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: fruit
-                operator: In
-                values:
-                - apple
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 3
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
+            - weight: 1
+              preference:
+                matchExpressions:
+                - key: zone
 ```
 
-This is a soft affinity. If there are no nodes labeled as apple, the pod would have still be scheduled.
-
-**Task:** Change the label value to some other fruit name and check the scheduling.
-
-Let us test the **hard node affinity**. This condition must be met for the pod to be scheduled. Change the deployment file as given below.
-
-`File: code/frontend-deploy.yml`
-
-```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
-    spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: fruit
-                operator: In
-                values:
-                - orange
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 3
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-```
-
-`Expected output:`
-
-```
-kubectl describe pod front-end-d7b787cdf-hhvfr
-
-[...]
-Events:
-  Type     Reason            Age               From               Message
-  ----     ------            ----              ----               -------
-  Warning  FailedScheduling  32s (x8 over 1m)  default-scheduler  0/4 nodes are available: 4 MatchNodeSelector.
-```
-
-### Node Anti-Affinity
-
-Node anti-affinity can be achieved by using **NotIn** operator. This will help us to ignore nodes while scheduling.
-
-`File: code/frontend-deploy.yml`
-
-```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: front-end
-  namespace: instavote
-  labels:
-    app: front-end
-    env: dev
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: front-end
-        env: dev
-    spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: fruit
-                operator: NotIn
-                values:
-                - orange
-      containers:
-        - name: front-end
-          image: schoolofdevops/frontend
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8079
-          livenessProbe:
-            tcpSocket:
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8079
-            initialDelaySeconds: 5
-            periodSeconds: 3
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-```
-
-This will schedule the pod on nodes other than node1.
 
 ### Pod Affinity
 
-Node affinity allows you to schedule pods on selective nodes. But what if you want to run pods along with other pods selectively. Pod affinity helps us with that.
 
-`File: code/frontend-deploy.yml`
+Lets define pod affinity criteria as,
+
+  * Pods for **vote** and **redis** should be co located as much as possible (preferred)
+  * No two pods with **redis** app should be running on the same node (required)
+
 
 ```
-[..]
+kubectl get pods -o wide --selector="role in (vote,redis)"
+
+```
+[sample output]
+```
+NAME                     READY     STATUS    RESTARTS   AGE       IP               NODE
+redis-6555998885-4k5cr   1/1       Running   0          4h        10.233.71.19     node3
+redis-6555998885-fb8rk   1/1       Running   0          4h        10.233.102.132   node1
+vote-74c894d6f5-bql8z    1/1       Running   0          22m       10.233.74.78     node4
+vote-74c894d6f5-nnzmc    1/1       Running   0          21m       10.233.71.22     node3
+vote-74c894d6f5-ss929    1/1       Running   0          22m       10.233.74.77     node4
+vote-74c894d6f5-tpzgm    1/1       Running   0          22m       10.233.71.21     node3
+```
+
+
+`file: vote-deploy.yaml`
+
+```
+...
+    template:
+...
     spec:
+      containers:
+        - name: app
+          image: schoolofdevops/vote:v1
+          ports:
+            - containerPort: 80
+              protocol: TCP
+
       affinity:
+...
+
         podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - catalogue
-              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: role
+                    operator: In
+                    values:
+                    - redis
+                topologyKey: kubernetes.io/hostname
 ```
 
-`Expected output:`
+
+`file: redis-deploy.yaml`
 
 ```
-kubectl describe pod front-end-85cc68d56b-4djtt
-
-[...]
-Events:
-  Type     Reason            Age               From               Message
-  ----     ------            ----              ----               -------
-  Warning  FailedScheduling  7s (x5 over 14s)  default-scheduler  0/4 nodes are available: 4 MatchInterPodAffinity, 4 PodAffinityRulesNotMatch
-```
-
-This is a hard pod affinity. If none of the node has a pod running with label **app=catalogue**, the pod will not be scheduled at all. Here **topologyKey** is a label of a node. This can be any node label.
-
-### Pod Anti-Affinity
-
-Pod anti-affinity works the opposite way of pod affinity.
-
-Lets create **catalogue** deployment this time.
-
-```
-kubectl apply -f catalogue-deploy.yml
-```
-
-Catalogue deployment has a label called **app=catalogue**. Check on which node catalogue pod is running.
-
-```
-kubectl get pods -o wide
-
-NAME                         READY     STATUS    RESTARTS   AGE       IP             NODE
-catalogue-86647dcb5b-f6t2j   1/1       Running   0          9s        10.233.71.52   node3
-```
-
-Change the front-end deployment file as follows.
-
-`File: code/frontend-deploy.yml`
-
-```
-[...]
+....
+  template:
+...
     spec:
+      containers:
+      - image: schoolofdevops/redis:latest
+        imagePullPolicy: Always
+        name: redis
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+      restartPolicy: Always
+
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - catalogue
-              topologyKey: kubernetes.io/hostname
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: role
+                operator: In
+                values:
+                - redis
+            topologyKey: "kubernetes.io/hostname"
 ```
 
-Now apply the deployment.
+
+apply
 
 ```
-kubectl apply -f frontend-deploy.yml
-kubectl get pods -o wide
+kubectl apply -f redis-deploy.yaml
+kubectl apply -f vote-deploy.yaml
 
-NAME                         READY     STATUS    RESTARTS   AGE       IP               NODE
-catalogue-86647dcb5b-f6t2j   1/1       Running   0          2m        10.233.71.52     node3
-front-end-5cbc986f44-mjr5m   1/1       Running   0          1m        10.233.102.134   node1
 ```
+
+check the pods distribution
+
+```
+kubectl get pods -o wide --selector="role in (vote,redis)"
+```
+
+[sample output ]
+
+```
+NAME                     READY     STATUS    RESTARTS   AGE       IP             NODE
+redis-5bf748dbcf-gr8zg   1/1       Running   0          13m       10.233.75.14   node2
+redis-5bf748dbcf-vxppx   1/1       Running   0          13m       10.233.74.79   node4
+vote-56bf599b9c-22lpw    1/1       Running   0          12m       10.233.74.80   node4
+vote-56bf599b9c-nvvfd    1/1       Running   0          13m       10.233.71.25   node3
+vote-56bf599b9c-w6jc9    1/1       Running   0          13m       10.233.71.23   node3
+vote-56bf599b9c-ztdgm    1/1       Running   0          13m       10.233.71.24   node3
+```
+
+Observations from the above output,
+
+  * Since redis has a hard constraint not to be on the same node, you would observe redis pods being on differnt nodes  (node2 and node4)
+  * since vote app has a soft constraint, you see some of the pods running on node4 (same node running redis), others continue to run on node 3
+
+If you kill the pods on node3, at the time of  scheduling new ones, scheduler meets all affinity rules
+
+```
+$ kubectl delete pods vote-56bf599b9c-nvvfd vote-56bf599b9c-w6jc9 vote-56bf599b9c-ztdgm
+pod "vote-56bf599b9c-nvvfd" deleted
+pod "vote-56bf599b9c-w6jc9" deleted
+pod "vote-56bf599b9c-ztdgm" deleted
+
+
+$ kubectl get pods -o wide --selector="role in (vote,redis)"
+NAME                     READY     STATUS    RESTARTS   AGE       IP             NODE
+redis-5bf748dbcf-gr8zg   1/1       Running   0          19m       10.233.75.14   node2
+redis-5bf748dbcf-vxppx   1/1       Running   0          19m       10.233.74.79   node4
+vote-56bf599b9c-22lpw    1/1       Running   0          19m       10.233.74.80   node4
+vote-56bf599b9c-4l6bc    1/1       Running   0          20s       10.233.74.83   node4
+vote-56bf599b9c-bqsrq    1/1       Running   0          20s       10.233.74.82   node4
+vote-56bf599b9c-xw7zc    1/1       Running   0          19s       10.233.74.81   node4
+```
+
+
 
 ## Taints and tolerations
 
-Taint the node.
+  * Affinity is defined for pods
+  * Taints are defined for nodes
+
+
+You could add the taints with criteria and effects. Effetcs can be
+
+**Taint Specs**:   
+  * effect
+    * NoSchedule
+    * PreferNoSchedule
+    * NoExecute
+  * key
+  * value
+  * timeAdded (only written for NoExecute taints)
+
+
+
+
+
+
+Observe the pods distribution
 
 ```
-kubectl taint node node4 dedicate=catalogue:NoExecute
+$ kubectl get pods -o wide
+NAME                      READY     STATUS    RESTARTS   AGE       IP             NODE
+db-66496667c9-qggzd       1/1       Running   0          4h        10.233.74.74   node4
+redis-5bf748dbcf-gr8zg    1/1       Running   0          27m       10.233.75.14   node2
+redis-5bf748dbcf-vxppx    1/1       Running   0          27m       10.233.74.79   node4
+result-5c7569bcb7-4fptr   1/1       Running   0          4h        10.233.71.18   node3
+result-5c7569bcb7-s4rdx   1/1       Running   0          4h        10.233.74.75   node4
+vote-56bf599b9c-22lpw     1/1       Running   0          26m       10.233.74.80   node4
+vote-56bf599b9c-4l6bc     1/1       Running   0          8m        10.233.74.83   node4
+vote-56bf599b9c-bqsrq     1/1       Running   0          8m        10.233.74.82   node4
+vote-56bf599b9c-xw7zc     1/1       Running   0          8m        10.233.74.81   node4
+worker-7c98c96fb4-7tzzw   1/1       Running   1          4h        10.233.75.8    node2
 ```
 
-Apply toleration in the Deployment.
-
-`File: code/catalogue-deploy.yml`
+Lets taint a node.
 
 ```
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: catalogue
-  namespace: instavote
-  labels:
-    app: catalogue
-    env: dev
-spec:
-  replicas: 1
+kubectl taint node node2 dedicate=worker:NoExecute
+```
+
+
+after taining the node
+
+```
+$ kubectl get pods -o wide
+NAME                      READY     STATUS    RESTARTS   AGE       IP               NODE
+db-66496667c9-qggzd       1/1       Running   0          4h        10.233.74.74     node4
+redis-5bf748dbcf-ckn65    1/1       Running   0          2m        10.233.71.26     node3
+redis-5bf748dbcf-vxppx    1/1       Running   0          30m       10.233.74.79     node4
+result-5c7569bcb7-4fptr   1/1       Running   0          4h        10.233.71.18     node3
+result-5c7569bcb7-s4rdx   1/1       Running   0          4h        10.233.74.75     node4
+vote-56bf599b9c-22lpw     1/1       Running   0          29m       10.233.74.80     node4
+vote-56bf599b9c-4l6bc     1/1       Running   0          11m       10.233.74.83     node4
+vote-56bf599b9c-bqsrq     1/1       Running   0          11m       10.233.74.82     node4
+vote-56bf599b9c-xw7zc     1/1       Running   0          11m       10.233.74.81     node4
+worker-7c98c96fb4-46ltl   1/1       Running   0          2m        10.233.102.140   node1
+```
+
+All pods running on node2 just got evicted.
+
+Add toleration in the Deployment for worker.
+
+`File: worker-deploy.yml`
+
+```
+apiVersion: apps/v1
+.....
   template:
-    metadata:
-      labels:
-        app: catalogue
-        env: dev
+....
     spec:
+      containers:
+        - name: app
+          image: schoolofdevops/vote-worker:latest
+
       tolerations:
         - key: "dedicate"
           operator: "Equal"
-          value: "catalogue"
+          value: "worker"
           effect: "NoExecute"
-      containers:
-        - name: catalogue
-          image: schoolofdevops/catalogue
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 80
 ```
 
-Check the pod list. This catalogue pod will only be scheduled in node4. If there were any pod running in node4, before it got tainted, will be evicted to other hosts.
+apply
 
----
+```
+kubectl apply -f worker-deploy.yml
 
-Need to talk about what a hard and soft affinity is. May need the change the node label used.
+```
+
+Observe the pod distribution now.
+
+
+```
+$ kubectl get pods -o wide
+NAME                      READY     STATUS    RESTARTS   AGE       IP             NODE
+db-66496667c9-qggzd       1/1       Running   0          4h        10.233.74.74   node4
+redis-5bf748dbcf-ckn65    1/1       Running   0          3m        10.233.71.26   node3
+redis-5bf748dbcf-vxppx    1/1       Running   0          31m       10.233.74.79   node4
+result-5c7569bcb7-4fptr   1/1       Running   0          4h        10.233.71.18   node3
+result-5c7569bcb7-s4rdx   1/1       Running   0          4h        10.233.74.75   node4
+vote-56bf599b9c-22lpw     1/1       Running   0          30m       10.233.74.80   node4
+vote-56bf599b9c-4l6bc     1/1       Running   0          12m       10.233.74.83   node4
+vote-56bf599b9c-bqsrq     1/1       Running   0          12m       10.233.74.82   node4
+vote-56bf599b9c-xw7zc     1/1       Running   0          12m       10.233.74.81   node4
+worker-6cc8dbd4f8-6bkfg   1/1       Running   0          1m        10.233.75.15   node2
+```
+
+You should see worker being scheduled on node2
+
+
+To remove the taint created above
+
+```
+kubectl taint node node2 dedicate:NoExecute-
+```
