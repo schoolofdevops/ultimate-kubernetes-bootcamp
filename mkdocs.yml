@@ -26,6 +26,7 @@ pages:
      - Creating Replicated Redis Cluster with Statefulsets: "13_redis_statefulset.md"
      - Access Control with Network Policies: "network_policies.md"
      - Cluster Administration: "cluster-administration.md"
+     - Helm Charts: "helm.md"
   - Additional Topics:
      - Building Deployment Strategies: "vote-deployement_strategies.md"
      - Troubleshooting Tips: "12_troubleshooting.md"
