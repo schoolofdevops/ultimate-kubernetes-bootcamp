@@ -1,24 +1,23 @@
 # Helm Package Manager
-
-
 ## Install Helm
-
+To install helm you can follow following instructions. 
 
 ```
-
 curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
 chmod 700 get_helm.sh
 ./get_helm.sh
+```
 
-helm
+Verify the installtion is successful,
+```
+helm --help
 ```
 
 ### Set RBAC for Tiller
 
 `file: tiller-rbac.yaml`
-
 ```
-piVersion: v1
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tiller
@@ -38,16 +37,14 @@ subjects:
     namespace: kube-system
 ```
 
-Apply
-
+Apply the ClusterRole and ClusterRoleBinding.
 ```
 kubectl apply -f tiller-rbac.yaml
 
 ```
 
 ### Initialize
-
-
+This is where we actually initialize Tiller in our Kubernetes cluster.
 ```
 helm init --service-account tiller
 ```
