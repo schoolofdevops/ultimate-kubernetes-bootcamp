@@ -72,10 +72,6 @@
                     
     <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
-                <li class="">
-                    
-    <a class="" href="../quickdive/">Kubernetes Quickdive</a>
-                </li>
     </ul>
 	    </li>
           
@@ -120,11 +116,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../kubespray-prereqs/">Kubespray HA lab setup with Vagrant</a>
+    <a class="" href="../kubespray-prereqs/">Kubespray lab setup with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../cluster_setup_kubespray/">HA setup with Kubespray</a>
+    <a class="" href="../cluster_setup_kubespray/">Production grade setup with Kubespray</a>
                 </li>
                 <li class=" current">
                     
@@ -183,6 +179,10 @@
                 <li class="">
                     
     <a class="" href="../cluster-administration/">Cluster Administration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../helm/">Helm Charts</a>
                 </li>
     </ul>
 	    </li>
@@ -279,6 +279,55 @@
 <p>When a request tries to contact the API , it goes through various stages as illustrated in the image given below.</p>
 <p><img alt="request-stages" src="../images/access-control.svg" />
   <sub><a href="https://kubernetes.io/docs/home/">source: official kubernetes site</a></sub></p>
+<h3 id="stage-1-authentication">Stage 1: Authentication</h3>
+<ul>
+<li>Authentication operation checks whether the <em>user/service account</em> has the permission to talk to the api server or not.  </li>
+<li>Authentication is done by the authentication modules which are configured with the api server.  </li>
+<li>Cluster uses with one or more authentication modules enabled.  </li>
+<li>If the request fails to authenticate itself, it will be served with <strong>401 error</strong>.  </li>
+</ul>
+<h4 id="authentication-for-human-users">Authentication for Human  Users</h4>
+<ul>
+<li>Kubernetes uses <strong>usernames</strong> for access control.  </li>
+<li>But it neither has an api object nor stores information about users in its data store.  </li>
+<li>Users need to be managed externally by the cluster administrator.  </li>
+</ul>
+<h4 id="authentication-for-service-accounts">Authentication for Service Accounts</h4>
+<ul>
+<li>Unlike user accounts, service accounts are managed by Kubernetes.  </li>
+<li><em>service accounts</em> are bound to specific namespaces.  </li>
+<li>Credentials for <em>service Accounts</em> are stored as <em>secrets</em>.  </li>
+<li>These secrets are mounted to pods when a deployment starts using the Service Account.  </li>
+</ul>
+<h3 id="stage-2-authorization">Stage 2: Authorization</h3>
+<ul>
+<li>After a request successfully authenticated, it goes through the authorization process.</li>
+<li>In order for a request to be authorized, it must consist following attributes.<ul>
+<li>Username of the requester(User)</li>
+<li>Requested action(Verb)</li>
+<li>The object affected(Resource)</li>
+</ul>
+</li>
+<li>Authorization is done by the following modules. Each of these modules has a special purpose.<ul>
+<li>Attribute Based Access Control(ABAC)</li>
+<li>Role Based Access Control(RBAC)</li>
+<li>Node Authorizer</li>
+<li>Webhook module</li>
+</ul>
+</li>
+<li>If a request is failed to get authorized, it will be served with <strong>403 error</strong>.</li>
+<li>Among these modules, RBAC is the most used authorizer while,<ul>
+<li>ABAC is used for,</li>
+<li>Policy based, fine grained access control</li>
+<li>The caveat is api server has to be restarted whenever we define a ABAC policy</li>
+<li>Node Authorizer is,</li>
+<li>Enabled in all the worker nodes</li>
+<li>Grants access to kubelet for some of the resources.</li>
+</ul>
+</li>
+<li>We have already talked about the user in detail. Now lets focus on <strong>verbs</strong> and <strong>resources</strong></li>
+<li>We will talk about RBAC in detail in the later part</li>
+</ul>
 <h2 id="api-groups-and-resources">api groups and resources</h2>
 <table>
 <thead>
@@ -328,6 +377,12 @@
 </table>
 <h5 id="notes">Notes</h5>
 <p>In addition to the above apiGroups, you may see <strong>extensions</strong> being used in some example code snippets. Please note that <strong>extensions</strong> was initially created as a experiement and is been deprecated, by moving most of the matured apis to one of the groups mentioned above.  <a href="https://github.com/kubernetes/kubernetes/issues/43214#issuecomment-287143011">You could read this comment and the thread</a> to get clarity on this.  </p>
+<h3 id="stage-3-admission-control">Stage 3: Admission Control</h3>
+<ul>
+<li>Admission control part is taken care of by the software modules that can modify/reject requests.</li>
+<li>Admission control is mainly used for fine-tuning access control.</li>
+<li>Admission control can directly act on the object being modified.</li>
+</ul>
 <h2 id="role-based-access-control-rbac">Role Based Access Control (RBAC)</h2>
 <table>
 <thead>
@@ -441,9 +496,7 @@ ca-key.pem: PEM RSA private key
 <p>In the example here, I have already downloaded <strong>ca.pem</strong> and <strong>ca-key.pem</strong> to my management workstation, which are used to sign the CSRs.  </p>
 <p>Assuming all the files are in the same directory, sign the CSR as,</p>
 <pre><code>openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in maya.csr -out maya.crt
-
 openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in kim.csr -out kim.crt
-
 openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in yono.csr -out yono.crt
 </code></pre>
 
@@ -455,23 +508,15 @@ openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in yon
 <li>Switch context in order to assume the user's identity while working with the cluster</li>
 </ul>
 <p>to add credentials,</p>
-<pre><code>kubectl config set-credentials maya --client-certificate=/absolute/path/to/maya.crt --client-key=/absolute/path/to/maya.key
+<pre><code>kubectl config set-credentials maya --client-certificate=~/.kube/users/maya.crt --client-key=~/.kube/users/maya.key
 
-kubectl config set-credentials kim --client-certificate=/absolute/path/to/kim.crt --client-key=~/.kube/users/kim.key
+kubectl config set-credentials kim --client-certificate=~/.kube/users/kim.crt --client-key=~/.kube/users/kim.key
 
-kubectl config set-credentials yono --client-certificate=/absolute/path/to/yono.crt --client-key=~/.kube/users/yono.key
+kubectl config set-credentials yono --client-certificate=~/.kube/users/yono.crt --client-key=~/.kube/users/yono.key
 
 </code></pre>
 
-<p>where,</p>
-<ul>
-<li>Replace /absolute/path/to/ with the path to these files.<ul>
-<li><code>invalid</code> :  ~/.kube/users/yono.crt</li>
-<li><code>valid</code> :  /home/xyz/.kube/users/yono.crt</li>
-</ul>
-</li>
-</ul>
-<p>And proceed to set/create  contexts (user@cluster). If you are not sure whats the cluster name, use the following command to find,</p>
+<p>and to define context (user@cluster). If you are not sure whats the cluster name, use the following command to find,</p>
 <pre><code>kubectl config get-contexts
 
 </code></pre>
@@ -485,11 +530,9 @@ kubectl config set-credentials yono --client-certificate=/absolute/path/to/yono.
 
 <p>where,  <strong>prod</strong>, <strong>cluster4</strong> and <strong>kubernetes</strong> are cluster names.</p>
 <p>To set context for <strong>prod</strong> cluster,</p>
-<pre><code>kubectl config set-context maya-prod --cluster=prod  --user=maya --namespace=instavote
-
-kubectl config set-context kim-prod --cluster=prod  --user=kim --namespace=instavote
-
-kubectl config set-context yono-prod --cluster=prod  --user=yono --namespace=instavote
+<pre><code>kubectl config set-context maya-prod --cluster=prod  --user=maya
+kubectl config set-context kim-prod --cluster=prod  --user=kim
+kubectl config set-context yono-prod --cluster=prod  --user=yono
 
 </code></pre>
 
@@ -613,33 +656,18 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 </code></pre>
 
-<pre><code>kubectl create -f interns-role.yml
+<pre><code>kubectl create -f readonly-role.yml
 
-kubectl create -f interns-rolebinding.yml
+kubectl create -f readonly-rolebinding.yml
 </code></pre>
 
-<p>To gt information about the objects created above,</p>
+<p>And validate</p>
 <pre><code>kubectl get roles -n instavote
 kubectl get roles,rolebindings -n instavote
 
-kubectl describe role interns
-kubectl describe rolebinding interns
+kubectl get pods  -n instavote --as-group=example.org --as=yono
 
 </code></pre>
-
-<p>To validate the access,</p>
-<pre><code>kubectl config use-context yono-prod
-kubectl get pods
-
-</code></pre>
-
-<p>To switch back to admin,</p>
-<pre><code>kubectl config use-context admin-prod
-
-</code></pre>
-
-<h4 id="exercise">Exercise</h4>
-<p>Create a Role and Rolebinding for <strong>dev</strong> group with the authorizations defined in the table above. Once applied, test it</p>
               
             </div>
           </div>
@@ -650,7 +678,7 @@ kubectl get pods
         <a href="../advanced_pod_scheduling/" class="btn btn-neutral float-right" title="Advanced Pod Scheduling">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../cluster_setup_kubespray/" class="btn btn-neutral" title="HA setup with Kubespray"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../cluster_setup_kubespray/" class="btn btn-neutral" title="Production grade setup with Kubespray"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
