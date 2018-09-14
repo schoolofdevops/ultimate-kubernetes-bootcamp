@@ -154,3 +154,7 @@ spec:
             - containerPort: 8080
               protocol: TCP
 ```
+
+#### 10. Pod that I've scheduled is in waiting state. How would I debug this issue?
+`Reference`: [My pod stays waiting](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-pod-replication-controller/#my-pod-stays-waiting)
+
