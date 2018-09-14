@@ -105,3 +105,75 @@ spec:
 ```
 kubeclt exec -it web -sh -c synch
 ```
+
+#### 8. Try to apply the following manifest. If fails, try to debug.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    app:
+    role: role
+spec:
+  containers:
+    - name: web
+      image: robotshop/rs-web:latest
+      ports:
+        - containerPort: 8080
+          protocol: TCP
+```
+
+#### 9. Fix the following manifest. Don't apply it. Just fix it by reading. 
+```
+apiVersion: v1
+kind: pod
+metadata:
+  name: web
+labels:
+  role: role
+spec:
+  containers:
+    - name: web
+      image: robotshop/rs-web:latest
+      ports:
+        - containerport: 8080
+          protocol: TCP
+```
+
+#### 10. Mount `/var/www/html` from Pod using the follwing manifest. Fill the missing fields.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    role: role
+spec:
+  containers:
+    - name: web
+      image: robotshop/rs-web:latest
+      ports:
+        - containerPort: 8080
+          protocol: TCP
+  volumes:
+    - name: roboshop-storage
+      emptyDir: {}
+```
+
+#### 11. Write a Pod manifest with the image nginx which has a volume that mounts /etc/nginx/ directory. Use "hostPath" volume type.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+      xxx
+```
+`Reference`: [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
