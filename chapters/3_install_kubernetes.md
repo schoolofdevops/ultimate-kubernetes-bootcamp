@@ -66,7 +66,7 @@ This tutorial assumes **kube-01**  as the master and used kubeadm as a tool to i
 To initialize master, run this on kube-01
 
 ```
-kubeadm init --apiserver-advertise-address 192.168.12.10 --pod-network-cidr=192.168.0.0/16
+kubeadm init --apiserver-advertise-address 192.168.56.101 --pod-network-cidr=192.168.0.0/16
 
 ```
 ### Initialization of the Nodes (Previously Minions)
