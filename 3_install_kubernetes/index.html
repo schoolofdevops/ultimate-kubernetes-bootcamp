@@ -96,6 +96,10 @@
                     
     <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../quickdive/">Kubernetes Quickdive</a>
+                </li>
     </ul>
 	    </li>
           
@@ -140,11 +144,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../kubespray-prereqs/">Kubespray lab setup with Vagrant</a>
+    <a class="" href="../kubespray-prereqs/">Kubespray HA lab setup with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../cluster_setup_kubespray/">Production grade setup with Kubespray</a>
+    <a class="" href="../cluster_setup_kubespray/">HA setup with Kubespray</a>
                 </li>
                 <li class="">
                     
@@ -310,7 +314,7 @@ EOF
 <h2 id="initializing-master">Initializing Master</h2>
 <p>This tutorial assumes <strong>kube-01</strong>  as the master and used kubeadm as a tool to install and setup the cluster. This section also assumes that you are using vagrant based setup provided along with this tutorial. If not, please update the IP address of the master accordingly.</p>
 <p>To initialize master, run this on kube-01</p>
-<pre><code>kubeadm init --apiserver-advertise-address 192.168.12.10 --pod-network-cidr=192.168.0.0/16
+<pre><code>kubeadm init --apiserver-advertise-address 192.168.56.101 --pod-network-cidr=192.168.0.0/16
 
 </code></pre>
 
@@ -445,13 +449,14 @@ Selector:               app=kubernetes-dashboard
 Type:                   NodePort
 IP:                     10.98.148.82
 Port:                   &lt;unset&gt; 80/TCP
-NodePort:               &lt;unset&gt; 32756/TCP
+NodePort:               &lt;unset&gt; 31000/TCP
 Endpoints:              10.40.0.1:9090
 Session Affinity:       None
 </code></pre>
 
-<p>Now check for the node port, here it is 32756, and go to the browser,</p>
-<pre><code>masterip:32756
+<p>Now check for the node port, here it is 31000, and go to the browser, and access the dashboard with the following URL
+<code>do not use the IP above, use master node IP instead</code></p>
+<pre><code>http://NODEIP:31000
 </code></pre>
 
 <p>The Dashboard Looks like:</p>

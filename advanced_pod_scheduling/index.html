@@ -72,6 +72,10 @@
                     
     <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../quickdive/">Kubernetes Quickdive</a>
+                </li>
     </ul>
 	    </li>
           
@@ -116,11 +120,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../kubespray-prereqs/">Kubespray lab setup with Vagrant</a>
+    <a class="" href="../kubespray-prereqs/">Kubespray HA lab setup with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../cluster_setup_kubespray/">Production grade setup with Kubespray</a>
+    <a class="" href="../cluster_setup_kubespray/">HA setup with Kubespray</a>
                 </li>
                 <li class="">
                     
@@ -546,14 +550,18 @@ vote-56bf599b9c-xw7zc    1/1       Running   0          19s       10.233.74.81  
 <li>Taints are defined for nodes</li>
 </ul>
 <p>You could add the taints with criteria and effects. Effetcs can be</p>
-<p><strong>Taint Specs</strong>: <br />
-  * effect
-    * NoSchedule
-    * PreferNoSchedule
-    * NoExecute
-  * key
-  * value
-  * timeAdded (only written for NoExecute taints)</p>
+<p><strong>Taint Specs</strong>:   </p>
+<ul>
+<li>effect  <ul>
+<li>NoSchedule  </li>
+<li>PreferNoSchedule  </li>
+<li>NoExecute  </li>
+</ul>
+</li>
+<li>key  </li>
+<li>value  </li>
+<li>timeAdded (only written for NoExecute taints)  </li>
+</ul>
 <p>Observe the pods distribution</p>
 <pre><code>$ kubectl get pods -o wide
 NAME                      READY     STATUS    RESTARTS   AGE       IP             NODE
@@ -570,7 +578,7 @@ worker-7c98c96fb4-7tzzw   1/1       Running   1          4h        10.233.75.8  
 </code></pre>
 
 <p>Lets taint a node.</p>
-<pre><code>kubectl taint node node2 dedicate=worker:NoExecute
+<pre><code>kubectl taint node node2 dedicated=worker:NoExecute
 </code></pre>
 
 <p>after taining the node</p>
@@ -601,7 +609,7 @@ worker-7c98c96fb4-46ltl   1/1       Running   0          2m        10.233.102.14
           image: schoolofdevops/vote-worker:latest
 
       tolerations:
-        - key: &quot;dedicate&quot;
+        - key: &quot;dedicated&quot;
           operator: &quot;Equal&quot;
           value: &quot;worker&quot;
           effect: &quot;NoExecute&quot;

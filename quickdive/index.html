@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Kubespray HA lab setup with Vagrant - Ultimate Kubernetes Bootcamp</title>
+  <title>Kubernetes Quickdive - Ultimate Kubernetes Bootcamp</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Kubespray HA lab setup with Vagrant";
-    var mkdocs_page_input_path = "kubespray-prereqs.md";
-    var mkdocs_page_url = "/kubespray-prereqs/";
+    var mkdocs_page_name = "Kubernetes Quickdive";
+    var mkdocs_page_input_path = "quickdive.md";
+    var mkdocs_page_url = "/quickdive/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -72,9 +72,23 @@
                     
     <a class="" href="../kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../quickdive/">Kubernetes Quickdive</a>
+    <a class="current" href="./">Kubernetes Quickdive</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#kubernetes-quick-dive">Kubernetes Quick Dive</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#setup-additional-apps">Setup additional apps</a></li>
+        
+            <li><a class="toctree-l4" href="#cleaing-up">Cleaing up</a></li>
+        
+        </ul>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -118,21 +132,9 @@
 		
     <span class="caption-text">Advanced Kubernetes</span>
     <ul class="subnav">
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">Kubespray HA lab setup with Vagrant</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#provisioning-ha-lab-cluster-with-vagrant">Provisioning HA Lab Cluster  with Vagrant</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#vagrant-setup">Vagrant Setup:</a></li>
-        
-        </ul>
-    
-
-    </ul>
+    <a class="" href="../kubespray-prereqs/">Kubespray HA lab setup with Vagrant</a>
                 </li>
                 <li class="">
                     
@@ -233,11 +235,11 @@
     
       
         
-          <li>Advanced Kubernetes &raquo;</li>
+          <li>Setup &raquo;</li>
         
       
     
-    <li>Kubespray HA lab setup with Vagrant</li>
+    <li>Kubernetes Quickdive</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -247,54 +249,54 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="provisioning-ha-lab-cluster-with-vagrant">Provisioning HA Lab Cluster  with Vagrant</h1>
-<h2 id="vagrant-setup">Vagrant Setup:</h2>
-<p>This tutorial assumes you have Vagrant+VirtualBox setup. While Vagrant is used for basic infrastructure requirements, the lessons learned in this tutorial can be applied to other platforms. Start from <a href="#Settin-Up-Kubernetes-Using-Kubespray">Set up Kubernetes Using Kubespray</a>(or) Refer to this <a href="https://github.com/schoolofdevops/ultimate-kubernetes-bootcamp/blob/master/chapters/cluster_setup_kubespray.md">Document</a>, if you have VMs running elsewhere</p>
-<h3 id="software-requirements-on-host-machine">Software Requirements on Host Machine:</h3>
-<ul>
-<li>Virtual Box (latest)</li>
-<li>Vagrant (latest)</li>
-<li>Git Bash (Only for Windows)</li>
-<li>Conemu (Only for Windows)</li>
-</ul>
-<h3 id="set-up-learning-environment">Set up Learning Environment:</h3>
-<p>Setup the repo</p>
-<pre><code>git clone https://github.com/schoolofdevops/kubespray-1
+                <h1 id="kubernetes-quick-dive">Kubernetes Quick Dive</h1>
+<p>Launch vote application with kubernetes. (simiar to docker run command)</p>
+<pre><code>kubectl  run vote --image=schoolofdevops/vote
+
+kubectl get pods
+</code></pre>
+
+<p>Publish the application (similar to using -P for port mapping)</p>
+<pre><code>
+
+kubectl expose deployment vote --type=NodePort --port 80
+
+kubectl get svc
 
 </code></pre>
 
-<p>Bring up the VMs</p>
-<pre><code>cd kubespray-1
-
-vagrant up
-
-vagrant status
+<p>Scale the vote app to run 4 instances.</p>
+<pre><code>kubectl scale --replicas=4 deployment/vote
+kubectl get pods
 </code></pre>
 
-<p>Login to nodes</p>
-<p>Open four different terminals to login to 4 nodes created with above command</p>
-<p><strong>Terminal 1</strong></p>
-<pre><code>vagrant ssh k8s-01
-sudo su
+<p>Connect to the app,  refresh the page to see it load balancing.  Also try to vote and observe what happens.  </p>
+<h4 id="setup-additional-apps">Setup additional apps</h4>
+<p>Now lets launch rest of the apps.</p>
+<pre><code>kubectl  run redis  --image=redis:alpine
+
+kubectl expose deployment redis --port 6379
+
+
+kubectl  run worker --image=schoolofdevops/worker
+
+kubectl  run db --image=postgres:9.4
+
+kubectl expose deployment db --port 5432
+
+kubectl run result --image=schoolofdevops/vote-result
+
+kubectl expose deployment result --type=NodePort --port 80
 
 </code></pre>
 
-<p><strong>Terminal 2</strong></p>
-<pre><code>vagrant ssh k8s-02
-sudo su
-</code></pre>
+<h4 id="cleaing-up">Cleaing up</h4>
+<p>Once you are done observing, you could delete it with the following commands,</p>
+<pre><code>
+kubectl delete deploy db redis vote worker result
 
-<p><strong>Terminal 3</strong></p>
-<pre><code>vagrant ssh k8s-03
-sudo su
+kubectl delete svc db redis results vote
 </code></pre>
-
-<p><strong>Terminal 4</strong></p>
-<pre><code>vagrant ssh k8s-04
-sudo su
-</code></pre>
-
-<p>Once the environment is setup, follow <a href="https://schoolofdevops.github.io/ultimate-kubernetes-bootcamp/cluster_setup_kubespray/"><strong>Production Grade Setup with Kubespray</strong></a></p>
               
             </div>
           </div>
@@ -302,10 +304,10 @@ sudo su
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../cluster_setup_kubespray/" class="btn btn-neutral float-right" title="HA setup with Kubespray">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../5-vote-deploying_pods/" class="btn btn-neutral float-right" title="Launching Pods">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../vote-persistent-volumes/" class="btn btn-neutral" title="Making Data Persist"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../kube_visualizer/" class="btn btn-neutral" title="Kuberentes Visualizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -331,10 +333,10 @@ sudo su
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../vote-persistent-volumes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../kube_visualizer/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../cluster_setup_kubespray/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../5-vote-deploying_pods/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
