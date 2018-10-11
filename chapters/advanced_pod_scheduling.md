@@ -363,13 +363,14 @@ vote-56bf599b9c-xw7zc    1/1       Running   0          19s       10.233.74.81  
 You could add the taints with criteria and effects. Effetcs can be
 
 **Taint Specs**:   
-  * effect
-    * NoSchedule
-    * PreferNoSchedule
-    * NoExecute
-  * key
-  * value
-  * timeAdded (only written for NoExecute taints)
+
+  * effect  
+    * NoSchedule  
+    * PreferNoSchedule  
+    * NoExecute  
+  * key  
+  * value  
+  * timeAdded (only written for NoExecute taints)  
 
 
 
@@ -396,7 +397,7 @@ worker-7c98c96fb4-7tzzw   1/1       Running   1          4h        10.233.75.8  
 Lets taint a node.
 
 ```
-kubectl taint node node2 dedicate=worker:NoExecute
+kubectl taint node node2 dedicated=worker:NoExecute
 ```
 
 
@@ -434,7 +435,7 @@ apiVersion: apps/v1
           image: schoolofdevops/vote-worker:latest
 
       tolerations:
-        - key: "dedicate"
+        - key: "dedicated"
           operator: "Equal"
           value: "worker"
           effect: "NoExecute"

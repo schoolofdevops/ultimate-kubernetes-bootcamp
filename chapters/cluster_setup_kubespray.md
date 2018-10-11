@@ -1,4 +1,4 @@
-# Kubernetes - Cluster Setup using Kubespray
+# High Available Kubernetes Cluster Setup using Kubespray
 
 Kubespray is an *Ansible* based kubernetes provisioner. It helps us to setup a production grade, highly available and highly scalable Kubernetes cluster.
 

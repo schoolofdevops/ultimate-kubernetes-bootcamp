@@ -1,4 +1,4 @@
-# Provisioning  vagrant based setup for Kubespray
+# Provisioning HA Lab Cluster  with Vagrant
 
 ## Vagrant Setup:
 

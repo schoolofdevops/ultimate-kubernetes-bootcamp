@@ -241,16 +241,19 @@ Selector:               app=kubernetes-dashboard
 Type:                   NodePort
 IP:                     10.98.148.82
 Port:                   <unset> 80/TCP
-NodePort:               <unset> 32756/TCP
+NodePort:               <unset> 31000/TCP
 Endpoints:              10.40.0.1:9090
 Session Affinity:       None
 ```
 
-Now check for the node port, here it is 32756, and go to the browser,
+Now check for the node port, here it is 31000, and go to the browser, and access the dashboard with the following URL
+`do not use the IP above, use master node IP instead`
+
 
 ```
-masterip:32756
+http://NODEIP:31000
 ```
+
 The Dashboard Looks like:
 
 ![alt text](images/Kubernetes-Dashboard.png "Kubernetes Dashboard")

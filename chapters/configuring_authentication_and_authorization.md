@@ -33,48 +33,6 @@ When a request tries to contact the API , it goes through various stages as illu
   <sub>[source: official kubernetes site](https://kubernetes.io/docs/home/)</sub>
 
 
-### Stage 1: Authentication
-
-  * Authentication operation checks whether the *user/service account* has the permission to talk to the api server or not.  
-  * Authentication is done by the authentication modules which are configured with the api server.  
-  * Cluster uses with one or more authentication modules enabled.  
-  * If the request fails to authenticate itself, it will be served with **401 error**.  
-
-#### Authentication for Human  Users
-
-  * Kubernetes uses **usernames** for access control.  
-  * But it neither has an api object nor stores information about users in its data store.  
-  * Users need to be managed externally by the cluster administrator.  
-
-#### Authentication for Service Accounts
-
-  * Unlike user accounts, service accounts are managed by Kubernetes.  
-  * *service accounts* are bound to specific namespaces.  
-  * Credentials for *service Accounts* are stored as *secrets*.  
-  * These secrets are mounted to pods when a deployment starts using the Service Account.  
-
-### Stage 2: Authorization
-
-  * After a request successfully authenticated, it goes through the authorization process.
-  * In order for a request to be authorized, it must consist following attributes.
-    * Username of the requester(User)
-    * Requested action(Verb)
-    * The object affected(Resource)
-  * Authorization is done by the following modules. Each of these modules has a special purpose.
-    * Attribute Based Access Control(ABAC)
-    * Role Based Access Control(RBAC)
-    * Node Authorizer
-    * Webhook module
-  * If a request is failed to get authorized, it will be served with **403 error**.
-  * Among these modules, RBAC is the most used authorizer while,
-    * ABAC is used for,
-      * Policy based, fine grained access control
-      * The caveat is api server has to be restarted whenever we define a ABAC policy
-    * Node Authorizer is,
-      * Enabled in all the worker nodes
-      * Grants access to kubelet for some of the resources.
-  * We have already talked about the user in detail. Now lets focus on **verbs** and **resources**
-  * We will talk about RBAC in detail in the later part
 
 ## api groups and resources
 
@@ -94,11 +52,6 @@ When a request tries to contact the API , it goes through various stages as illu
 ##### Notes
 
   In addition to the above apiGroups, you may see **extensions** being used in some example code snippets. Please note that **extensions** was initially created as a experiement and is been deprecated, by moving most of the matured apis to one of the groups mentioned above.  [You could read this comment and the thread](https://github.com/kubernetes/kubernetes/issues/43214#issuecomment-287143011) to get clarity on this.  
-
-### Stage 3: Admission Control
-  * Admission control part is taken care of by the software modules that can modify/reject requests.
-  * Admission control is mainly used for fine-tuning access control.
-  * Admission control can directly act on the object being modified.
 
 
 ## Role Based Access Control (RBAC)
@@ -194,7 +147,9 @@ Assuming all the files are in the same directory, sign the CSR as,
 
 ```
 openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in maya.csr -out maya.crt
+
 openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in kim.csr -out kim.crt
+
 openssl x509 -req -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 730 -in yono.csr -out yono.crt
 ```
 
@@ -212,15 +167,22 @@ In order to configure the users that you created above, following steps need to 
 to add credentials,
 
 ```
-kubectl config set-credentials maya --client-certificate=~/.kube/users/maya.crt --client-key=~/.kube/users/maya.key
+kubectl config set-credentials maya --client-certificate=/absolute/path/to/maya.crt --client-key=/absolute/path/to/maya.key
 
-kubectl config set-credentials kim --client-certificate=~/.kube/users/kim.crt --client-key=~/.kube/users/kim.key
+kubectl config set-credentials kim --client-certificate=/absolute/path/to/kim.crt --client-key=~/.kube/users/kim.key
 
-kubectl config set-credentials yono --client-certificate=~/.kube/users/yono.crt --client-key=~/.kube/users/yono.key
+kubectl config set-credentials yono --client-certificate=/absolute/path/to/yono.crt --client-key=~/.kube/users/yono.key
 
 ```
 
-and to define context (user@cluster). If you are not sure whats the cluster name, use the following command to find,
+where,
+
+  * Replace /absolute/path/to/ with the path to these files.
+    * `invalid` :  ~/.kube/users/yono.crt
+    * `valid` :  /home/xyz/.kube/users/yono.crt
+
+
+And proceed to set/create  contexts (user@cluster). If you are not sure whats the cluster name, use the following command to find,
 
 ```
 kubectl config get-contexts
@@ -240,9 +202,11 @@ where,  **prod**, **cluster4** and **kubernetes** are cluster names.
 To set context for **prod** cluster,
 
 ```
-kubectl config set-context maya-prod --cluster=prod  --user=maya
-kubectl config set-context kim-prod --cluster=prod  --user=kim
-kubectl config set-context yono-prod --cluster=prod  --user=yono
+kubectl config set-context maya-prod --cluster=prod  --user=maya --namespace=instavote
+
+kubectl config set-context kim-prod --cluster=prod  --user=kim --namespace=instavote
+
+kubectl config set-context yono-prod --cluster=prod  --user=yono --namespace=instavote
 
 ```
 
@@ -397,17 +361,37 @@ roleRef:
 
 
 ```
-kubectl create -f readonly-role.yml
+kubectl create -f interns-role.yml
 
-kubectl create -f readonly-rolebinding.yml
+kubectl create -f interns-rolebinding.yml
 ```
 
-And validate
+To gt information about the objects created above,
 
 ```
 kubectl get roles -n instavote
 kubectl get roles,rolebindings -n instavote
 
-kubectl get pods  -n instavote --as-group=example.org --as=yono
+kubectl describe role interns
+kubectl describe rolebinding interns
 
 ```
+
+To validate the access,
+```
+kubectl config use-context yono-prod
+kubectl get pods
+
+```
+
+To switch back to admin,
+
+```
+kubectl config use-context admin-prod
+
+```
+
+#### Exercise
+
+
+Create a Role and Rolebinding for **dev** group with the authorizations defined in the table above. Once applied, test it
