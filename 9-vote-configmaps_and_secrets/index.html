@@ -551,7 +551,15 @@ spec:
 
 kubectl apply -f db-svc.yaml
 
-kubectl get rs,deploy --show-labels
+kubectl get pods,rs,deploy
+
+kubectl exec -it   db-xxxx sh
+
+[replace db-xxxx with pod name for db ]
+
+env | grep -i postgres 
+
+[here you should see the env vars defined for POSTGRES_USER and POSTGRES_PASS]
 </code></pre>
 
 <h3 id="note-automatic-updation-of-deployments-on-configmap-updates">Note: Automatic Updation of deployments on ConfigMap  Updates</h3>
