@@ -52,6 +52,35 @@ pod/metrics-server-6fbfb84cdd-74jww   1/1       Running   0          28m
 
 Monitoring has been setup.
 
+##### Fixing issues with Metrics deployment 
+
+There is a known issue as off Dec 2018 with Metrics Server where is fails to work event after deploying it using above commands. This can be fixed with a patch using steps below. 
+
+
+To apply a patch to metrics server, 
+
+```
+wget -c https://gist.githubusercontent.com/initcron/1a2bd25353e1faa22a0ad41ad1c01b62/raw/008e23f9fbf4d7e2cf79df1dd008de2f1db62a10/k8s-metrics-server.patch.yaml
+
+kubectl patch deploy metrics-server -p "$(cat k8s-metrics-server.patch.yaml)" -n kube-system
+```
+
+Now validate with
+
+```
+kubectl top node 
+kubectl top pod 
+```
+
+where expected output shoudl be similar to, 
+
+```
+# kubectl top node
+NAME     CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+vis-01   145m         7%     2215Mi          57%
+vis-13   36m          1%     1001Mi          26%
+vis-14   71m          3%     1047Mi          27%
+```
 ### Defining Resource Requests and Limits
 
 `file: vote-deploy.yaml`

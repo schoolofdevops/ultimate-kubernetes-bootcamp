@@ -353,7 +353,15 @@ kubectl apply -f db-deploy.yaml
 
 kubectl apply -f db-svc.yaml
 
-kubectl get rs,deploy --show-labels
+kubectl get pods,rs,deploy
+
+kubectl exec -it   db-xxxx sh
+
+[replace db-xxxx with pod name for db ]
+
+env | grep -i postgres 
+
+[here you should see the env vars defined for POSTGRES_USER and POSTGRES_PASS]
 ```
 
 

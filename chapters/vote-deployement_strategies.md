@@ -279,7 +279,7 @@ spec:
 
 ```
 
-file: blue-green/vote-bg-svc.yml
+file: blue-green/vote-bg-svc.yaml
 
 ```
 ---
@@ -304,7 +304,7 @@ spec:
 ```
 
 
-file: vote-svc.yml
+file: vote-svc.yaml
 ```
 ---
 apiVersion: v1
@@ -450,7 +450,7 @@ Now that you  have the new version running in parallel, you could quickly switch
   * apply service definition
   * visit http://HOST:NODEPORT for **vote** service again to validate
 
-file: vote-svc.yml
+file: vote-svc.yaml
 
 ```
 ---
