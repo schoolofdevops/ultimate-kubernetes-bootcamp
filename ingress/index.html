@@ -13,18 +13,19 @@
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="../css/highlight.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
     var mkdocs_page_name = "Application Routing with Ingress Controllers";
     var mkdocs_page_input_path = "ingress.md";
-    var mkdocs_page_url = "/ingress/";
+    var mkdocs_page_url = null;
   </script>
   
-  <script src="../js/jquery-2.1.1.min.js"></script>
-  <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
 
@@ -38,7 +39,7 @@
         <a href=".." class="icon icon-home"> Ultimate Kubernetes Bootcamp</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -298,7 +299,7 @@ pod/traefik-ingress-controller-vl296   1/1       Running   0          11h
 </code></pre>
 
 <p>You would notice that the ingress controller is started on all nodes (except managers). Visit any of the nodes 8080 port e.g. http://IPADDRESS:8080 to see  traefik's management UI.</p>
-<p><img alt="Traefik" src="../../images/traefik01.png" /></p>
+<p><img alt="Traefik" src="../images/traefik01.png" /></p>
 <h3 id="setting-up-named-based-routing-for-vote-app">Setting up Named Based Routing for Vote App</h3>
 <p>We will direct all our request to the ingress controller now, but with differnt hostname e.g. <strong>vote.example.org</strong> or <strong>results.example.org</strong>. And it should direct to the correct service based on the host name.</p>
 <p>In order to achieve this you, as a user would create a <strong>ingress</strong> object with a set of rules,</p>
@@ -369,7 +370,7 @@ kubectl apply -f vote-ing.yaml
 <li>An ingress controller, in this example traefik constantly monitors for ingress objects. The moment it detects one, it creates a rule and adds it to the traefik load balancer. This rule maps to the ingress specs.</li>
 </ul>
 <p>You could now see the rule added to ingress controller,</p>
-<p><img alt="Traefik with Ingress Rules" src="../../images/traefik02.png" /></p>
+<p><img alt="Traefik with Ingress Rules" src="../images/traefik02.png" /></p>
 <p>Where,</p>
 <ul>
 <li>
@@ -410,7 +411,7 @@ kubectl apply -f vote-ing.yaml
 <li>xxx.xxx.xxx.xxx is the actual IP address of one of the nodes running traefik.</li>
 </ul>
 <p>And then access the app urls using http://vote.example.org or http://results.example.org</p>
-<p><img alt="Name Based Routing" src="../../images/domain-name.png" /></p>
+<p><img alt="Name Based Routing" src="../images/domain-name.png" /></p>
 <h3 id="adding-http-authentication-with-annotations">Adding HTTP Authentication with Annotations</h3>
 <h4 id="creating-htpasswd-spec-as-secret">Creating htpasswd spec as Secret</h4>
 <pre><code>htpasswd -c auth devops
@@ -481,7 +482,7 @@ kubectl get ing/vote -o yaml
 </code></pre>
 
 <p>And if you visit traefik's dashboard and go to the details tab, you should see the basic authentication section enabled as in the diagram below.</p>
-<p><img alt="Name Based Routing" src="../../images/domain-name.png" /></p>
+<p><img alt="Name Based Routing" src="../images/domain-name.png" /></p>
 <h5 id="reading">Reading</h5>
 <ul>
 <li><a href="https://docs.traefik.io/user-guide/kubernetes/">Trafeik's Guide to Kubernetes Ingress Controller</a></li>
@@ -543,9 +544,8 @@ kubectl get ing/vote -o yaml
     </span>
 </div>
     <script>var base_url = '..';</script>
-    <script src="../js/theme.js"></script>
-      <script src="../search/require.js"></script>
-      <script src="../search/search.js"></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
 
 </body>
 </html>

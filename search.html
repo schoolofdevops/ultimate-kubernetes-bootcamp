@@ -13,11 +13,12 @@
 
   <link rel="stylesheet" href="./css/theme.css" type="text/css" />
   <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="./css/highlight.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
-  <script src="./js/jquery-2.1.1.min.js"></script>
-  <script src="./js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
+  <script src="./js/jquery-2.1.1.min.js" defer></script>
+  <script src="./js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
 
@@ -28,10 +29,10 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
       <div class="wy-side-nav-search">
-        <a href="." class="icon icon-home"> Ultimate Kubernetes Bootcamp</a>
+        <a href="./." class="icon icon-home"> Ultimate Kubernetes Bootcamp</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -42,7 +43,7 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href=".">Home</a>
+    <a class="" href="./.">Home</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -51,23 +52,23 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="minikube/">Using minikube to setup single node environment</a>
+    <a class="" href="./minikube/">Using minikube to setup single node environment</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
+    <a class="" href="./2_kube_cluster_vagrant/">Provisioning VMs with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="3_install_kubernetes/">Setup Kubernetes Cluster</a>
+    <a class="" href="./3_install_kubernetes/">Setup Kubernetes Cluster</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="kube_visualizer/">Kuberentes Visualizer</a>
+    <a class="" href="./kube_visualizer/">Kuberentes Visualizer</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="quickdive/">Kubernetes Quickdive</a>
+    <a class="" href="./quickdive/">Kubernetes Quickdive</a>
                 </li>
     </ul>
 	    </li>
@@ -78,31 +79,31 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="5-vote-deploying_pods/">Launching Pods</a>
+    <a class="" href="./5-vote-deploying_pods/">Launching Pods</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="replication/">Making application highly available</a>
+    <a class="" href="./replication/">Making application highly available</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
+    <a class="" href="./7-vote-exposing_app_with_service/">Publishing appliaction and Service Discovery</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="6-vote-kubernetes_deployment/">Defining Update Strategy</a>
+    <a class="" href="./6-vote-kubernetes_deployment/">Defining Update Strategy</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="11_deploying_sample_app/">Mini Project</a>
+    <a class="" href="./11_deploying_sample_app/">Mini Project</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
+    <a class="" href="./9-vote-configmaps_and_secrets/">Managing Configurations and Secrets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="vote-persistent-volumes/">Making Data Persist</a>
+    <a class="" href="./vote-persistent-volumes/">Making Data Persist</a>
                 </li>
     </ul>
 	    </li>
@@ -113,51 +114,51 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="kubespray-prereqs/">Kubespray HA lab setup with Vagrant</a>
+    <a class="" href="./kubespray-prereqs/">Kubespray HA lab setup with Vagrant</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="cluster_setup_kubespray/">HA setup with Kubespray</a>
+    <a class="" href="./cluster_setup_kubespray/">HA setup with Kubespray</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="configuring_authentication_and_authorization/">Authentication and Authorization (RBAC)</a>
+    <a class="" href="./configuring_authentication_and_authorization/">Authentication and Authorization (RBAC)</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="advanced_pod_scheduling/">Advanced Pod Scheduling</a>
+    <a class="" href="./advanced_pod_scheduling/">Advanced Pod Scheduling</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="pod-adv-specs/">Pod Resource and Security Specs</a>
+    <a class="" href="./pod-adv-specs/">Pod Resource and Security Specs</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="pods-health-probes/">Adding health checks with Probes</a>
+    <a class="" href="./pods-health-probes/">Adding health checks with Probes</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="ingress/">Application Routing with Ingress Controllers</a>
+    <a class="" href="./ingress/">Application Routing with Ingress Controllers</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
+    <a class="" href="./10_kubernetes_autoscaling/">Auto Scaling Capacity with HPA</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="13_redis_statefulset/">Creating Replicated Redis Cluster with Statefulsets</a>
+    <a class="" href="./13_redis_statefulset/">Creating Replicated Redis Cluster with Statefulsets</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="network_policies/">Access Control with Network Policies</a>
+    <a class="" href="./network_policies/">Access Control with Network Policies</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="cluster-administration/">Cluster Administration</a>
+    <a class="" href="./cluster-administration/">Cluster Administration</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="helm/">Helm Charts</a>
+    <a class="" href="./helm/">Helm Charts</a>
                 </li>
     </ul>
 	    </li>
@@ -168,15 +169,15 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="vote-deployement_strategies/">Building Deployment Strategies</a>
+    <a class="" href="./vote-deployement_strategies/">Building Deployment Strategies</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="12_troubleshooting/">Troubleshooting Tips</a>
+    <a class="" href="./12_troubleshooting/">Troubleshooting Tips</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="logging/">Logging</a>
+    <a class="" href="./logging/">Logging</a>
                 </li>
     </ul>
 	    </li>
@@ -187,7 +188,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="rbac-resource-group-mapping/">RBAC apiGroups to Resource Mapping</a>
+    <a class="" href="./rbac-resource-group-mapping/">RBAC apiGroups to Resource Mapping</a>
                 </li>
     </ul>
 	    </li>
@@ -202,7 +203,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href=".">Ultimate Kubernetes Bootcamp</a>
+        <a href="./.">Ultimate Kubernetes Bootcamp</a>
       </nav>
 
       
@@ -210,7 +211,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".">Docs</a> &raquo;</li>
+    <li><a href="./.">Docs</a> &raquo;</li>
     
     
     <li class="wy-breadcrumbs-aside">
@@ -227,7 +228,7 @@
 
   <form id="content_search" action="search.html">
     <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
-    <input name="q" id="mkdocs-search-query" type="text" class="search_input search-query ui-autocomplete-input" placeholder="Search the Docs" autocomplete="off" autofocus>
+    <input name="q" id="mkdocs-search-query" type="text" class="search_input search-query ui-autocomplete-input" placeholder="Search the Docs" autocomplete="off" autofocus title="Type search term here">
   </form>
 
   <div id="mkdocs-search-results" class="search-results">
@@ -265,9 +266,8 @@
     </span>
 </div>
     <script>var base_url = '.';</script>
-    <script src="./js/theme.js"></script>
-      <script src="./search/require.js"></script>
-      <script src="./search/search.js"></script>
+    <script src="./js/theme.js" defer></script>
+      <script src="./search/main.js" defer></script>
 
 </body>
 </html>
