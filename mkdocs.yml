@@ -35,6 +35,12 @@ pages:
   - References:
      - RBAC apiGroups to Resource Mapping: "rbac-resource-group-mapping.md"
 docs_dir: chapters
+site_dir: site_dir
 theme: readthedocs
 plugins:
     - search
+    - pdf-export:
+        verbose: true
+        media_type: print
+        enabled_if_env: ENABLE_PDF_EXPORT
+        combined: true 

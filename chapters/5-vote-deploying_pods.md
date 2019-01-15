@@ -62,9 +62,6 @@ spec:
   containers:
     - name: app
       image: schoolofdevops/vote:v1
-      ports:
-        - containerPort: 80
-          protocol: TCP
 ```
 
 [Use this link to refer to pod spec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core)
@@ -178,7 +175,7 @@ ps aux
 ```
 
 
-### Lab: Examine pods from the dashboard
+### Exercise: Examine pods from the dashboard
 
 ### Port Forwarding
 
