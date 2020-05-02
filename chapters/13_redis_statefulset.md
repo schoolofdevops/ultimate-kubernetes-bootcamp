@@ -73,7 +73,7 @@ data:
 apply
 
 ```
-kubectl apply -f redis-svc.yml
+kubectl apply -f redis-cm.yml
 ```
 
 ### Redis initContainers
